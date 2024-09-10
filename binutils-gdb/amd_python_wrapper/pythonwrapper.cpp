@@ -1,3 +1,7 @@
+#ifndef __AMD_PYTHON_WRAPPER__ 
+#define __AMD_PYTHON_WRAPPER__
+
+
 #include <stdio.h>  
 #include <stdlib.h>  
 #include <dlfcn.h>  
@@ -6,17 +10,16 @@
 const char* LIBRARY_WITH_PATH = "/usr/lib64/libpython3.9.so.1.0";
 
 
-struct _function_name {
-    int (*function_name)(int);
-};
+int (*function_name)(int);
 
 
-void construct_function_list(struct _function_name* function_name) {
-    function_name->function_name = (int (*)(int))dlsym(dlopen(LIBRARY_WITH_PATH, RTLD_LAZY), "function_name");
+void construct_function_list() {
+    
+    //fun->function_name = (int (*)(int))dlsym(dlopen(LIBRARY_WITH_PATH, RTLD_LAZY), "function_name");
 }
 
 
-int main() {  
+int amd_main() {  
     // Open the shared library  
     void* handle = dlopen(LIBRARY_WITH_PATH, RTLD_LAZY);  
     if (!handle) {  
@@ -44,3 +47,4 @@ int main() {
 }  
 
 
+#endif /* __AMD_PYTHON_WRAPPER__ */

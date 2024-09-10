@@ -450,9 +450,7 @@ SUBDIR_PYTHON_CFLAGS =
 # AMD python wrapper sub directory definitons
 #
 SUBDIR_AMD_WRAPER_PYTHON_SRCS = \
-	amd_python_wrapper/py-arch.c \
-	amd_python_wrapper/py-auto-load.c \
-	amd_python_wrapper/py-block.c \
+	amd_python_wrapper/pythonwrapper.cpp
 
 
 SUBDIR_AMD_WRAPER_PYTHON_OBS = $(patsubst %.c,%.o,$(SUBDIR_AMD_WRAPER_PYTHON_SRCS))
@@ -596,9 +594,9 @@ SUBDIR_GDBTK_DEPS = $(LIBGUI) $(TCL_DEPS) $(TK_DEPS)
 SUBDIR_GDBTK_LDFLAGS =
 SUBDIR_GDBTK_CFLAGS = -DGDBTK
 
-CONFIG_OBS =  $(SUBDIR_TUI_OBS) $(SUBDIR_PYTHON_OBS) guile/guile.o elfread.o stap-probe.o dtrace-probe.o 		gcore-elf.o elf-none-tdep.o posix-hdep.o $(SELFTESTS_OBS)
-CONFIG_SRCS =  $(SUBDIR_TUI_SRCS) $(SUBDIR_PYTHON_SRCS) guile/guile.c $(SELFTESTS_SRCS)
-CONFIG_DEPS =  $(SUBDIR_TUI_DEPS) $(SUBDIR_PYTHON_DEPS)
+CONFIG_OBS =  $(SUBDIR_TUI_OBS) $(SUBDIR_PYTHON_OBS) $(SUBDIR_AMD_WRAPER_PYTHON_OBS) guile/guile.o elfread.o stap-probe.o dtrace-probe.o 		gcore-elf.o elf-none-tdep.o posix-hdep.o $(SELFTESTS_OBS)
+CONFIG_SRCS =  $(SUBDIR_TUI_SRCS) $(SUBDIR_PYTHON_SRCS) $(SUBDIR_AMD_WRAPER_PYTHON_SRCS) guile/guile.c $(SELFTESTS_SRCS)
+CONFIG_DEPS =  $(SUBDIR_TUI_DEPS) $(SUBDIR_PYTHON_DEPS) $(SUBDIR_AMD_WRAPER_PYTHON_DEPS)
 CONFIG_LDFLAGS = 
 ENABLE_CFLAGS =  $(SUBDIR_TUI_CFLAGS) $(SUBDIR_PYTHON_CFLAGS)
 CONFIG_ALL =  all-po
