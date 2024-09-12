@@ -31,12 +31,7 @@ int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw,
                                        const char *format, char **keywords, ...){
 
 
-    fprintf(stderr, "%s\n", "Ashutosh 's Implementation of PyArg_VaParseTupleAndKeywords <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-    void* handle = dlopen(LIBRARY_WITH_PATH, RTLD_LAZY);
-    if (!handle) {
-        fprintf(stderr, "%s\n", dlerror());
-        exit(EXIT_FAILURE);
-    }
+    void* handle = AMD_get_lib_handle();
 
     // Look up the symbol
     va_arg_pyfunc PyArg_VaParseTupleAndKeywords = (va_arg_pyfunc)dlsym(handle, "PyArg_VaParseTupleAndKeywords");
@@ -51,7 +46,6 @@ int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw,
 
     va_start (ap, keywords);
 
-    //int result = (*PyArg_VaParseTupleAndKeywords)(args, kw, format, const_cast<char **> (keywords), ap);
     int result = (*PyArg_VaParseTupleAndKeywords)(args, kw, format, keywords, ap);
     printf("Call status of the API :  [ %d ]\n", result);
 

@@ -63,7 +63,7 @@ htmldir = ${docdir}
 pdfdir = ${docdir}
 includedir = ${prefix}/include
 
-install_sh = ${SHELL} /tmp/grpc/gdb_with_python_prototype/binutils-gdb/install-sh
+install_sh = ${SHELL} /dockerx/gdb_with_python_prototype/binutils-gdb/install-sh
 
 # This can be referenced by `LIBINTL' as computed by
 # ZW_GNU_GETTEXT_SISTER_DIR.
@@ -438,7 +438,8 @@ SUBDIR_PYTHON_SRCS = \
 	python/py-value.c \
 	python/py-varobj.c \
 	python/py-xmethods.c \
-	python/python.c
+	python/python.c \
+	amd_python_wrapper/amd_pythonwrapper.c
 
 SUBDIR_PYTHON_OBS = $(patsubst %.c,%.o,$(SUBDIR_PYTHON_SRCS))
 
@@ -450,7 +451,7 @@ SUBDIR_PYTHON_CFLAGS =
 # AMD python wrapper sub directory definitons
 #
 SUBDIR_AMD_WRAPER_PYTHON_SRCS = \
-	amd_python_wrapper/amd_pythonwrapper.cpp
+	amd_python_wrapper/amd_pythonwrapper.c
 
 
 SUBDIR_AMD_WRAPER_PYTHON_OBS = $(patsubst %.c,%.o,$(SUBDIR_AMD_WRAPER_PYTHON_SRCS))
@@ -595,7 +596,8 @@ SUBDIR_GDBTK_DEPS = $(LIBGUI) $(TCL_DEPS) $(TK_DEPS)
 SUBDIR_GDBTK_LDFLAGS =
 SUBDIR_GDBTK_CFLAGS = -DGDBTK
 
-CONFIG_OBS =  $(SUBDIR_TUI_OBS) $(SUBDIR_PYTHON_OBS) $(SUBDIR_AMD_WRAPER_PYTHON_OBS) guile/guile.o elfread.o stap-probe.o dtrace-probe.o 		gcore-elf.o elf-none-tdep.o posix-hdep.o $(SELFTESTS_OBS)
+#CONFIG_OBS =  $(SUBDIR_TUI_OBS) $(SUBDIR_PYTHON_OBS) $(SUBDIR_AMD_WRAPER_PYTHON_OBS) guile/guile.o elfread.o stap-probe.o dtrace-probe.o 		gcore-elf.o elf-none-tdep.o posix-hdep.o $(SELFTESTS_OBS)
+CONFIG_OBS =  $(SUBDIR_TUI_OBS) $(SUBDIR_PYTHON_OBS) guile/guile.o elfread.o stap-probe.o dtrace-probe.o 		gcore-elf.o elf-none-tdep.o posix-hdep.o $(SELFTESTS_OBS)
 CONFIG_SRCS =  $(SUBDIR_TUI_SRCS) $(SUBDIR_PYTHON_SRCS) $(SUBDIR_AMD_WRAPER_PYTHON_SRCS) guile/guile.c $(SELFTESTS_SRCS)
 CONFIG_DEPS =  $(SUBDIR_TUI_DEPS) $(SUBDIR_PYTHON_DEPS) $(SUBDIR_AMD_WRAPER_PYTHON_DEPS)
 CONFIG_LDFLAGS = 
@@ -691,7 +693,7 @@ INTERNAL_LDFLAGS = \
 CLIBS = $(SIM) $(READLINE) $(OPCODES) $(LIBCTF) $(BFD) $(ZLIB) $(ZSTD_LIBS) \
         $(LIBSUPPORT) $(INTL) $(LIBIBERTY) $(LIBDECNUMBER) \
 	$(XM_CLIBS) $(GDBTKLIBS)  $(LIBBACKTRACE_LIB) \
-	-lncursesw -lm -lcrypt -ldl -lm -lm  $(AMD_DBGAPI_LIBS) \
+	-lncursesw -lm -lpython3.9 -lcrypt -ldl -lm -lm  $(AMD_DBGAPI_LIBS) \
 	$(LIBEXPAT) $(LIBLZMA) $(LIBBABELTRACE) $(LIBIPT) \
 	$(WIN32LIBS) $(LIBGNU) $(LIBGNU_EXTRA_LIBS) $(LIBICONV) \
 	$(GMPLIBS) $(SRCHIGH_LIBS) $(LIBXXHASH) $(PTHREAD_LIBS) \
@@ -1069,6 +1071,7 @@ COMMON_SFILES = \
 	break-catch-sig.c \
 	break-catch-syscall.c \
 	break-catch-throw.c \
+	break-cond-parse.c \
 	breakpoint.c \
 	bt-utils.c \
 	btrace.c \
@@ -1338,6 +1341,7 @@ HFILES_NO_SRCDIR = \
 	bfd-target.h \
 	bfin-tdep.h \
 	block.h \
+	break-cond-parse.h \
 	breakpoint.h \
 	bsd-kvm.h \
 	bsd-uthread.h \
