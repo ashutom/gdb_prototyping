@@ -450,14 +450,15 @@ SUBDIR_PYTHON_CFLAGS =
 # AMD python wrapper sub directory definitons
 #
 SUBDIR_AMD_WRAPER_PYTHON_SRCS = \
-	amd_python_wrapper/pythonwrapper.cpp
+	amd_python_wrapper/amd_pythonwrapper.cpp
 
 
 SUBDIR_AMD_WRAPER_PYTHON_OBS = $(patsubst %.c,%.o,$(SUBDIR_AMD_WRAPER_PYTHON_SRCS))
 
 SUBDIR_AMD_WRAPER_PYTHON_DEPS =
 SUBDIR_AMD_WRAPER_PYTHON_LDFLAGS =
-SUBDIR_AMD_WRAPER_PYTHON_PYTHON_CFLAGS =
+SUBDIR_AMD_WRAPER_PYTHON_PYTHON_CFLAGS = -I/usr/include/python3.9 
+SUBDIR_AMD_WRAPER_PYTHON_PYTHON_CXXFLAGS = -I/usr/include/python3.9 
 
 
 SELFTESTS_SRCS = \
@@ -598,7 +599,7 @@ CONFIG_OBS =  $(SUBDIR_TUI_OBS) $(SUBDIR_PYTHON_OBS) $(SUBDIR_AMD_WRAPER_PYTHON_
 CONFIG_SRCS =  $(SUBDIR_TUI_SRCS) $(SUBDIR_PYTHON_SRCS) $(SUBDIR_AMD_WRAPER_PYTHON_SRCS) guile/guile.c $(SELFTESTS_SRCS)
 CONFIG_DEPS =  $(SUBDIR_TUI_DEPS) $(SUBDIR_PYTHON_DEPS) $(SUBDIR_AMD_WRAPER_PYTHON_DEPS)
 CONFIG_LDFLAGS = 
-ENABLE_CFLAGS =  $(SUBDIR_TUI_CFLAGS) $(SUBDIR_PYTHON_CFLAGS)
+ENABLE_CFLAGS =  $(SUBDIR_TUI_CFLAGS) $(SUBDIR_PYTHON_CFLAGS) $(SUBDIR_PYTHON_CFLAGS)
 CONFIG_ALL =  all-po
 CONFIG_CLEAN =  clean-po
 CONFIG_INSTALL =  install-po install-python
@@ -642,7 +643,7 @@ CPPFLAGS =
 # are sometimes a little generic, we think that the risk of collision
 # with other header files is high.  If that happens, we try to mitigate
 # a bit the consequences by putting the Python includes last in the list.
-INTERNAL_CPPFLAGS = $(CPPFLAGS)  -I/usr/include/python3.9 -I/usr/include/python3.9 \
+INTERNAL_CPPFLAGS = $(CPPFLAGS)  -I/usr/include/python3.9 -I/usr/include/python3.9 -Iamd_python_wrapper \
 	
 
 # INTERNAL_CFLAGS is the aggregate of all other *CFLAGS macros.
