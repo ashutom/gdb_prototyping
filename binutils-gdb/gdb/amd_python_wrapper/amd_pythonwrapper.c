@@ -2,57 +2,93 @@
 #include <stdlib.h>  
 #include <dlfcn.h>
 #include "amd_pythonwrapper.h"
+#include "amd_function_pointers_list.h"
 
 
+/*This shall have to be made dynamic using the configuration file later */
 const char* LIBRARY_WITH_PATH = "/usr/lib64/libpython3.9.so.1.0";
-
-
-typedef int (*va_arg_pyfunc) (PyObject *args, PyObject *kw, const char *format, char **keywords, ...);
-
-
 /* LIB handle */
 static void * PY_LIB_HANDLE=NULL;
 
-static void* AMD_get_lib_handle(){
-
-	if(!PY_LIB_HANDLE){
-                fprintf(stderr, "%s\n", "Ashutosh 's Implementation of Python API <<<<<<<<<<<<<<<<<<<<<<<<");  
-        	PY_LIB_HANDLE = dlopen(LIBRARY_WITH_PATH, RTLD_LAZY);
-		if (!PY_LIB_HANDLE) {
-			fprintf(stderr, "%s\n", dlerror());
-			exit(EXIT_FAILURE);
-		}
-	}
-	return PY_LIB_HANDLE;
+static void AMD_close_lib_handle(){
+       if(PY_LIB_HANDLE){
+       //Close the library
+       dlclose(PY_LIB_HANDLE);
+       PY_LIB_HANDLE=NULL;
+}
 }
 
+void AMD_lib_exception_failure_handeler(){
+        fprintf(stderr, "%s\n", dlerror());
+        AMD_close_lib_handle();
+        exit(EXIT_FAILURE);
+}
+
+void* AMD_get_lib_handle(){
+        if(!PY_LIB_HANDLE){
+                fprintf(stdout, "%s\n", "Ashutosh 's Implementation of Python API <<<<<<<<<<<<<<<<<<<<<<<<");
+                PY_LIB_HANDLE = dlopen(LIBRARY_WITH_PATH, RTLD_LAZY);
+                if (!PY_LIB_HANDLE) {
+                    AMD_lib_exception_failure_handeler();
+                }
+        }
+        return PY_LIB_HANDLE;
+}
+
+void* check_symbol_resolution(void* functionpointer, char* str){
+    functionpointer=NULL;
+    functionpointer= dlsym(PY_LIB_HANDLE, str);
+    if(!functionpointer){
+        fprintf(stderr, "%s , %s, %s \n", dlerror(), "Fatal!!  Symbol not found for : ", str);
+        AMD_close_lib_handle();
+        exit(EXIT_FAILURE);
+    }
+    return functionpointer;
+}
 
 int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw,
                                        const char *format, char **keywords, ...){
-
-
     void* handle = AMD_get_lib_handle();
-
+    check_lib_handeler_execption(handle);
     // Look up the symbol
-    va_arg_pyfunc PyArg_VaParseTupleAndKeywords = (va_arg_pyfunc)dlsym(handle, "PyArg_VaParseTupleAndKeywords");
+    va_arg_pyfunc PyArg_VaParseTupleAndKeywords=NULL;
+    char funname[] = "PyArg_VaParseTupleAndKeywords";
+    PyArg_VaParseTupleAndKeywords=(va_arg_pyfunc) check_symbol_resolution((void*) PyArg_VaParseTupleAndKeywords, funname);
+    /*va_arg_pyfunc PyArg_VaParseTupleAndKeywords = (va_arg_pyfunc)dlsym(handle, "PyArg_VaParseTupleAndKeywords");
     if (!PyArg_VaParseTupleAndKeywords) {
         fprintf(stderr, "%s\n", dlerror());
-        dlclose(handle);
+        AMD_close_lib_handle();
         exit(EXIT_FAILURE);
-    }
+    }*/
 
-    // Use the function
+    //Use the function
     va_list ap;
 
     va_start (ap, keywords);
 
+    /*int result = (*PyArg_VaParseTupleAndKeywords)(args, kw, format, const_cast<char **> (keywords), ap);  */
     int result = (*PyArg_VaParseTupleAndKeywords)(args, kw, format, keywords, ap);
     printf("Call status of the API :  [ %d ]\n", result);
 
     va_end (ap);
-    // Close the library
-    dlclose(handle);
 
     return result;
 }
+
+/*
+PyObject* AMD_PyObject_New(PyObject type, PyTypeObject* objptr){
+
+    void* handle = AMD_get_lib_handle();
+
+    // Look up the symbol
+    py_new_func PyNewImp = (py_new_func)dlsym(handle, "PyObject_NEW");
+    if (!PyNewImp) {
+        fprintf(stderr, "%s\n", dlerror());
+        AMD_close_lib_handle();
+        exit(EXIT_FAILURE);
+    }
+
+    return (*PyNewImp)(type, objptr);
+}
+*/
 

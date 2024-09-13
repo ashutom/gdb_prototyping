@@ -1,0 +1,62 @@
+root@hy-7c0111-rcqe-07:/dockerx/gdb_with_python_prototype/binutils-gdb/gdb#
+root@hy-7c0111-rcqe-07:/dockerx/gdb_with_python_prototype/binutils-gdb/gdb#./gdb python3
+Python Exception <class 'ModuleNotFoundError'>: No module named 'gdb'
+./gdb: warning:
+Could not load the Python gdb module from `/dockerx/gdb/share/gdb/python'.
+Limited Python support is available from the _gdb module.
+Suggest passing --data-directory=/path/to/gdb/data-directory.
+GNU gdb (GDB) 16.0.50.20240911-git
+Copyright (C) 2024 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-pc-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from python3...
+Reading symbols from .gnu_debugdata for /usr/bin/python3.9...
+(No debugging symbols found in .gnu_debugdata for /usr/bin/python3.9)
+(gdb) set args "/dockerx/program_for_testing_gdb.py"
+(gdb) r
+Starting program: /usr/bin/python3 "/dockerx/program_for_testing_gdb.py"
+Ashutosh 's Implementation of Python API <<<<<<<<<<<<<<<<<<<<<<<<
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib64/libthread_db.so.1".
+ This is what I am counting now : 1 ===
+ This is what I am counting now : 2 ===
+ This is what I am counting now : 3 ===
+ This is what I am counting now : 4 ===
+ This is what I am counting now : 5 ===
+ This is what I am counting now : 6 ===
+ This is what I am counting now : 7 ===
+ This is what I am counting now : 8 ===
+ This is what I am counting now : 9 ===
+ This is what I am counting now : 10 ===
+ This is what I am counting now : 11 ===
+ This is what I am counting now : 12 ===
+ This is what I am counting now : 13 ===
+ This is what I am counting now : 14 ===
+ This is what I am counting now : 15 ===
+ This is what I am counting now : 16 ===
+ This is what I am counting now : 17 ===
+ This is what I am counting now : 18 ===
+ This is what I am counting now : 19 ===
+ This is what I am counting now : 20 ===
+[Inferior 1 (process 259198) exited normally]
+(gdb) q
+root@hy-7c0111-rcqe-07:/dockerx/gdb_with_python_prototype/binutils-gdb/gdb#
+root@hy-7c0111-rcqe-07:/dockerx/gdb_with_python_prototype/binutils-gdb/gdb#
+root@hy-7c0111-rcqe-07:/dockerx/gdb_with_python_prototype/binutils-gdb/gdb#
+root@hy-7c0111-rcqe-07:/dockerx/gdb_with_python_prototype/binutils-gdb/gdb#
+root@hy-7c0111-rcqe-07:/dockerx/gdb_with_python_prototype/binutils-gdb/gdb#git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+

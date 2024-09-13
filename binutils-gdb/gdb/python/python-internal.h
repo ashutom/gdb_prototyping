@@ -86,6 +86,8 @@
 #include <Python.h>
 #include <frameobject.h>
 #include "py-ref.h"
+/*Ashutosh */
+#include "amd_pythonwrapper.h"
 
 #define Py_TPFLAGS_CHECKTYPES 0
 
@@ -323,8 +325,6 @@ struct gdb_PyGetSetDef : PyGetSetDef
    that exists in some newer Python version.)  */
 
 /*Ashutosh */
-#include "amd_pythonwrapper.h"
-
 static inline int
 gdb_PyArg_ParseTupleAndKeywords (PyObject *args, PyObject *kw,
 				 const char *format, const char **keywords, ...)

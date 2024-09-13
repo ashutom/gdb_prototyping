@@ -92,7 +92,8 @@ amd_python_wrapper/amd_pythonwrapper.o: \
  /usr/include/python3.9/pyctype.h /usr/include/python3.9/pystrtod.h \
  /usr/include/python3.9/pystrcmp.h /usr/include/python3.9/fileutils.h \
  /usr/include/python3.9/cpython/fileutils.h \
- /usr/include/python3.9/pyfpe.h /usr/include/python3.9/tracemalloc.h
+ /usr/include/python3.9/pyfpe.h /usr/include/python3.9/tracemalloc.h \
+ amd_python_wrapper/amd_function_pointers_list.h
 defs.h:
 ../gdbsupport/common-defs.h:
 ../gdbsupport/config.h:
@@ -251,3 +252,4 @@ amd_python_wrapper/amd_pythonwrapper.h:
 /usr/include/python3.9/cpython/fileutils.h:
 /usr/include/python3.9/pyfpe.h:
 /usr/include/python3.9/tracemalloc.h:
+amd_python_wrapper/amd_function_pointers_list.h:
