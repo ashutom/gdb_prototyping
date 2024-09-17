@@ -202,7 +202,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	  && (self->type == var_filename
 	      || value != Py_None))
 	{
-	  PyErr_SetString (PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			   _("String required for filename."));
 
 	  return -1;
@@ -226,7 +226,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 
 	if (! gdbpy_is_string (value))
 	  {
-	    PyErr_SetString (PyExc_RuntimeError,
+	    AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			     _("ENUM arguments must be a string."));
 	    return -1;
 	  }
@@ -240,7 +240,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	    break;
 	if (! self->enumeration[i])
 	  {
-	    PyErr_SetString (PyExc_RuntimeError,
+	    AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			     _("The value must be member of an enumeration."));
 	    return -1;
 	  }
@@ -251,7 +251,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
     case var_boolean:
       if (! PyBool_Check (value))
 	{
-	  PyErr_SetString (PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			   _("A boolean argument is required."));
 	  return -1;
 	}
@@ -264,7 +264,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
     case var_auto_boolean:
       if (! PyBool_Check (value) && value != Py_None)
 	{
-	  PyErr_SetString (PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			   _("A boolean or None is required"));
 	  return -1;
 	}
@@ -325,14 +325,14 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	    if (PyErr_Occurred ())
 	      {
 		if (extra_literals == nullptr)
-		  PyErr_SetString (PyExc_RuntimeError,
+		  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 				   _("The value must be integer."));
 		else if (count > 1)
-		  PyErr_SetString (PyExc_RuntimeError,
+		  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 				   string_printf (_("integer or one of: %s"),
 						  buffer.c_str ()).c_str ());
 		else
-		  PyErr_SetString (PyExc_RuntimeError,
+		  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 				   string_printf (_("integer or %s"),
 						  buffer.c_str ()).c_str ());
 		return -1;
@@ -366,7 +366,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	  }
 	if (allowed == TRIBOOL_FALSE)
 	  {
-	    PyErr_SetString (PyExc_RuntimeError,
+	    AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			     _("Range exceeded."));
 	    return -1;
 	  }
@@ -379,7 +379,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
       }
 
     default:
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Unhandled type in parameter value."));
       return -1;
     }
@@ -396,7 +396,7 @@ set_attr (PyObject *obj, PyObject *attr_name, PyObject *val)
     {
       if (!val)
 	{
-	  PyErr_SetString (PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			   _("Cannot delete a parameter's value."));
 	  return -1;
 	}
@@ -511,7 +511,7 @@ call_doc_function (PyObject *obj, PyObject *method, PyObject *arg)
     }
   else
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Parameter must return a string value."));
       return NULL;
     }
@@ -532,7 +532,7 @@ get_set_value (const char *args, int from_tty,
   gdb::unique_xmalloc_ptr<char> set_doc_string;
 
   gdbpy_enter enter_py;
-  gdbpy_ref<> set_doc_func (PyUnicode_FromString ("get_set_string"));
+  gdbpy_ref<> set_doc_func (AMD_PyUnicode_FromString ("get_set_string"));
 
   if (set_doc_func == NULL)
     {
@@ -567,7 +567,7 @@ get_show_value (struct ui_file *file, int from_tty,
   gdb::unique_xmalloc_ptr<char> show_doc_string;
 
   gdbpy_enter enter_py;
-  gdbpy_ref<> show_doc_func (PyUnicode_FromString ("get_show_string"));
+  gdbpy_ref<> show_doc_func (AMD_PyUnicode_FromString ("get_show_string"));
 
   if (show_doc_func == NULL)
     {
@@ -577,7 +577,7 @@ get_show_value (struct ui_file *file, int from_tty,
 
   if (PyObject_HasAttr (obj, show_doc_func.get ()))
     {
-      gdbpy_ref<> val_obj (PyUnicode_FromString (value));
+      gdbpy_ref<> val_obj (AMD_PyUnicode_FromString (value));
 
       if (val_obj == NULL)
 	{
@@ -728,14 +728,14 @@ compute_enum_values (parmpy_object *self, PyObject *enum_values)
 
   if (! enum_values)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("An enumeration is required for PARAM_ENUM."));
       return 0;
     }
 
   if (! PySequence_Check (enum_values))
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("The enumeration is not a sequence."));
       return 0;
     }
@@ -745,7 +745,7 @@ compute_enum_values (parmpy_object *self, PyObject *enum_values)
     return 0;
   if (size == 0)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("The enumeration is empty."));
       return 0;
     }
@@ -761,7 +761,7 @@ compute_enum_values (parmpy_object *self, PyObject *enum_values)
 	return 0;
       if (! gdbpy_is_string (item.get ()))
 	{
-	  PyErr_SetString (PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			   _("The enumeration item not a string."));
 	  return 0;
 	}
@@ -832,14 +832,14 @@ parmpy_init (PyObject *self, PyObject *args, PyObject *kwds)
       && parmclass != param_zinteger && parmclass != param_zuinteger
       && parmclass != param_zuinteger_unlimited && parmclass != param_enum)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Invalid parameter class argument."));
       return -1;
     }
 
   if (enum_values && parmclass != param_enum)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Only PARAM_ENUM accepts a fourth argument."));
       return -1;
     }
@@ -912,10 +912,10 @@ gdbpy_initialize_parameters (void)
   if (PyType_Ready (&parmpy_object_type) < 0)
     return -1;
 
-  set_doc_cst = PyUnicode_FromString ("set_doc");
+  set_doc_cst = AMD_PyUnicode_FromString ("set_doc");
   if (! set_doc_cst)
     return -1;
-  show_doc_cst = PyUnicode_FromString ("show_doc");
+  show_doc_cst = AMD_PyUnicode_FromString ("show_doc");
   if (! show_doc_cst)
     return -1;
 

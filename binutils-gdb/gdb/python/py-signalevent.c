@@ -31,7 +31,7 @@ create_signal_event_object (const gdbpy_ref<> &dict,
 
   const char *signal_name = gdb_signal_to_name (stop_signal);
 
-  gdbpy_ref<> signal_name_obj (PyUnicode_FromString (signal_name));
+  gdbpy_ref<> signal_name_obj (AMD_PyUnicode_FromString (signal_name));
   if (signal_name_obj == NULL)
     return NULL;
   if (evpy_add_attribute (signal_event_obj.get (),

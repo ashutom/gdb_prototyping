@@ -301,7 +301,7 @@ micmdpy_install_command (micmdpy_object *obj)
     {
       /* There is already an MI command registered with that name, and it's not
 	 a Python one.  Forbid replacing a non-Python MI command.  */
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("unable to add command, name is already in use"));
       return -1;
     }
@@ -347,12 +347,12 @@ micmdpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
   const int name_len = strlen (name);
   if (name_len == 0)
     {
-      PyErr_SetString (PyExc_ValueError, _("MI command name is empty."));
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError, _("MI command name is empty."));
       return -1;
     }
   else if ((name_len < 2) || (name[0] != '-') || !isalnum (name[1]))
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("MI command name does not start with '-'"
 			 " followed by at least one letter or digit."));
       return -1;
@@ -455,7 +455,7 @@ gdbpy_initialize_micommands ()
       < 0)
     return -1;
 
-  invoke_cst = PyUnicode_FromString ("invoke");
+  invoke_cst = AMD_PyUnicode_FromString ("invoke");
   if (invoke_cst == nullptr)
     return -1;
 
@@ -486,7 +486,7 @@ micmdpy_get_name (PyObject *self, void *closure)
 
   gdb_assert (micmd_obj->mi_command_name != nullptr);
   std::string name_str = string_printf ("-%s", micmd_obj->mi_command_name);
-  return PyUnicode_FromString (name_str.c_str ());
+  return AMD_PyUnicode_FromString (name_str.c_str ());
 }
 
 /* Get the gdb.MICommand.installed property.  Returns true if this MI

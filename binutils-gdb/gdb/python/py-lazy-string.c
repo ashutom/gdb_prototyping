@@ -72,7 +72,7 @@ stpy_get_encoding (PyObject *self, void *closure)
   /* An encoding can be set to NULL by the user, so check before
      attempting a Python FromString call.  If NULL return Py_None.  */
   if (self_string->encoding)
-    result = PyUnicode_FromString (self_string->encoding);
+    result = AMD_PyUnicode_FromString (self_string->encoding);
   else
     {
       result = Py_None;
@@ -106,7 +106,7 @@ stpy_convert_to_value (PyObject *self, PyObject *args)
 
   if (self_string->address == 0)
     {
-      PyErr_SetString (gdbpy_gdb_memory_error,
+      AMD_PyErr_SetString((PyObject *)gdbpy_gdb_memory_error,
 		       _("Cannot create a value from NULL."));
       return NULL;
     }
@@ -178,13 +178,13 @@ gdbpy_create_lazy_string_object (CORE_ADDR address, long length,
 
   if (length < -1)
     {
-      PyErr_SetString (PyExc_ValueError, _("Invalid length."));
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError, _("Invalid length."));
       return NULL;
     }
 
   if (address == 0 && length != 0)
     {
-      PyErr_SetString (gdbpy_gdb_memory_error,
+      AMD_PyErr_SetString((PyObject *)gdbpy_gdb_memory_error,
 		       _("Cannot create a lazy string with address 0x0, " \
 			 "and a non-zero length."));
       return NULL;
@@ -192,7 +192,7 @@ gdbpy_create_lazy_string_object (CORE_ADDR address, long length,
 
   if (!type)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("A lazy string's type cannot be NULL."));
       return NULL;
     }
@@ -211,7 +211,7 @@ gdbpy_create_lazy_string_object (CORE_ADDR address, long length,
 	  length = array_length;
 	else if (length != array_length)
 	  {
-	    PyErr_SetString (PyExc_ValueError, _("Invalid length."));
+	    AMD_PyErr_SetString((PyObject *)PyExc_ValueError, _("Invalid length."));
 	    return NULL;
 	  }
 	break;
@@ -248,7 +248,7 @@ gdbpy_initialize_lazy_string (void)
 int
 gdbpy_is_lazy_string (PyObject *result)
 {
-  return PyObject_TypeCheck (result, &lazy_string_object_type);
+  return AMD_PyObject_TypeCheck (result, &lazy_string_object_type);
 }
 
 /* Return the type of a character in lazy string LAZY.  */

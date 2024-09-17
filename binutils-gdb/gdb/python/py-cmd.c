@@ -359,7 +359,7 @@ gdbpy_parse_command_name (const char *name,
     ;
   if (i < 0)
     {
-      PyErr_SetString (PyExc_RuntimeError, _("No command name found."));
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,_("No command name found."));
       return NULL;
     }
   lastchar = i;
@@ -591,10 +591,10 @@ gdbpy_initialize_commands (void)
 			      (PyObject *) &cmdpy_object_type) < 0)
     return -1;
 
-  invoke_cst = PyUnicode_FromString ("invoke");
+  invoke_cst = AMD_PyUnicode_FromString ("invoke");
   if (invoke_cst == NULL)
     return -1;
-  complete_cst = PyUnicode_FromString ("complete");
+  complete_cst = AMD_PyUnicode_FromString ("complete");
   if (complete_cst == NULL)
     return -1;
 
@@ -685,7 +685,7 @@ gdbpy_string_to_argv (PyObject *self, PyObject *args)
 
       for (char *arg : c_argv)
 	{
-	  gdbpy_ref<> argp (PyUnicode_FromString (arg));
+	  gdbpy_ref<> argp (AMD_PyUnicode_FromString (arg));
 
 	  if (argp == NULL
 	      || PyList_Append (py_argv.get (), argp.get ()) < 0)

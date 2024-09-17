@@ -60,7 +60,7 @@ show_pyuw_debug (struct ui_file *file, int from_tty,
   do {							     \
     if ((pending_frame)->frame_info == nullptr)		     \
       {							     \
-	PyErr_SetString (PyExc_ValueError,		     \
+	AMD_PyErr_SetString((PyObject *)PyExc_ValueError,		     \
 			 _("gdb.PendingFrame is invalid.")); \
 	return nullptr;					     \
       }							     \
@@ -238,7 +238,7 @@ unwind_infopy_str (PyObject *self)
     stb.puts (")");
   }
 
-  return PyUnicode_FromString (stb.c_str ());
+  return AMD_PyUnicode_FromString (stb.c_str ());
 }
 
 /* Implement UnwindInfo.__repr__().  */
@@ -310,7 +310,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
 
   if (pending_frame->frame_info == NULL)
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       "UnwindInfo instance refers to a stale PendingFrame");
       return nullptr;
     }
@@ -338,7 +338,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
 	regnum = user_reg_value->regnum ();
       if (regnum >= gdbarch_num_cooked_regs (pending_frame->gdbarch))
 	{
-	  PyErr_SetString (PyExc_ValueError, "Bad register");
+	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError, "Bad register");
 	  return NULL;
 	}
     }
@@ -421,7 +421,7 @@ pending_framepy_str (PyObject *self)
   const char *pc_str = NULL;
 
   if (frame == NULL)
-    return PyUnicode_FromString ("Stale PendingFrame instance");
+    return AMD_PyUnicode_FromString ("Stale PendingFrame instance");
   try
     {
       sp_str = core_addr_to_string_nz (get_frame_sp (frame));
@@ -665,7 +665,7 @@ pending_framepy_block (PyObject *self, PyObject *args)
       || fn_block == nullptr
       || fn_block->function () == nullptr)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Cannot locate block for frame."));
       return nullptr;
     }
@@ -728,7 +728,7 @@ pending_framepy_create_unwind_info (PyObject *self, PyObject *args,
     = pyuw_object_attribute_to_pointer (pyo_frame_id, "sp", &sp);
   if (code == pyuw_get_attr_code::ATTR_MISSING)
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("frame_id should have 'sp' attribute."));
       return nullptr;
     }
@@ -853,7 +853,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
   if (gdb_python_module == NULL
       || ! PyObject_HasAttrString (gdb_python_module, "_execute_unwinders"))
     {
-      PyErr_SetString (PyExc_NameError,
+      AMD_PyErr_SetString((PyObject *)PyExc_NameError,
 		       "Installation error: gdb._execute_unwinders function "
 		       "is missing");
       gdbpy_print_stack ();

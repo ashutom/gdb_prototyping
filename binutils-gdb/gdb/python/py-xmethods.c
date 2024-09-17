@@ -102,7 +102,7 @@ invoke_match_method (PyObject *matcher, PyObject *py_obj_type,
   if (match_method == NULL)
     return NULL;
 
-  gdbpy_ref<> py_xmethod_name (PyUnicode_FromString (xmethod_name));
+  gdbpy_ref<> py_xmethod_name (AMD_PyUnicode_FromString (xmethod_name));
   if (py_xmethod_name == NULL)
     return NULL;
 
@@ -357,7 +357,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
 	  struct type *arg_type = type_object_to_type (item.get ());
 	  if (arg_type == NULL)
 	    {
-	      PyErr_SetString (PyExc_TypeError,
+	      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 			       _("Arg type returned by the get_arg_types "
 				 "method of a debug method worker object is "
 				 "not a gdb.Type object."));
@@ -376,7 +376,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
 
       if (arg_type == NULL)
 	{
-	  PyErr_SetString (PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 			   _("Arg type returned by the get_arg_types method "
 			     "of an xmethod worker object is not a gdb.Type "
 			     "object."));
@@ -486,7 +486,7 @@ python_xmethod_worker::do_get_result_type (value *obj,
   *result_type_ptr = type_object_to_type (py_result_type.get ());
   if (*result_type_ptr == NULL)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("Type returned by the get_result_type method of an"
 			 " xmethod worker object is not a gdb.Type object."));
       gdbpy_print_stack ();
@@ -601,12 +601,12 @@ python_xmethod_worker::python_xmethod_worker (PyObject *py_worker,
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_xmethods (void)
 {
-  py_match_method_name = PyUnicode_FromString (match_method_name);
+  py_match_method_name = AMD_PyUnicode_FromString (match_method_name);
   if (py_match_method_name == NULL)
     return -1;
 
   py_get_arg_types_method_name
-    = PyUnicode_FromString (get_arg_types_method_name);
+    = AMD_PyUnicode_FromString (get_arg_types_method_name);
   if (py_get_arg_types_method_name == NULL)
     return -1;
 

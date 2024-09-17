@@ -47,7 +47,7 @@ python_string_to_unicode (PyObject *obj)
     }
   else
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("Expected a string object."));
       unicode_str = NULL;
     }
@@ -264,7 +264,7 @@ get_addr_from_python (PyObject *obj, CORE_ADDR *addr)
 
       if (sizeof (val) > sizeof (CORE_ADDR) && ((CORE_ADDR) val) != val)
 	{
-	  PyErr_SetString (PyExc_ValueError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 			   _("Overflow converting to address."));
 	  return -1;
 	}

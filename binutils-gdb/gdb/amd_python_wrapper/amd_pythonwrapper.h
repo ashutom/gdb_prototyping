@@ -14,7 +14,10 @@
 int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw, const char *format, 
                                        char **keywords, ...);
 
-/*PyObject* AMD_PyObject_New(PyTypeObject*);*/
+int  AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type);
+int  AMD_PyObject_TypeCheck(PyObject *ob, PyTypeObject*);
+void AMD_PyErr_SetString(PyObject *exception, const char* );
+PyObject* AMD_PyUnicode_FromString(const char *ustr);
 
 /*Internal functions which need to be supported here because of the tempalated approach*/
 void AMD_lib_exception_failure_handeler();
@@ -33,7 +36,6 @@ T* AMD_PyObject_New(PyTypeObject* objptr){
    PyObject* retval = (*fp)(objptr);
    return (T*) retval;
 }
-
 
 
 #endif /* __AMD_PYTHON_WRAPPER__ */

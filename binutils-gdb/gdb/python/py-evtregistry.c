@@ -39,7 +39,7 @@ evregpy_connect (PyObject *self, PyObject *function)
 
   if (!PyCallable_Check (func))
     {
-      PyErr_SetString (PyExc_RuntimeError, "Function is not callable");
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, "Function is not callable");
       return NULL;
     }
 

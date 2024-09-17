@@ -760,7 +760,7 @@ execute_gdb_command (PyObject *self, PyObject *args, PyObject *kw)
     }
 
   if (to_string)
-    return PyUnicode_FromString (to_string_res.c_str ());
+    return AMD_PyUnicode_FromString (to_string_res.c_str ());
   Py_RETURN_NONE;
 }
 
@@ -875,7 +875,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
   /* Check throttle bounds and exit if in excess.  */
   if (throttle != 0 && count > throttle)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Number of breakpoints exceeds throttled maximum."));
       return NULL;
     }
@@ -998,7 +998,7 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
 
   if (arg != NULL && strlen (arg) > 0)
     {
-      unparsed.reset (PyUnicode_FromString (arg));
+      unparsed.reset (AMD_PyUnicode_FromString (arg));
       if (unparsed == NULL)
 	return NULL;
     }
@@ -1145,7 +1145,7 @@ gdbpy_post_event (PyObject *self, PyObject *args)
 
   if (!PyCallable_Check (func))
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Posted event is not callable"));
       return NULL;
     }
@@ -1204,7 +1204,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 
       if (PyCallable_Check (hook.get ()))
 	{
-	  gdbpy_ref<> current_prompt (PyUnicode_FromString (current_gdb_prompt));
+	  gdbpy_ref<> current_prompt (AMD_PyUnicode_FromString (current_gdb_prompt));
 	  if (current_prompt == NULL)
 	    {
 	      gdbpy_print_stack ();
@@ -1282,7 +1282,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
   if (!PyCallable_Check (hook.get ()))
     return {};
 
-  gdbpy_ref<> fname_arg (PyUnicode_FromString (filename.c_str ()));
+  gdbpy_ref<> fname_arg (AMD_PyUnicode_FromString (filename.c_str ()));
   if (fname_arg == nullptr)
     {
       gdbpy_print_stack ();
@@ -1320,7 +1320,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
     return {};
   else if (!PyBytes_Check (result.get ()))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("Return value from gdb.colorize should be a bytes object or None."));
       gdbpy_print_stack ();
       return {};
@@ -1389,7 +1389,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
 
   if (!PyBytes_Check (result.get ()))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("Return value from gdb.colorize_disasm should be a bytes object or None."));
       gdbpy_print_stack ();
       return {};
@@ -1447,7 +1447,7 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
 	 default, but it feels like there's too much scope of mistakes in
 	 this case, so better to require the user to provide both
 	 arguments.  */
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("The architecture and progspace arguments must both be supplied"));
       return nullptr;
     }
@@ -1457,7 +1457,7 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
 	 Just check that these objects are valid.  */
       if (!gdbpy_is_progspace (pspace_obj))
 	{
-	  PyErr_SetString (PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 			   _("The progspace argument is not a gdb.Progspace object"));
 	  return nullptr;
 	}
@@ -1465,14 +1465,14 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
       pspace = progspace_object_to_program_space (pspace_obj);
       if (pspace == nullptr)
 	{
-	  PyErr_SetString (PyExc_ValueError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 			   _("The progspace argument is not valid"));
 	  return nullptr;
 	}
 
       if (!gdbpy_is_architecture (arch_obj))
 	{
-	  PyErr_SetString (PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 			   _("The architecture argument is not a gdb.Architecture object"));
 	  return nullptr;
 	}
@@ -1496,7 +1496,7 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
   /* Format the address, and return it as a string.  */
   string_file buf;
   print_address (gdbarch, addr, &buf);
-  return PyUnicode_FromString (buf.c_str ());
+  return AMD_PyUnicode_FromString (buf.c_str ());
 }
 
 
@@ -1811,7 +1811,7 @@ gdbpy_handle_missing_debuginfo (const struct extension_language_defn *extlang,
 
   if (!gdbpy_is_string (pyo_execute_ret.get ()))
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       "return value from _handle_missing_debuginfo should "
 		       "be None, a Bool, or a String");
       gdbpy_print_stack ();
@@ -2321,22 +2321,22 @@ init_done:
 #include "py-event-types.def"
 #undef GDB_PY_DEFINE_EVENT_TYPE
 
-  gdbpy_to_string_cst = PyUnicode_FromString ("to_string");
+  gdbpy_to_string_cst = AMD_PyUnicode_FromString ("to_string");
   if (gdbpy_to_string_cst == NULL)
     return false;
-  gdbpy_children_cst = PyUnicode_FromString ("children");
+  gdbpy_children_cst = AMD_PyUnicode_FromString ("children");
   if (gdbpy_children_cst == NULL)
     return false;
-  gdbpy_display_hint_cst = PyUnicode_FromString ("display_hint");
+  gdbpy_display_hint_cst = AMD_PyUnicode_FromString ("display_hint");
   if (gdbpy_display_hint_cst == NULL)
     return false;
-  gdbpy_doc_cst = PyUnicode_FromString ("__doc__");
+  gdbpy_doc_cst = AMD_PyUnicode_FromString ("__doc__");
   if (gdbpy_doc_cst == NULL)
     return false;
-  gdbpy_enabled_cst = PyUnicode_FromString ("enabled");
+  gdbpy_enabled_cst = AMD_PyUnicode_FromString ("enabled");
   if (gdbpy_enabled_cst == NULL)
     return false;
-  gdbpy_value_cst = PyUnicode_FromString ("value");
+  gdbpy_value_cst = AMD_PyUnicode_FromString ("value");
   if (gdbpy_value_cst == NULL)
     return false;
 
@@ -2568,7 +2568,7 @@ do_initialize (const struct extension_language_defn *extlang)
 #endif
   if (sys_path && PyList_Check (sys_path))
     {
-      gdbpy_ref<> pythondir (PyUnicode_FromString (gdb_pythondir.c_str ()));
+      gdbpy_ref<> pythondir (AMD_PyUnicode_FromString (gdb_pythondir.c_str ()));
       if (pythondir == NULL || PyList_Insert (sys_path, 0, pythondir.get ()))
 	return false;
     }

@@ -492,7 +492,7 @@ recpy_gap_reason_string (PyObject *self, void *closure)
 {
   const recpy_gap_object * const obj = (const recpy_gap_object *) self;
 
-  return PyUnicode_FromString (obj->reason_string);
+  return AMD_PyUnicode_FromString (obj->reason_string);
 }
 
 /* Create a new gdb.Auxiliary object.  */

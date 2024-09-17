@@ -123,7 +123,7 @@ field_new (void)
 int
 gdbpy_is_field (PyObject *obj)
 {
-  return PyObject_TypeCheck (obj, &field_object_type);
+  return AMD_PyObject_TypeCheck (obj, &field_object_type);
 }
 
 /* Return the code for this type.  */
@@ -184,7 +184,7 @@ convert_field (struct type *type, int field)
 
       if (field_name[0] != '\0')
 	{
-	  arg.reset (PyUnicode_FromString (type->field (field).name ()));
+	  arg.reset (AMD_PyUnicode_FromString (type->field (field).name ()));
 	  if (arg == NULL)
 	    return NULL;
 	}
@@ -234,7 +234,7 @@ field_name (struct type *type, int field)
   gdbpy_ref<> result;
 
   if (type->field (field).name ())
-    result.reset (PyUnicode_FromString (type->field (field).name ()));
+    result.reset (AMD_PyUnicode_FromString (type->field (field).name ()));
   else
     result = gdbpy_ref<>::new_reference (Py_None);
 
@@ -372,9 +372,9 @@ typy_get_name (PyObject *self, void *closure)
     {
       std::string name = ada_decode (type->name (), false);
       if (!name.empty ())
-	return PyUnicode_FromString (name.c_str ());
+	return AMD_PyUnicode_FromString (name.c_str ());
     }
-  return PyUnicode_FromString (type->name ());
+  return AMD_PyUnicode_FromString (type->name ());
 }
 
 /* Return the type's tag, or None.  */
@@ -391,7 +391,7 @@ typy_get_tag (PyObject *self, void *closure)
 
   if (tagname == nullptr)
     Py_RETURN_NONE;
-  return PyUnicode_FromString (tagname);
+  return AMD_PyUnicode_FromString (tagname);
 }
 
 /* Return the type's objfile, or None.  */
@@ -429,7 +429,7 @@ typy_is_signed (PyObject *self, void *closure)
 
   if (!is_scalar_type (type))
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("Type must be a scalar type"));
       return nullptr;
     }
@@ -537,7 +537,7 @@ typy_get_composite (struct type *type)
       && type->code () != TYPE_CODE_METHOD
       && type->code () != TYPE_CODE_FUNC)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "Type is not a structure, union, enum, or function type.");
       return NULL;
     }
@@ -562,7 +562,7 @@ typy_array_1 (PyObject *self, PyObject *args, int is_vector)
     {
       if (!PyLong_Check (n2_obj))
 	{
-	  PyErr_SetString (PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			   _("Array bound must be an integer"));
 	  return NULL;
 	}
@@ -578,7 +578,7 @@ typy_array_1 (PyObject *self, PyObject *args, int is_vector)
 
   if (n2 < n1 - 1) /* Note: An empty array has n2 == n1 - 1.  */
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("Array length must not be negative"));
       return NULL;
     }
@@ -645,7 +645,7 @@ typy_range (PyObject *self, PyObject *args)
       && type->code () != TYPE_CODE_STRING
       && type->code () != TYPE_CODE_RANGE)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("This type does not have a range."));
       return NULL;
     }
@@ -711,7 +711,7 @@ typy_target (PyObject *self, PyObject *args)
 
   if (!type->target_type ())
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Type does not have a target."));
       return NULL;
     }
@@ -943,7 +943,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (type->name () == NULL)
     {
-      PyErr_SetString (PyExc_RuntimeError, _("Null type name."));
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, _("Null type name."));
       return NULL;
     }
 
@@ -959,7 +959,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (! info)
     {
-      PyErr_SetString (PyExc_RuntimeError, err.c_str ());
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, err.c_str ());
       return NULL;
     }
   demangled = info->tree;
@@ -971,7 +971,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (demangled->type != DEMANGLE_COMPONENT_TEMPLATE)
     {
-      PyErr_SetString (PyExc_RuntimeError, _("Type is not a template."));
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, _("Type is not a template."));
       return NULL;
     }
 
@@ -1009,7 +1009,7 @@ typy_template_argument (PyObject *self, PyObject *args)
 
   if (argno < 0)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Template argument number must be non-negative"));
       return NULL;
     }
@@ -1019,7 +1019,7 @@ typy_template_argument (PyObject *self, PyObject *args)
       block = block_object_to_block (block_obj);
       if (! block)
 	{
-	  PyErr_SetString (PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			   _("Second argument must be block."));
 	  return NULL;
 	}
@@ -1482,7 +1482,7 @@ type_to_type_object (struct type *type)
 struct type *
 type_object_to_type (PyObject *obj)
 {
-  if (! PyObject_TypeCheck (obj, &type_object_type))
+  if (! AMD_PyObject_TypeCheck (obj, &type_object_type))
     return NULL;
   return ((type_object *) obj)->type;
 }
@@ -1508,7 +1508,7 @@ gdbpy_lookup_type (PyObject *self, PyObject *args, PyObject *kw)
       block = block_object_to_block (block_obj);
       if (! block)
 	{
-	  PyErr_SetString (PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 			   _("'block' argument must be a Block."));
 	  return NULL;
 	}

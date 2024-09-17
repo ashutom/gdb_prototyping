@@ -29,7 +29,7 @@ extern PyTypeObject thread_object_type
   do {								\
     if (!Thread->thread)					\
       {								\
-	PyErr_SetString (PyExc_RuntimeError,			\
+	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,			\
 			 _("Thread no longer exists."));	\
 	return NULL;						\
       }								\
@@ -81,7 +81,7 @@ thpy_get_name (PyObject *self, void *ignore)
   if (name == NULL)
     Py_RETURN_NONE;
 
-  return PyUnicode_FromString (name);
+  return AMD_PyUnicode_FromString (name);
 }
 
 /* Return a string containing target specific additional information about
@@ -109,7 +109,7 @@ thpy_get_details (PyObject *self, void *ignore)
   if (extra_info == nullptr)
     Py_RETURN_NONE;
 
-  return PyUnicode_FromString (extra_info);
+  return AMD_PyUnicode_FromString (extra_info);
 }
 
 static int
@@ -120,13 +120,13 @@ thpy_set_name (PyObject *self, PyObject *newvalue, void *ignore)
 
   if (! thread_obj->thread)
     {
-      PyErr_SetString (PyExc_RuntimeError, _("Thread no longer exists."));
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, _("Thread no longer exists."));
       return -1;
     }
 
   if (newvalue == NULL)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("Cannot delete `name' attribute."));
       return -1;
     }
@@ -136,7 +136,7 @@ thpy_set_name (PyObject *self, PyObject *newvalue, void *ignore)
     }
   else if (! gdbpy_is_string (newvalue))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("The value of `name' must be a string."));
       return -1;
     }
@@ -208,7 +208,7 @@ thpy_get_ptid_string (PyObject *self, void *closure)
       scoped_restore_current_thread restore_thread;
       switch_to_inferior_no_thread (thread_obj->thread->inf);
       std::string ptid_str = target_pid_to_str (ptid);
-      return PyUnicode_FromString (ptid_str.c_str ());
+      return AMD_PyUnicode_FromString (ptid_str.c_str ());
     }
   catch (const gdb_exception &except)
     {
@@ -335,7 +335,7 @@ thpy_thread_handle (PyObject *self, PyObject *args)
 
   if (hv.size () == 0)
     {
-      PyErr_SetString (PyExc_RuntimeError, _("Thread handle not found."));
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, _("Thread handle not found."));
       return NULL;
     }
 

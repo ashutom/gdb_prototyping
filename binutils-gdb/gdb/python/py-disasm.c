@@ -389,7 +389,7 @@ make_disasm_addr_part (struct gdbarch *gdbarch, CORE_ADDR address)
   do {									\
     if (!disasm_info_object_is_valid (Info))				\
       {									\
-	PyErr_SetString (PyExc_RuntimeError,				\
+	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,				\
 			 _("DisassembleInfo is no longer valid."));	\
 	return nullptr;							\
       }									\
@@ -414,14 +414,14 @@ disasmpy_info_make_text_part (PyObject *self, PyObject *args,
 
   if (style_num < 0 || style_num > ((int) dis_style_comment_start))
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("Invalid disassembler style."));
       return nullptr;
     }
 
   if (strlen (string) == 0)
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("String must not be empty."));
       return nullptr;
     }
@@ -598,9 +598,9 @@ disasmpy_builtin_disassemble (PyObject *self, PyObject *args, PyObject *kw)
 	      GDB_PY_HANDLE_EXCEPTION (except);
 	    }
 	  if (!str.empty ())
-	    PyErr_SetString (gdbpy_gdberror_exc, str.c_str ());
+	    AMD_PyErr_SetString((PyObject *)gdbpy_gdberror_exc, str.c_str ());
 	  else
-	    PyErr_SetString (gdbpy_gdberror_exc,
+	    AMD_PyErr_SetString((PyObject *)gdbpy_gdberror_exc,
 			     _("Unknown disassembly error."));
 	}
       return nullptr;
@@ -645,7 +645,7 @@ disasmpy_set_enabled (PyObject *self, PyObject *args, PyObject *kw)
 
   if (!PyBool_Check (newstate))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("The value passed to `_set_enabled' must be a boolean."));
       return nullptr;
     }
@@ -1009,7 +1009,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
 
   if (length <= 0)
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("Length must be greater than 0."));
       return -1;
     }
@@ -1029,7 +1029,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
     {
       if (strlen (string) == 0)
 	{
-	  PyErr_SetString (PyExc_ValueError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 			   _("String must not be empty."));
 	  return -1;
 	}
@@ -1045,7 +1045,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
     {
       if (!PySequence_Check (parts_list))
 	{
-	  PyErr_SetString (PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 			   _("'parts' argument is not a sequence"));
 	  return -1;
 	}
@@ -1053,7 +1053,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
       Py_ssize_t parts_count = PySequence_Size (parts_list);
       if (parts_count <= 0)
 	{
-	  PyErr_SetString (PyExc_ValueError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 			   _("'parts' list must not be empty."));
 	  return -1;
 	}
@@ -1078,7 +1078,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
 		gdbarch = addr_part->gdbarch;
 	      else if (addr_part->gdbarch != gdbarch)
 		{
-		  PyErr_SetString (PyExc_ValueError,
+		  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 				   _("Inconsistent gdb.Architectures used "
 				     "in 'parts' sequence."));
 		  return -1;
@@ -1322,7 +1322,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
   if (!PyObject_IsInstance (result.get (),
 			    (PyObject *) &disasm_result_object_type))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("Result is not a DisassemblerResult."));
       gdbpy_print_stack ();
       return std::optional<int> (-1);
@@ -1340,8 +1340,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
 			  gdbarch_max_insn_length (gdbarch) : INT_MAX);
   if (length <= 0)
     {
-      PyErr_SetString
-	(PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 	 _("Invalid length attribute: length must be greater than 0."));
       gdbpy_print_stack ();
       return std::optional<int> (-1);
@@ -1410,7 +1409,7 @@ disasmpy_dealloc_result (PyObject *self)
 static int
 disasmpy_part_init (PyObject *self, PyObject *args, PyObject *kwargs)
 {
-  PyErr_SetString (PyExc_RuntimeError,
+  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		   _("Cannot create instances of DisassemblerPart."));
   return -1;
 }

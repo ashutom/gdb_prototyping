@@ -92,7 +92,7 @@ static const registry<program_space>::key<pspace_object, pspace_deleter>
   do {								\
     if (pspace_obj->pspace == nullptr)				\
       {								\
-	PyErr_SetString (PyExc_RuntimeError,			\
+	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,			\
 			 _("Program space no longer exists."));	\
 	return NULL;						\
       }								\
@@ -225,14 +225,14 @@ pspy_set_printers (PyObject *o, PyObject *value, void *ignore)
 
   if (! value)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "cannot delete the pretty_printers attribute");
       return -1;
     }
 
   if (! PyList_Check (value))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "the pretty_printers attribute must be a list");
       return -1;
     }
@@ -264,14 +264,14 @@ pspy_set_frame_filters (PyObject *o, PyObject *frame, void *ignore)
 
   if (! frame)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "cannot delete the frame filter attribute");
       return -1;
     }
 
   if (! PyDict_Check (frame))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "the frame filter attribute must be a dictionary");
       return -1;
     }
@@ -304,14 +304,14 @@ pspy_set_frame_unwinders (PyObject *o, PyObject *unwinders, void *ignore)
 
   if (!unwinders)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "cannot delete the frame unwinders list");
       return -1;
     }
 
   if (!PyList_Check (unwinders))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "the frame unwinders attribute must be a list");
       return -1;
     }
@@ -367,14 +367,14 @@ pspy_set_missing_debug_handlers (PyObject *o, PyObject *handlers,
 
   if (handlers == nullptr)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "cannot delete the missing debug handlers list");
       return -1;
     }
 
   if (!PyList_Check (handlers))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "the missing debug handlers attribute must be a list");
       return -1;
     }
@@ -396,14 +396,14 @@ pspy_set_type_printers (PyObject *o, PyObject *value, void *ignore)
 
   if (! value)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "cannot delete the type_printers attribute");
       return -1;
     }
 
   if (! PyList_Check (value))
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       "the type_printers attribute must be a list");
       return -1;
     }
@@ -626,7 +626,7 @@ progspace_object_to_program_space (PyObject *obj)
 bool
 gdbpy_is_progspace (PyObject *obj)
 {
-  return PyObject_TypeCheck (obj, &pspace_object_type);
+  return AMD_PyObject_TypeCheck (obj, &pspace_object_type);
 }
 
 /* Emit an ExecutableChangedEvent event to REGISTRY.  Return 0 on success,

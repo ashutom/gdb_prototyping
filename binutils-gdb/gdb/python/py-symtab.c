@@ -69,7 +69,7 @@ static const registry<objfile>::key<symtab_object, stpy_deleter>
     symtab = symtab_object_to_symtab (symtab_obj);	 \
     if (symtab == NULL)					 \
       {							 \
-	PyErr_SetString (PyExc_RuntimeError,		 \
+	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,		 \
 			 _("Symbol Table is invalid.")); \
 	return NULL;					 \
       }							 \
@@ -130,7 +130,7 @@ static const registry<objfile>::key<sal_object, salpy_deleter>
     sal = sal_object_to_symtab_and_line (sal_obj);			\
     if (sal == NULL)							\
       {									\
-	  PyErr_SetString (PyExc_RuntimeError,				\
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,				\
 			   _("Symbol Table and Line is invalid."));	\
 	  return NULL;							\
 	}								\
@@ -144,7 +144,7 @@ stpy_str (PyObject *self)
 
   STPY_REQUIRE_VALID (self, symtab);
 
-  result = PyUnicode_FromString (symtab_to_filename_for_display (symtab));
+  result = AMD_PyUnicode_FromString (symtab_to_filename_for_display (symtab));
 
   return result;
 }
@@ -494,7 +494,7 @@ symtab_and_line_to_sal_object (struct symtab_and_line sal)
 struct symtab_and_line *
 sal_object_to_symtab_and_line (PyObject *obj)
 {
-  if (! PyObject_TypeCheck (obj, &sal_object_type))
+  if (! AMD_PyObject_TypeCheck (obj, &sal_object_type))
     return NULL;
   return ((sal_object *) obj)->sal;
 }
@@ -503,7 +503,7 @@ sal_object_to_symtab_and_line (PyObject *obj)
 struct symtab *
 symtab_object_to_symtab (PyObject *obj)
 {
-  if (! PyObject_TypeCheck (obj, &symtab_object_type))
+  if (! AMD_PyObject_TypeCheck (obj, &symtab_object_type))
     return NULL;
   return ((symtab_object *) obj)->symtab;
 }

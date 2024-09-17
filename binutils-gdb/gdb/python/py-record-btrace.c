@@ -472,7 +472,7 @@ recpy_bt_aux_data (PyObject *self, void *closure)
       return nullptr;
     }
 
-  return PyUnicode_FromString
+  return AMD_PyUnicode_FromString
     (iter.btinfo->aux_data.at (insn->aux_data_index).c_str ());
 }
 
@@ -662,7 +662,7 @@ btpy_list_richcompare (PyObject *self, PyObject *other, int op)
 PyObject *
 recpy_bt_method (PyObject *self, void *closure)
 {
-  return PyUnicode_FromString ("btrace");
+  return AMD_PyUnicode_FromString ("btrace");
 }
 
 /* Implementation of
@@ -683,7 +683,7 @@ recpy_bt_format (PyObject *self, void *closure)
   if (config == NULL)
     Py_RETURN_NONE;
 
-  return PyUnicode_FromString (btrace_format_short_string (config->format));
+  return AMD_PyUnicode_FromString (btrace_format_short_string (config->format));
 }
 
 /* Implementation of

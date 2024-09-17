@@ -44,7 +44,7 @@ struct symbol_object {
     symbol = symbol_object_to_symbol (symbol_obj);	\
     if (symbol == NULL)					\
       {							\
-	PyErr_SetString (PyExc_RuntimeError,		\
+	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,		\
 			 _("Symbol is invalid."));	\
 	return NULL;					\
       }							\
@@ -79,7 +79,7 @@ sympy_str (PyObject *self)
 
   SYMPY_REQUIRE_VALID (self, symbol);
 
-  result = PyUnicode_FromString (symbol->print_name ());
+  result = AMD_PyUnicode_FromString (symbol->print_name ());
 
   return result;
 }
@@ -120,7 +120,7 @@ sympy_get_name (PyObject *self, void *closure)
 
   SYMPY_REQUIRE_VALID (self, symbol);
 
-  return PyUnicode_FromString (symbol->natural_name ());
+  return AMD_PyUnicode_FromString (symbol->natural_name ());
 }
 
 static PyObject *
@@ -130,7 +130,7 @@ sympy_get_linkage_name (PyObject *self, void *closure)
 
   SYMPY_REQUIRE_VALID (self, symbol);
 
-  return PyUnicode_FromString (symbol->linkage_name ());
+  return AMD_PyUnicode_FromString (symbol->linkage_name ());
 }
 
 static PyObject *
@@ -271,16 +271,16 @@ sympy_value (PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple (args, "|O", &frame_obj))
     return NULL;
 
-  if (frame_obj != NULL && !PyObject_TypeCheck (frame_obj, &frame_object_type))
+  if (frame_obj != NULL && !AMD_PyObject_TypeCheck (frame_obj, &frame_object_type))
     {
-      PyErr_SetString (PyExc_TypeError, "argument is not a frame");
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError, "argument is not a frame");
       return NULL;
     }
 
   SYMPY_REQUIRE_VALID (self, symbol);
   if (symbol->aclass () == LOC_TYPEDEF)
     {
-      PyErr_SetString (PyExc_TypeError, "cannot get the value of a typedef");
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError, "cannot get the value of a typedef");
       return NULL;
     }
 
@@ -355,7 +355,7 @@ symbol_to_symbol_object (struct symbol *sym)
 struct symbol *
 symbol_object_to_symbol (PyObject *obj)
 {
-  if (! PyObject_TypeCheck (obj, &symbol_object_type))
+  if (! AMD_PyObject_TypeCheck (obj, &symbol_object_type))
     return NULL;
   return ((symbol_object *) obj)->symbol;
 }

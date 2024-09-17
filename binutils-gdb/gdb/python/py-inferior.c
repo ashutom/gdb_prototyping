@@ -79,7 +79,7 @@ static const registry<inferior>::key<inferior_object, infpy_deleter>
   do {								\
     if (!Inferior->inferior)					\
       {								\
-	PyErr_SetString (PyExc_RuntimeError,			\
+	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,			\
 			 _("Inferior no longer exists."));	\
 	return NULL;						\
       }								\
@@ -326,7 +326,7 @@ thread_to_thread_object (thread_info *thr)
     return gdbpy_ref<>::new_reference
       ((PyObject *) (thread_it->second.get ()));
 
-  PyErr_SetString (PyExc_SystemError,
+  AMD_PyErr_SetString((PyObject *)PyExc_SystemError,
 		   _("could not find gdb thread object"));
   return NULL;
 }
@@ -557,7 +557,7 @@ infpy_read_memory (PyObject *self, PyObject *args, PyObject *kw)
 
   if (length == 0)
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("Argument 'count' should be greater than zero"));
       return NULL;
     }
@@ -679,7 +679,7 @@ infpy_search_memory (PyObject *self, PyObject *args, PyObject *kw)
 
   if (!length)
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("Search range is empty."));
       return nullptr;
     }
@@ -687,7 +687,7 @@ infpy_search_memory (PyObject *self, PyObject *args, PyObject *kw)
   else if (length > CORE_ADDR_MAX
 	   || (start_addr + length - 1) < start_addr)
     {
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("The search range is too large."));
       return nullptr;
     }
@@ -765,7 +765,7 @@ infpy_thread_from_thread_handle (PyObject *self, PyObject *args, PyObject *kw)
     }
   else
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("Argument 'handle' must be a thread handle object."));
 
       return NULL;
@@ -890,13 +890,13 @@ infpy_set_args (PyObject *self, PyObject *value, void *closure)
 
   if (!inf->inferior)
     {
-      PyErr_SetString (PyExc_RuntimeError, _("Inferior no longer exists."));
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, _("Inferior no longer exists."));
       return -1;
     }
 
   if (value == nullptr)
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("Cannot delete 'arguments' attribute."));
       return -1;
     }
@@ -933,7 +933,7 @@ infpy_set_args (PyObject *self, PyObject *value, void *closure)
     }
   else
     {
-      PyErr_SetString (PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 		       _("string or sequence required for 'arguments'"));
       return -1;
     }

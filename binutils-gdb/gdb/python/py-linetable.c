@@ -70,7 +70,7 @@ get_symtab (PyObject *linetable)
     symtab = symtab_object_to_symtab (get_symtab (lt_obj));		\
     if (symtab == NULL)							\
       {									\
-	  PyErr_SetString (PyExc_RuntimeError,				\
+	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,				\
 			   _("Symbol Table in line table is invalid."));\
 	  return NULL;							\
 	}								\
@@ -192,7 +192,7 @@ ltpy_has_line (PyObject *self, PyObject *args)
 
   if (symtab->linetable () == NULL)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Linetable information not found in symbol table"));
       return NULL;
     }
@@ -222,7 +222,7 @@ ltpy_get_all_source_lines (PyObject *self, PyObject *args)
 
   if (symtab->linetable () == NULL)
     {
-      PyErr_SetString (PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Linetable information not found in symbol table"));
       return NULL;
     }

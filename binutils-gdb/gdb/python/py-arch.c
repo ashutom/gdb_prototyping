@@ -35,10 +35,9 @@ static const registry<gdbarch>::key<PyObject, gdb::noop_deleter<PyObject>>
   do {								\
     arch = arch_object_to_gdbarch (arch_obj);			\
     if (arch == NULL)						\
-      {								\
-	PyErr_SetString (PyExc_RuntimeError,			\
-			 _("Architecture is invalid."));	\
-	return NULL;						\
+      {                   \
+        AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,_("Architecture is invalid."));	\
+        return NULL;						\
       }								\
   } while (0)
 
@@ -78,7 +77,7 @@ arch_object_to_gdbarch (PyObject *obj)
 bool
 gdbpy_is_architecture (PyObject *obj)
 {
-  return PyObject_TypeCheck (obj, &arch_object_type);
+  return AMD_PyObject_TypeCheck (obj, &arch_object_type);
 }
 
 /* Returns the Python architecture object corresponding to GDBARCH.
@@ -113,7 +112,7 @@ archpy_name (PyObject *self, PyObject *args)
   ARCHPY_REQUIRE_VALID (self, gdbarch);
 
   name = (gdbarch_bfd_arch_info (gdbarch))->printable_name;
-  return PyUnicode_FromString (name);
+  return AMD_PyUnicode_FromString (name);
 }
 
 /* Implementation of
@@ -149,7 +148,7 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
 
       if (end < start)
 	{
-	  PyErr_SetString (PyExc_ValueError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 			   _("Argument 'end_pc' should be greater than or "
 			     "equal to the argument 'start_pc'."));
 
@@ -161,7 +160,7 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
       count = PyLong_AsLong (count_obj);
       if (PyErr_Occurred () || count < 0)
 	{
-	  PyErr_SetString (PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 			   _("Argument 'count' should be an non-negative "
 			     "integer."));
 
@@ -207,7 +206,7 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
 	return nullptr;
 
       gdbpy_ref<> asm_obj
-	(PyUnicode_FromString (!stb.empty () ? stb.c_str () : "<unknown>"));
+	(AMD_PyUnicode_FromString (!stb.empty () ? stb.c_str () : "<unknown>"));
       if (asm_obj == nullptr)
 	return nullptr;
 
@@ -309,7 +308,7 @@ archpy_integer_type (PyObject *self, PyObject *args, PyObject *kw)
       break;
 
     default:
-      PyErr_SetString (PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
 		       _("no integer type of that size is available"));
       return nullptr;
     }
@@ -345,7 +344,7 @@ gdbpy_all_architecture_names (PyObject *self, PyObject *args)
   std::vector<const char *> name_list = gdbarch_printable_names ();
   for (const char *name : name_list)
     {
-      gdbpy_ref <> py_name (PyUnicode_FromString (name));
+      gdbpy_ref <> py_name (AMD_PyUnicode_FromString (name));
       if (py_name == nullptr)
 	return nullptr;
       if (PyList_Append (list.get (), py_name.get ()) < 0)

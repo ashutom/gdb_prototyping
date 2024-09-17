@@ -350,7 +350,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
   const int name_len = strlen (name);
   if (name_len == 0)
     {
-      PyErr_SetString (PyExc_ValueError, _("MI notification name is empty."));
+      AMD_PyErr_SetString((PyObject *)PyExc_ValueError, _("MI notification name is empty."));
       return nullptr;
     }
   for (int i = 0; i < name_len; i++)
