@@ -109,7 +109,7 @@ field_new (void)
 
   if (result != NULL)
     {
-      result->dict = PyDict_New ();
+      result->dict = AMD_PyDict_New ();
       if (!result->dict)
 	return NULL;
     }
@@ -149,7 +149,7 @@ convert_field (struct type *type, int field)
   gdbpy_ref<> arg (type_to_type_object (type));
   if (arg == NULL)
     return NULL;
-  if (PyObject_SetAttrString (result.get (), "parent_type", arg.get ()) < 0)
+  if (AMD_PyObject_SetAttrString (result.get (), "parent_type", arg.get ()) < 0)
     return NULL;
 
   if (!type->field (field).is_static ())
@@ -173,7 +173,7 @@ convert_field (struct type *type, int field)
       if (arg == NULL)
 	return NULL;
 
-      if (PyObject_SetAttrString (result.get (), attrstring, arg.get ()) < 0)
+      if (AMD_PyObject_SetAttrString (result.get (), attrstring, arg.get ()) < 0)
 	return NULL;
     }
 
@@ -192,24 +192,24 @@ convert_field (struct type *type, int field)
   if (arg == NULL)
     arg = gdbpy_ref<>::new_reference (Py_None);
 
-  if (PyObject_SetAttrString (result.get (), "name", arg.get ()) < 0)
+  if (AMD_PyObject_SetAttrString (result.get (), "name", arg.get ()) < 0)
     return NULL;
 
   arg.reset (PyBool_FromLong (type->field (field).is_artificial ()));
-  if (PyObject_SetAttrString (result.get (), "artificial", arg.get ()) < 0)
+  if (AMD_PyObject_SetAttrString (result.get (), "artificial", arg.get ()) < 0)
     return NULL;
 
   if (type->code () == TYPE_CODE_STRUCT)
     arg.reset (PyBool_FromLong (field < TYPE_N_BASECLASSES (type)));
   else
     arg = gdbpy_ref<>::new_reference (Py_False);
-  if (PyObject_SetAttrString (result.get (), "is_base_class", arg.get ()) < 0)
+  if (AMD_PyObject_SetAttrString (result.get (), "is_base_class", arg.get ()) < 0)
     return NULL;
 
   arg = gdb_py_object_from_longest (type->field (field).bitsize ());
   if (arg == NULL)
     return NULL;
-  if (PyObject_SetAttrString (result.get (), "bitsize", arg.get ()) < 0)
+  if (AMD_PyObject_SetAttrString (result.get (), "bitsize", arg.get ()) < 0)
     return NULL;
 
   /* A field can have a NULL type in some situations.  */
@@ -219,7 +219,7 @@ convert_field (struct type *type, int field)
     arg.reset (type_to_type_object (type->field (field).type ()));
   if (arg == NULL)
     return NULL;
-  if (PyObject_SetAttrString (result.get (), "type", arg.get ()) < 0)
+  if (AMD_PyObject_SetAttrString (result.get (), "type", arg.get ()) < 0)
     return NULL;
 
   return result;
@@ -1094,10 +1094,10 @@ typy_repr (PyObject *self)
     {
       GDB_PY_HANDLE_EXCEPTION (except);
     }
-  auto py_typename = PyUnicode_Decode (type_name.c_str (), type_name.size (),
+  auto py_typename = AMD_PyUnicode_Decode (type_name.c_str (), type_name.size (),
 				       host_charset (), NULL);
 
-  return PyUnicode_FromFormat ("<%s code=%s name=%U>", Py_TYPE (self)->tp_name,
+  return AMD_PyUnicode_FromFormat ("<%s code=%s name=%U>", Py_TYPE (self)->tp_name,
 			       code, py_typename);
 }
 
@@ -1117,7 +1117,7 @@ typy_str (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyUnicode_Decode (thetype.c_str (), thetype.size (),
+  return AMD_PyUnicode_Decode (thetype.c_str (), thetype.size (),
 			   host_charset (), NULL);
 }
 

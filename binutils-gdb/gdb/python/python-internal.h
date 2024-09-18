@@ -132,7 +132,7 @@ typedef unsigned PY_LONG_LONG gdb_py_ulongest;
 typedef long gdb_py_longest;
 typedef unsigned long gdb_py_ulongest;
 #define gdb_py_long_as_ulongest PyLong_AsUnsignedLong
-#define gdb_py_long_as_long_and_overflow PyLong_AsLongAndOverflow
+#define gdb_py_long_as_long_and_overflow AMD_PyLong_AsLongAndOverflow
 
 #endif /* HAVE_LONG_LONG */
 

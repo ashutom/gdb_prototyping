@@ -386,7 +386,7 @@ sympy_repr (PyObject *self)
   if (symbol == nullptr)
     return gdb_py_invalid_object_repr (self);
 
-  return PyUnicode_FromFormat ("<%s print_name=%s>", Py_TYPE (self)->tp_name,
+  return AMD_PyUnicode_FromFormat ("<%s print_name=%s>", Py_TYPE (self)->tp_name,
 			       symbol->print_name ());
 }
 
@@ -587,7 +587,7 @@ gdbpy_lookup_static_symbols (PyObject *self, PyObject *args, PyObject *kw)
 					&domain))
     return NULL;
 
-  gdbpy_ref<> return_list (PyList_New (0));
+  gdbpy_ref<> return_list (AMD_PyList_New (0));
   if (return_list == NULL)
     return NULL;
 
@@ -622,7 +622,7 @@ gdbpy_lookup_static_symbols (PyObject *self, PyObject *args, PyObject *kw)
 		    {
 		      PyObject *sym_obj
 			= symbol_to_symbol_object (symbol);
-		      if (PyList_Append (return_list.get (), sym_obj) == -1)
+		      if (AMD_PyList_Append (return_list.get (), sym_obj) == -1)
 			return NULL;
 		    }
 		}

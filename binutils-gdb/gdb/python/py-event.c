@@ -33,7 +33,7 @@ create_event_object (PyTypeObject *py_type)
   if (event_obj == NULL)
     return NULL;
 
-  event_obj->dict = PyDict_New ();
+  event_obj->dict = AMD_PyDict_New ();
   if (!event_obj->dict)
     return NULL;
 
@@ -48,7 +48,7 @@ create_event_object (PyTypeObject *py_type)
 int
 evpy_add_attribute (PyObject *event, const char *name, PyObject *attr)
 {
-  return PyObject_SetAttrString (event, name, attr);
+  return AMD_PyObject_SetAttrString (event, name, attr);
 }
 
 /* Initialize the Python event code.  */

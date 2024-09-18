@@ -426,7 +426,7 @@ gdbpy_parse_register_id (struct gdbarch *gdbarch, PyObject *pyo_reg_id,
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_registers ()
 {
-  register_descriptor_object_type.tp_new = PyType_GenericNew;
+  register_descriptor_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&register_descriptor_object_type) < 0)
     return -1;
   if (gdb_pymodule_addobject
@@ -434,7 +434,7 @@ gdbpy_initialize_registers ()
        (PyObject *) &register_descriptor_object_type) < 0)
     return -1;
 
-  reggroup_iterator_object_type.tp_new = PyType_GenericNew;
+  reggroup_iterator_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&reggroup_iterator_object_type) < 0)
     return -1;
   if (gdb_pymodule_addobject
@@ -442,7 +442,7 @@ gdbpy_initialize_registers ()
        (PyObject *) &reggroup_iterator_object_type) < 0)
     return -1;
 
-  reggroup_object_type.tp_new = PyType_GenericNew;
+  reggroup_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&reggroup_object_type) < 0)
     return -1;
   if (gdb_pymodule_addobject
@@ -450,7 +450,7 @@ gdbpy_initialize_registers ()
        (PyObject *) &reggroup_object_type) < 0)
     return -1;
 
-  register_descriptor_iterator_object_type.tp_new = PyType_GenericNew;
+  register_descriptor_iterator_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&register_descriptor_iterator_object_type) < 0)
     return -1;
   return (gdb_pymodule_addobject

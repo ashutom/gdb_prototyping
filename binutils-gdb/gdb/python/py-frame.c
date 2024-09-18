@@ -94,7 +94,7 @@ frapy_repr (PyObject *self)
     return gdb_py_invalid_object_repr (self);
 
   const frame_id &fid = frame_obj->frame_id;
-  return PyUnicode_FromFormat ("<%s level=%d frame-id=%s>",
+  return AMD_PyUnicode_FromFormat ("<%s level=%d frame-id=%s>",
 			       Py_TYPE (self)->tp_name,
 			       frame_relative_level (f_info),
 			       fid.to_string ().c_str ());
@@ -148,7 +148,7 @@ frapy_name (PyObject *self, PyObject *args)
 
   if (name)
     {
-      result = PyUnicode_Decode (name.get (), strlen (name.get ()),
+      result = AMD_PyUnicode_Decode (name.get (), strlen (name.get ()),
 				 host_charset (), NULL);
     }
   else
@@ -721,7 +721,7 @@ gdbpy_frame_stop_reason_string (PyObject *self, PyObject *args)
     }
 
   str = unwind_stop_reason_to_string ((enum unwind_stop_reason) reason);
-  return PyUnicode_Decode (str, strlen (str), host_charset (), NULL);
+  return AMD_PyUnicode_Decode (str, strlen (str), host_charset (), NULL);
 }
 
 /* Implements the equality comparison for Frame objects.
@@ -759,7 +759,7 @@ frapy_richcompare (PyObject *self, PyObject *other, int op)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_frames (void)
 {
-  frame_object_type.tp_new = PyType_GenericNew;
+  frame_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&frame_object_type) < 0)
     return -1;
 

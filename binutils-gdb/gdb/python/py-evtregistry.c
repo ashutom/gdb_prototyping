@@ -43,7 +43,7 @@ evregpy_connect (PyObject *self, PyObject *function)
       return NULL;
     }
 
-  if (PyList_Append (callback_list, func) < 0)
+  if (AMD_PyList_Append (callback_list, func) < 0)
     return NULL;
 
   Py_RETURN_NONE;
@@ -84,7 +84,7 @@ create_eventregistry_object (void)
   if (eventregistry_obj == NULL)
     return NULL;
 
-  eventregistry_obj->callbacks = PyList_New (0);
+  eventregistry_obj->callbacks = AMD_PyList_New (0);
   if (!eventregistry_obj->callbacks)
     return NULL;
 

@@ -989,7 +989,7 @@ static PyMappingMethods btpy_list_mapping_methods =
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_btrace (void)
 {
-  btpy_list_type.tp_new = PyType_GenericNew;
+  btpy_list_type.tp_new = AMD_PyType_GenericNew;
   btpy_list_type.tp_flags = Py_TPFLAGS_DEFAULT;
   btpy_list_type.tp_basicsize = sizeof (btpy_list_object);
   btpy_list_type.tp_name = "gdb.BtraceObjectList";

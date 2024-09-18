@@ -244,7 +244,7 @@ inferior_to_inferior_object (struct inferior *inferior)
 
       inf_obj->inferior = inferior;
       inf_obj->threads = new thread_map_t ();
-      inf_obj->dict = PyDict_New ();
+      inf_obj->dict = AMD_PyDict_New ();
       if (inf_obj->dict == nullptr)
 	return nullptr;
 
@@ -512,7 +512,7 @@ infpy_get_progspace (PyObject *self, void *closure)
 PyObject *
 gdbpy_inferiors (PyObject *unused, PyObject *unused2)
 {
-  gdbpy_ref<> list (PyList_New (0));
+  gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == NULL)
     return NULL;
 
@@ -523,7 +523,7 @@ gdbpy_inferiors (PyObject *unused, PyObject *unused2)
       if (inferior == NULL)
 	continue;
 
-      if (PyList_Append (list.get (), (PyObject *) inferior.get ()) != 0)
+      if (AMD_PyList_Append (list.get (), (PyObject *) inferior.get ()) != 0)
 	return NULL;
     }
 
@@ -812,7 +812,7 @@ infpy_repr (PyObject *obj)
   if (inf == nullptr)
     return gdb_py_invalid_object_repr (obj);
 
-  return PyUnicode_FromFormat ("<gdb.Inferior num=%d, pid=%d>",
+  return AMD_PyUnicode_FromFormat ("<gdb.Inferior num=%d, pid=%d>",
 			       inf->num, inf->pid);
 }
 

@@ -71,7 +71,7 @@ mbpy_str (PyObject *self)
 {
   membuf_object *membuf_obj = (membuf_object *) self;
 
-  return PyUnicode_FromFormat (_("Memory buffer for address %s, \
+  return AMD_PyUnicode_FromFormat (_("Memory buffer for address %s, \
 which is %s bytes long."),
 			       paddress (gdbpy_enter::get_gdbarch (),
 					 membuf_obj->addr),
@@ -100,7 +100,7 @@ get_buffer (PyObject *self, Py_buffer *buf, int flags)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_membuf (void)
 {
-  membuf_object_type.tp_new = PyType_GenericNew;
+  membuf_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&membuf_object_type) < 0)
     return -1;
 

@@ -321,7 +321,7 @@ disasmpy_info_repr (PyObject *self)
 
   const char *arch_name
     = (gdbarch_bfd_arch_info (obj->gdbarch))->printable_name;
-  return PyUnicode_FromFormat ("<%s address=%s architecture=%s>",
+  return AMD_PyUnicode_FromFormat ("<%s address=%s architecture=%s>",
 			       Py_TYPE (obj)->tp_name,
 			       core_addr_to_string_nz (obj->address),
 			       arch_name);
@@ -936,7 +936,7 @@ disasmpy_result_str (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyUnicode_Decode (str.c_str (), str.size (),
+  return AMD_PyUnicode_Decode (str.c_str (), str.size (),
 			   host_charset (), nullptr);
 }
 
@@ -974,7 +974,7 @@ disasmpy_result_parts (PyObject *self, void *closure)
   gdb_assert (obj->parts->size () > 0);
   gdb_assert (obj->length > 0);
 
-  gdbpy_ref<> result_list (PyList_New (obj->parts->size ()));
+  gdbpy_ref<> result_list (AMD_PyList_New (obj->parts->size ()));
   if (result_list == nullptr)
     return nullptr;
   Py_ssize_t idx = 0;
@@ -1104,7 +1104,7 @@ disasmpy_result_repr (PyObject *self)
 
   gdb_assert (obj->parts != nullptr);
 
-  return PyUnicode_FromFormat ("<%s length=%d string=\"%U\">",
+  return AMD_PyUnicode_FromFormat ("<%s length=%d string=\"%U\">",
 			       Py_TYPE (obj)->tp_name,
 			       obj->length,
 			       disasmpy_result_str (self));
@@ -1241,7 +1241,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
   /* Get the _print_insn attribute from the module, this should be the
      function we are going to call to actually perform the disassembly.  */
   gdbpy_ref<> hook
-    (PyObject_GetAttrString (gdb_python_disassembler_module.get (),
+    (AMD_PyObject_GetAttrString (gdb_python_disassembler_module.get (),
 			     "_print_insn"));
   if (hook == nullptr)
     {
@@ -1282,10 +1282,10 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
 
 	  CORE_ADDR addr;
 	  if (err.value () != nullptr
-	      && PyObject_HasAttrString (err.value ().get (), "address"))
+	      && AMD_PyObject_HasAttrString (err.value ().get (), "address"))
 	    {
 	      PyObject *addr_obj
-		= PyObject_GetAttrString (err.value ().get (), "address");
+		= AMD_PyObject_GetAttrString (err.value ().get (), "address");
 	      if (get_addr_from_python (addr_obj, &addr) < 0)
 		addr = disasm_info->address;
 	    }
@@ -1446,7 +1446,7 @@ disasmpy_text_part_repr (PyObject *self)
 
   gdb_assert (obj->string != nullptr);
 
-  return PyUnicode_FromFormat ("<%s string='%s', style='%s'>",
+  return AMD_PyUnicode_FromFormat ("<%s string='%s', style='%s'>",
 			       Py_TYPE (obj)->tp_name,
 			       obj->string->c_str (),
 			       get_style_name (obj->style));
@@ -1459,7 +1459,7 @@ disasmpy_text_part_str (PyObject *self)
 {
   disasm_text_part_object *obj = (disasm_text_part_object *) self;
 
-  return PyUnicode_Decode (obj->string->c_str (), obj->string->size (),
+  return AMD_PyUnicode_Decode (obj->string->c_str (), obj->string->size (),
 			   host_charset (), nullptr);
 }
 
@@ -1489,7 +1489,7 @@ disasmpy_addr_part_repr (PyObject *self)
 {
   disasm_addr_part_object *obj = (disasm_addr_part_object *) self;
 
-  return PyUnicode_FromFormat ("<%s address='%s'>",
+  return AMD_PyUnicode_FromFormat ("<%s address='%s'>",
 			       Py_TYPE (obj)->tp_name,
 			       core_addr_to_string_nz (obj->address));
 }
@@ -1513,7 +1513,7 @@ disasmpy_addr_part_str (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyUnicode_Decode (str.c_str (), str.size (),
+  return AMD_PyUnicode_Decode (str.c_str (), str.size (),
 			   host_charset (), nullptr);
 }
 
@@ -1651,7 +1651,7 @@ gdbpy_initialize_disasm ()
 
   /* This is needed so that 'import _gdb.disassembler' will work.  */
   PyObject *dict = PyImport_GetModuleDict ();
-  if (PyDict_SetItemString (dict, "_gdb.disassembler",
+  if (AMD_PyDict_SetItemString (dict, "_gdb.disassembler",
 			    gdb_disassembler_module) < 0)
     return -1;
 
@@ -1662,7 +1662,7 @@ gdbpy_initialize_disasm ()
 	return -1;
     }
 
-  disasm_info_object_type.tp_new = PyType_GenericNew;
+  disasm_info_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&disasm_info_object_type) < 0)
     return -1;
 
@@ -1670,7 +1670,7 @@ gdbpy_initialize_disasm ()
 			      (PyObject *) &disasm_info_object_type) < 0)
     return -1;
 
-  disasm_result_object_type.tp_new = PyType_GenericNew;
+  disasm_result_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&disasm_result_object_type) < 0)
     return -1;
 
@@ -1678,7 +1678,7 @@ gdbpy_initialize_disasm ()
 			      (PyObject *) &disasm_result_object_type) < 0)
     return -1;
 
-  disasm_part_object_type.tp_new = PyType_GenericNew;
+  disasm_part_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&disasm_part_object_type) < 0)
     return -1;
 
@@ -1686,7 +1686,7 @@ gdbpy_initialize_disasm ()
 			      (PyObject *) &disasm_part_object_type) < 0)
     return -1;
 
-  disasm_addr_part_object_type.tp_new = PyType_GenericNew;
+  disasm_addr_part_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&disasm_addr_part_object_type) < 0)
     return -1;
 
@@ -1695,7 +1695,7 @@ gdbpy_initialize_disasm ()
 			      (PyObject *) &disasm_addr_part_object_type) < 0)
     return -1;
 
-  disasm_text_part_object_type.tp_new = PyType_GenericNew;
+  disasm_text_part_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&disasm_text_part_object_type) < 0)
     return -1;
 

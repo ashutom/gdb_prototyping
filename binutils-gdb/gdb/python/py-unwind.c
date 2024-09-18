@@ -177,10 +177,10 @@ static pyuw_get_attr_code
 pyuw_object_attribute_to_pointer (PyObject *pyo, const char *attr_name,
 				  CORE_ADDR *addr)
 {
-  if (!PyObject_HasAttrString (pyo, attr_name))
+  if (!AMD_PyObject_HasAttrString (pyo, attr_name))
     return pyuw_get_attr_code::ATTR_MISSING;
 
-  gdbpy_ref<> pyo_value (PyObject_GetAttrString (pyo, attr_name));
+  gdbpy_ref<> pyo_value (AMD_PyObject_GetAttrString (pyo, attr_name));
   if (pyo_value == nullptr)
     {
       gdb_assert (PyErr_Occurred ());
@@ -252,7 +252,7 @@ unwind_infopy_repr (PyObject *self)
   frame_info_ptr frame = pending_frame->frame_info;
 
   if (frame == nullptr)
-    return PyUnicode_FromFormat ("<%s for an invalid frame>",
+    return AMD_PyUnicode_FromFormat ("<%s for an invalid frame>",
 				 Py_TYPE (self)->tp_name);
 
   std::string saved_reg_names;
@@ -267,7 +267,7 @@ unwind_infopy_repr (PyObject *self)
 	saved_reg_names = (saved_reg_names + ", ") + name;
     }
 
-  return PyUnicode_FromFormat ("<%s frame #%d, saved_regs=(%s)>",
+  return AMD_PyUnicode_FromFormat ("<%s frame #%d, saved_regs=(%s)>",
 			       Py_TYPE (self)->tp_name,
 			       frame_relative_level (frame),
 			       saved_reg_names.c_str ());
@@ -432,7 +432,7 @@ pending_framepy_str (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyUnicode_FromFormat ("SP=%s,PC=%s", sp_str, pc_str);
+  return AMD_PyUnicode_FromFormat ("SP=%s,PC=%s", sp_str, pc_str);
 }
 
 /* Implement PendingFrame.__repr__().  */
@@ -459,7 +459,7 @@ pending_framepy_repr (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyUnicode_FromFormat ("<%s level=%d, sp=%s, pc=%s>",
+  return AMD_PyUnicode_FromFormat ("<%s level=%d, sp=%s, pc=%s>",
 			       Py_TYPE (self)->tp_name,
 			       frame_relative_level (frame),
 			       sp_str,
@@ -550,7 +550,7 @@ pending_framepy_name (PyObject *self, PyObject *args)
     }
 
   if (name != nullptr)
-    return PyUnicode_Decode (name.get (), strlen (name.get ()),
+    return AMD_PyUnicode_Decode (name.get (), strlen (name.get ()),
 			     host_charset (), nullptr);
 
   Py_RETURN_NONE;
@@ -851,7 +851,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
 
   /* Run unwinders.  */
   if (gdb_python_module == NULL
-      || ! PyObject_HasAttrString (gdb_python_module, "_execute_unwinders"))
+      || ! AMD_PyObject_HasAttrString (gdb_python_module, "_execute_unwinders"))
     {
       AMD_PyErr_SetString((PyObject *)PyExc_NameError,
 		       "Installation error: gdb._execute_unwinders function "
@@ -859,7 +859,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
       gdbpy_print_stack ();
       return 0;
     }
-  gdbpy_ref<> pyo_execute (PyObject_GetAttrString (gdb_python_module,
+  gdbpy_ref<> pyo_execute (AMD_PyObject_GetAttrString (gdb_python_module,
 						   "_execute_unwinders"));
   if (pyo_execute == nullptr)
     {

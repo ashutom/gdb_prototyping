@@ -193,13 +193,13 @@ mi_command_py::invoke (struct mi_parse *parse) const
 
   /* Place all the arguments into a list which we pass as a single argument
      to the MI command's invoke method.  */
-  gdbpy_ref<> argobj (PyList_New (parse->argc));
+  gdbpy_ref<> argobj (AMD_PyList_New (parse->argc));
   if (argobj == nullptr)
     gdbpy_handle_exception ();
 
   for (int i = 0; i < parse->argc; ++i)
     {
-      gdbpy_ref<> str (PyUnicode_Decode (parse->argv[i],
+      gdbpy_ref<> str (AMD_PyUnicode_Decode (parse->argv[i],
 					 strlen (parse->argv[i]),
 					 host_charset (), nullptr));
       if (PyList_SetItem (argobj.get (), i, str.release ()) < 0)
@@ -446,7 +446,7 @@ micmdpy_dealloc (PyObject *obj)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_micommands ()
 {
-  micmdpy_object_type.tp_new = PyType_GenericNew;
+  micmdpy_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&micmdpy_object_type) < 0)
     return -1;
 

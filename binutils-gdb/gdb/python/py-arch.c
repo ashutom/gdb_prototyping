@@ -157,7 +157,7 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
     }
   if (count_obj)
     {
-      count = PyLong_AsLong (count_obj);
+      count = AMD_PyLong_AsLong (count_obj);
       if (PyErr_Occurred () || count < 0)
 	{
 	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
@@ -168,7 +168,7 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
 	}
     }
 
-  gdbpy_ref<> result_list (PyList_New (0));
+  gdbpy_ref<> result_list (AMD_PyList_New (0));
   if (result_list == NULL)
     return NULL;
 
@@ -183,12 +183,12 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
        || (end_obj == NULL && count_obj == NULL && pc == start);)
     {
       int insn_len = 0;
-      gdbpy_ref<> insn_dict (PyDict_New ());
+      gdbpy_ref<> insn_dict (AMD_PyDict_New ());
 
       if (insn_dict == NULL)
 	return NULL;
-      if (PyList_Append (result_list.get (), insn_dict.get ()))
-	return NULL;  /* PyList_Append Sets the exception.  */
+      if (AMD_PyList_Append (result_list.get (), insn_dict.get ()))
+	return NULL;  /* AMD_PyList_Append Sets the exception.  */
 
       string_file stb;
 
@@ -214,9 +214,9 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
       if (len_obj == nullptr)
 	return nullptr;
 
-      if (PyDict_SetItemString (insn_dict.get (), "addr", pc_obj.get ())
-	  || PyDict_SetItemString (insn_dict.get (), "asm", asm_obj.get ())
-	  || PyDict_SetItemString (insn_dict.get (), "length", len_obj.get ()))
+      if (AMD_PyDict_SetItemString (insn_dict.get (), "addr", pc_obj.get ())
+	  || AMD_PyDict_SetItemString (insn_dict.get (), "asm", asm_obj.get ())
+	  || AMD_PyDict_SetItemString (insn_dict.get (), "length", len_obj.get ()))
 	return NULL;
 
       pc += insn_len;
@@ -326,7 +326,7 @@ archpy_repr (PyObject *self)
     return gdb_py_invalid_object_repr (self);
 
   auto arch_info = gdbarch_bfd_arch_info (gdbarch);
-  return PyUnicode_FromFormat ("<%s arch_name=%s printable_name=%s>",
+  return AMD_PyUnicode_FromFormat ("<%s arch_name=%s printable_name=%s>",
 			       Py_TYPE (self)->tp_name, arch_info->arch_name,
 			       arch_info->printable_name);
 }
@@ -337,7 +337,7 @@ archpy_repr (PyObject *self)
 PyObject *
 gdbpy_all_architecture_names (PyObject *self, PyObject *args)
 {
-  gdbpy_ref<> list (PyList_New (0));
+  gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == nullptr)
     return nullptr;
 
@@ -347,7 +347,7 @@ gdbpy_all_architecture_names (PyObject *self, PyObject *args)
       gdbpy_ref <> py_name (AMD_PyUnicode_FromString (name));
       if (py_name == nullptr)
 	return nullptr;
-      if (PyList_Append (list.get (), py_name.get ()) < 0)
+      if (AMD_PyList_Append (list.get (), py_name.get ()) < 0)
 	return nullptr;
     }
 
@@ -359,7 +359,7 @@ gdbpy_all_architecture_names (PyObject *self, PyObject *args)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_arch (void)
 {
-  arch_object_type.tp_new = PyType_GenericNew;
+  arch_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&arch_object_type) < 0)
     return -1;
 

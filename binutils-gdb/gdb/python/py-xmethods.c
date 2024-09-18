@@ -83,7 +83,7 @@ invoke_match_method (PyObject *matcher, PyObject *py_obj_type,
 {
   int enabled;
 
-  gdbpy_ref<> enabled_field (PyObject_GetAttrString (matcher,
+  gdbpy_ref<> enabled_field (AMD_PyObject_GetAttrString (matcher,
 						     enabled_field_name));
   if (enabled_field == NULL)
     return NULL;
@@ -97,7 +97,7 @@ invoke_match_method (PyObject *matcher, PyObject *py_obj_type,
       Py_RETURN_NONE;
     }
 
-  gdbpy_ref<> match_method (PyObject_GetAttrString (matcher,
+  gdbpy_ref<> match_method (AMD_PyObject_GetAttrString (matcher,
 						    match_method_name));
   if (match_method == NULL)
     return NULL;
@@ -131,7 +131,7 @@ gdbpy_get_matching_xmethod_workers
     }
 
   /* Create an empty list of debug methods.  */
-  gdbpy_ref<> py_xmethod_matcher_list (PyList_New (0));
+  gdbpy_ref<> py_xmethod_matcher_list (AMD_PyList_New (0));
   if (py_xmethod_matcher_list == NULL)
     {
       gdbpy_print_stack ();
@@ -190,9 +190,9 @@ gdbpy_get_matching_xmethod_workers
 
   /* Gather debug method matchers registered globally.  */
   if (gdb_python_module != NULL
-      && PyObject_HasAttrString (gdb_python_module, matchers_attr_str))
+      && AMD_PyObject_HasAttrString (gdb_python_module, matchers_attr_str))
     {
-      gdbpy_ref<> gdb_matchers (PyObject_GetAttrString (gdb_python_module,
+      gdbpy_ref<> gdb_matchers (AMD_PyObject_GetAttrString (gdb_python_module,
 							matchers_attr_str));
       if (gdb_matchers != NULL)
 	{
@@ -299,7 +299,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
   gdbpy_ref<> list_iter;
 
   gdbpy_ref<> get_arg_types_method
-    (PyObject_GetAttrString (m_py_worker, get_arg_types_method_name));
+    (AMD_PyObject_GetAttrString (m_py_worker, get_arg_types_method_name));
   if (get_arg_types_method == NULL)
     {
       gdbpy_print_stack ();
@@ -414,7 +414,7 @@ python_xmethod_worker::do_get_result_type (value *obj,
   /* First see if there is a get_result_type method.
      If not this could be an old xmethod (pre 7.9.1).  */
   gdbpy_ref<> get_result_type_method
-    (PyObject_GetAttrString (m_py_worker, get_result_type_method_name));
+    (AMD_PyObject_GetAttrString (m_py_worker, get_result_type_method_name));
   if (get_result_type_method == NULL)
     {
       PyErr_Clear ();

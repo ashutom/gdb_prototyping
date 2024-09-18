@@ -285,7 +285,7 @@ salpy_str (PyObject *self)
       filename = symtab_to_filename_for_display (symtab);
     }
 
-  return PyUnicode_FromFormat ("symbol and line for %s, line %d", filename,
+  return AMD_PyUnicode_FromFormat ("symbol and line for %s, line %d", filename,
 			       sal->line);
 }
 
@@ -511,11 +511,11 @@ symtab_object_to_symtab (PyObject *obj)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_symtabs (void)
 {
-  symtab_object_type.tp_new = PyType_GenericNew;
+  symtab_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&symtab_object_type) < 0)
     return -1;
 
-  sal_object_type.tp_new = PyType_GenericNew;
+  sal_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&sal_object_type) < 0)
     return -1;
 

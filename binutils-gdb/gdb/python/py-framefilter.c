@@ -128,7 +128,7 @@ extract_sym (PyObject *obj, gdb::unique_xmalloc_ptr<char> *name,
 static enum ext_lang_bt_status
 extract_value (PyObject *obj, struct value **value)
 {
-  if (PyObject_HasAttrString (obj, "value"))
+  if (AMD_PyObject_HasAttrString (obj, "value"))
     {
       gdbpy_ref<> vresult = gdbpy_call_method (obj, "value");
 
@@ -262,7 +262,7 @@ py_print_value (struct ui_out *out, struct value *val,
 static PyObject *
 get_py_iter_from_func (PyObject *filter, const char *func)
 {
-  if (PyObject_HasAttrString (filter, func))
+  if (AMD_PyObject_HasAttrString (filter, func))
     {
       gdbpy_ref<> result = gdbpy_call_method (filter, func);
 
@@ -828,7 +828,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 
       /* The address is required for frame annotations, and also for
 	 address printing.  */
-      if (PyObject_HasAttrString (filter, "address"))
+      if (AMD_PyObject_HasAttrString (filter, "address"))
 	{
 	  gdbpy_ref<> paddr = gdbpy_call_method (filter, "address");
 
@@ -903,7 +903,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	}
 
       /* Print frame function name.  */
-      if (PyObject_HasAttrString (filter, "function"))
+      if (AMD_PyObject_HasAttrString (filter, "function"))
 	{
 	  gdbpy_ref<> py_func = gdbpy_call_method (filter, "function");
 	  const char *function = NULL;
@@ -967,7 +967,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
     {
       annotate_frame_source_begin ();
 
-      if (PyObject_HasAttrString (filter, "filename"))
+      if (AMD_PyObject_HasAttrString (filter, "filename"))
 	{
 	  gdbpy_ref<> py_fn = gdbpy_call_method (filter, "filename");
 
@@ -991,7 +991,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	    }
 	}
 
-      if (PyObject_HasAttrString (filter, "line"))
+      if (AMD_PyObject_HasAttrString (filter, "line"))
 	{
 	  gdbpy_ref<> py_line = gdbpy_call_method (filter, "line");
 	  int line;
@@ -1001,7 +1001,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 
 	  if (py_line != Py_None)
 	    {
-	      line = PyLong_AsLong (py_line.get ());
+	      line = AMD_PyLong_AsLong (py_line.get ());
 	      if (PyErr_Occurred ())
 		return EXT_LANG_BT_ERROR;
 
@@ -1091,7 +1091,7 @@ bootstrap_python_frame_filters (const frame_info_ptr &frame,
   if (module == NULL)
     return NULL;
 
-  gdbpy_ref<> sort_func (PyObject_GetAttrString (module.get (),
+  gdbpy_ref<> sort_func (AMD_PyObject_GetAttrString (module.get (),
 						 "execute_frame_filters"));
   if (sort_func == NULL)
     return NULL;

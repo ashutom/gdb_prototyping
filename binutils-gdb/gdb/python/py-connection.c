@@ -113,7 +113,7 @@ target_to_connection_object (process_stratum_target *target)
 PyObject *
 gdbpy_connections (PyObject *self, PyObject *args)
 {
-  gdbpy_ref<> list (PyList_New (0));
+  gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == nullptr)
     return nullptr;
 
@@ -126,7 +126,7 @@ gdbpy_connections (PyObject *self, PyObject *args)
 	return nullptr;
       gdb_assert (conn.get () != Py_None);
 
-      if (PyList_Append (list.get (), conn.get ()) < 0)
+      if (AMD_PyList_Append (list.get (), conn.get ()) < 0)
 	return nullptr;
     }
 
@@ -205,7 +205,7 @@ connpy_repr (PyObject *obj)
   if (target == nullptr)
     return gdb_py_invalid_object_repr (obj);
 
-  return PyUnicode_FromFormat ("<%s num=%d, what=\"%s\">",
+  return AMD_PyUnicode_FromFormat ("<%s num=%d, what=\"%s\">",
 			       Py_TYPE (obj)->tp_name,
 			       target->connection_number,
 			       make_target_connection_string (target).c_str ());

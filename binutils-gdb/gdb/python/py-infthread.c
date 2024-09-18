@@ -50,7 +50,7 @@ create_thread_object (struct thread_info *tp)
 
   thread_obj->thread = tp;
   thread_obj->inf_obj = (PyObject *) inf_obj.release ();
-  thread_obj->dict = PyDict_New ();
+  thread_obj->dict = AMD_PyDict_New ();
   if (thread_obj->dict == nullptr)
     return nullptr;
 
@@ -355,7 +355,7 @@ thpy_repr (PyObject *self)
     return gdb_py_invalid_object_repr (self);
 
   thread_info *thr = thread_obj->thread;
-  return PyUnicode_FromFormat ("<%s id=%s target-id=\"%s\">",
+  return AMD_PyUnicode_FromFormat ("<%s id=%s target-id=\"%s\">",
 			       Py_TYPE (self)->tp_name,
 			       print_full_thread_id (thr),
 			       target_pid_to_str (thr->ptid).c_str ());

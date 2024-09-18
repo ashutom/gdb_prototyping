@@ -39,12 +39,12 @@ py_ui_out::add_field (const char *name, const gdbpy_ref<> &obj)
   object_desc &desc = current ();
   if (desc.type == ui_out_type_list)
     {
-      if (PyList_Append (desc.obj.get (), obj.get ()) < 0)
+      if (AMD_PyList_Append (desc.obj.get (), obj.get ()) < 0)
 	m_error.emplace ();
     }
   else
     {
-      if (PyDict_SetItemString (desc.obj.get (), name, obj.get ()) < 0)
+      if (AMD_PyDict_SetItemString (desc.obj.get (), name, obj.get ()) < 0)
 	m_error.emplace ();
     }
 }
@@ -56,8 +56,8 @@ py_ui_out::do_begin (ui_out_type type, const char *id)
     return;
 
   gdbpy_ref<> new_obj (type == ui_out_type_list
-		       ? PyList_New (0)
-		       : PyDict_New ());
+		       ? AMD_PyList_New (0)
+		       : AMD_PyDict_New ());
   if (new_obj == nullptr)
     {
       m_error.emplace ();

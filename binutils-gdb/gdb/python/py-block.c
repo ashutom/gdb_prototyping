@@ -451,7 +451,7 @@ blpy_repr (PyObject *self)
       if (++written_symbols < len)
 	str += ", ";
     }
-  return PyUnicode_FromFormat ("<%s %s {%s}>", Py_TYPE (self)->tp_name,
+  return AMD_PyUnicode_FromFormat ("<%s %s {%s}>", Py_TYPE (self)->tp_name,
 			       name, str.c_str ());
 }
 
@@ -491,11 +491,11 @@ blpy_richcompare (PyObject *self, PyObject *other, int op)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_blocks (void)
 {
-  block_object_type.tp_new = PyType_GenericNew;
+  block_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&block_object_type) < 0)
     return -1;
 
-  block_syms_iterator_object_type.tp_new = PyType_GenericNew;
+  block_syms_iterator_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&block_syms_iterator_object_type) < 0)
     return -1;
 

@@ -607,7 +607,7 @@ static gdb_PyGetSetDef recpy_aux_getset[] = {
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_record (void)
 {
-  recpy_record_type.tp_new = PyType_GenericNew;
+  recpy_record_type.tp_new = AMD_PyType_GenericNew;
   recpy_record_type.tp_flags = Py_TPFLAGS_DEFAULT;
   recpy_record_type.tp_basicsize = sizeof (recpy_record_object);
   recpy_record_type.tp_name = "gdb.Record";
@@ -615,7 +615,7 @@ gdbpy_initialize_record (void)
   recpy_record_type.tp_methods = recpy_record_methods;
   recpy_record_type.tp_getset = recpy_record_getset;
 
-  recpy_insn_type.tp_new = PyType_GenericNew;
+  recpy_insn_type.tp_new = AMD_PyType_GenericNew;
   recpy_insn_type.tp_flags = Py_TPFLAGS_DEFAULT;
   recpy_insn_type.tp_basicsize = sizeof (recpy_element_object);
   recpy_insn_type.tp_name = "gdb.RecordInstruction";
@@ -625,7 +625,7 @@ gdbpy_initialize_record (void)
   recpy_insn_type.tp_hash = recpy_element_hash;
   recpy_insn_type.tp_base = py_insn_get_insn_type ();
 
-  recpy_func_type.tp_new = PyType_GenericNew;
+  recpy_func_type.tp_new = AMD_PyType_GenericNew;
   recpy_func_type.tp_flags = Py_TPFLAGS_DEFAULT;
   recpy_func_type.tp_basicsize = sizeof (recpy_element_object);
   recpy_func_type.tp_name = "gdb.RecordFunctionSegment";
@@ -634,14 +634,14 @@ gdbpy_initialize_record (void)
   recpy_func_type.tp_richcompare = recpy_element_richcompare;
   recpy_func_type.tp_hash = recpy_element_hash;
 
-  recpy_gap_type.tp_new = PyType_GenericNew;
+  recpy_gap_type.tp_new = AMD_PyType_GenericNew;
   recpy_gap_type.tp_flags = Py_TPFLAGS_DEFAULT;
   recpy_gap_type.tp_basicsize = sizeof (recpy_gap_object);
   recpy_gap_type.tp_name = "gdb.RecordGap";
   recpy_gap_type.tp_doc = "GDB recorded gap object";
   recpy_gap_type.tp_getset = recpy_gap_getset;
 
-  recpy_aux_type.tp_new = PyType_GenericNew;
+  recpy_aux_type.tp_new = AMD_PyType_GenericNew;
   recpy_aux_type.tp_flags = Py_TPFLAGS_DEFAULT;
   recpy_aux_type.tp_basicsize = sizeof (recpy_element_object);
   recpy_aux_type.tp_name = "gdb.RecordAuxiliary";

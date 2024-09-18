@@ -75,7 +75,7 @@ fnpy_call (struct gdbarch *gdbarch, const struct language_defn *language,
 
   if (args != NULL)
     {
-      gdbpy_ref<> callable (PyObject_GetAttrString ((PyObject *) cookie,
+      gdbpy_ref<> callable (AMD_PyObject_GetAttrString ((PyObject *) cookie,
 						    "invoke"));
       if (callable == NULL)
 	error (_("No method named 'invoke' in object."));
@@ -110,9 +110,9 @@ fnpy_init (PyObject *self, PyObject *args, PyObject *kwds)
 
   gdbpy_ref<> self_ref = gdbpy_ref<>::new_reference (self);
 
-  if (PyObject_HasAttrString (self, "__doc__"))
+  if (AMD_PyObject_HasAttrString (self, "__doc__"))
     {
-      gdbpy_ref<> ds_obj (PyObject_GetAttrString (self, "__doc__"));
+      gdbpy_ref<> ds_obj (AMD_PyObject_GetAttrString (self, "__doc__"));
       if (ds_obj != NULL)
 	{
 	  if (gdbpy_is_string (ds_obj.get ()))
@@ -136,7 +136,7 @@ fnpy_init (PyObject *self, PyObject *args, PyObject *kwds)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_functions (void)
 {
-  fnpy_object_type.tp_new = PyType_GenericNew;
+  fnpy_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&fnpy_object_type) < 0)
     return -1;
 

@@ -150,9 +150,9 @@ find_pretty_printer_from_gdb (PyObject *value)
 {
   /* Fetch the global pretty printer list.  */
   if (gdb_python_module == NULL
-      || ! PyObject_HasAttrString (gdb_python_module, "pretty_printers"))
+      || ! AMD_PyObject_HasAttrString (gdb_python_module, "pretty_printers"))
     return gdbpy_ref<>::new_reference (Py_None);
-  gdbpy_ref<> pp_list (PyObject_GetAttrString (gdb_python_module,
+  gdbpy_ref<> pp_list (AMD_PyObject_GetAttrString (gdb_python_module,
 					       "pretty_printers"));
   if (pp_list == NULL || ! PyList_Check (pp_list.get ()))
     return gdbpy_ref<>::new_reference (Py_None);
@@ -699,7 +699,7 @@ set_boolean (PyObject *dict, const char *name, bool val)
   gdbpy_ref<> val_obj (PyBool_FromLong (val));
   if (val_obj == nullptr)
     return -1;
-  return PyDict_SetItemString (dict, name, val_obj.get ());
+  return AMD_PyDict_SetItemString (dict, name, val_obj.get ());
 }
 
 /* Helper function to set an integer in a dictionary.  */
@@ -709,14 +709,14 @@ set_unsigned (PyObject *dict, const char *name, unsigned int val)
   gdbpy_ref<> val_obj = gdb_py_object_from_ulongest (val);
   if (val_obj == nullptr)
     return -1;
-  return PyDict_SetItemString (dict, name, val_obj.get ());
+  return AMD_PyDict_SetItemString (dict, name, val_obj.get ());
 }
 
 /* Implement gdb.print_options.  */
 PyObject *
 gdbpy_print_options (PyObject *unused1, PyObject *unused2)
 {
-  gdbpy_ref<> result (PyDict_New ());
+  gdbpy_ref<> result (AMD_PyDict_New ());
   if (result == nullptr)
     return nullptr;
 
@@ -763,7 +763,7 @@ gdbpy_print_options (PyObject *unused1, PyObject *unused2)
       gdbpy_ref<> fmtstr = host_string_to_python_string (str);
       if (fmtstr == nullptr)
 	return nullptr;
-      if (PyDict_SetItemString (result.get (), "format", fmtstr.get ()) < 0)
+      if (AMD_PyDict_SetItemString (result.get (), "format", fmtstr.get ()) < 0)
 	return nullptr;
     }
 
@@ -828,7 +828,7 @@ PyTypeObject printer_object_type =
   0,				  /* tp_dictoffset */
   0,				  /* tp_init */
   0,				  /* tp_alloc */
-  PyType_GenericNew,		  /* tp_new */
+  AMD_PyType_GenericNew,		  /* tp_new */
 };
 
 /* Set up the ValuePrinter type.  */

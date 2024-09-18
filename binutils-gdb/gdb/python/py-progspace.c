@@ -178,31 +178,31 @@ pspy_initialize (pspace_object *self)
 {
   self->pspace = NULL;
 
-  self->dict = PyDict_New ();
+  self->dict = AMD_PyDict_New ();
   if (self->dict == NULL)
     return 0;
 
-  self->printers = PyList_New (0);
+  self->printers = AMD_PyList_New (0);
   if (self->printers == NULL)
     return 0;
 
-  self->frame_filters = PyDict_New ();
+  self->frame_filters = AMD_PyDict_New ();
   if (self->frame_filters == NULL)
     return 0;
 
-  self->frame_unwinders = PyList_New (0);
+  self->frame_unwinders = AMD_PyList_New (0);
   if (self->frame_unwinders == NULL)
     return 0;
 
-  self->type_printers = PyList_New (0);
+  self->type_printers = AMD_PyList_New (0);
   if (self->type_printers == NULL)
     return 0;
 
-  self->xmethods = PyList_New (0);
+  self->xmethods = AMD_PyList_New (0);
   if (self->xmethods == NULL)
     return 0;
 
-  self->missing_debug_handlers = PyList_New (0);
+  self->missing_debug_handlers = AMD_PyList_New (0);
   if (self->missing_debug_handlers == nullptr)
     return 0;
 
@@ -425,7 +425,7 @@ pspy_get_objfiles (PyObject *self_, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  gdbpy_ref<> list (PyList_New (0));
+  gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == NULL)
     return NULL;
 
@@ -436,7 +436,7 @@ pspy_get_objfiles (PyObject *self_, PyObject *args)
 	  gdbpy_ref<> item = objfile_to_objfile_object (objf);
 
 	  if (item == nullptr
-	      || PyList_Append (list.get (), item.get ()) == -1)
+	      || AMD_PyList_Append (list.get (), item.get ()) == -1)
 	    return NULL;
 	}
     }

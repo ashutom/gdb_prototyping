@@ -59,7 +59,7 @@ py_insn_get_insn_type ()
 {
   if (py_insn_type.tp_new == nullptr)
     {
-      py_insn_type.tp_new = PyType_GenericNew;
+      py_insn_type.tp_new = AMD_PyType_GenericNew;
       py_insn_type.tp_flags = Py_TPFLAGS_DEFAULT;
       py_insn_type.tp_basicsize = sizeof (py_insn_obj);
       py_insn_type.tp_name = "gdb.Instruction";

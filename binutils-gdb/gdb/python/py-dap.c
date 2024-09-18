@@ -82,7 +82,7 @@ call_dap_fn (const char *fn_name)
   if (dap_module == nullptr)
     gdbpy_handle_exception ();
 
-  gdbpy_ref<> func (PyObject_GetAttrString (dap_module.get (), fn_name));
+  gdbpy_ref<> func (AMD_PyObject_GetAttrString (dap_module.get (), fn_name));
   if (func == nullptr)
     gdbpy_handle_exception ();
 

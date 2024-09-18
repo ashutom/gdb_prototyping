@@ -227,7 +227,7 @@ ltpy_get_all_source_lines (PyObject *self, PyObject *args)
       return NULL;
     }
 
-  gdbpy_ref<> source_dict (PyDict_New ());
+  gdbpy_ref<> source_dict (AMD_PyDict_New ());
   if (source_dict == NULL)
     return NULL;
 

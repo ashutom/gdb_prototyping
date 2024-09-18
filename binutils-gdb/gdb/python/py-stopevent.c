@@ -88,7 +88,7 @@ py_print_bpstat (bpstat *bs, enum gdb_signal stop_signal)
       gdbpy_ref<> val (value_to_value_object (return_value));
       if (val == nullptr)
 	return nullptr;
-      if (PyDict_SetItemString (dict.get (), "finish-value", val.get ()) < 0)
+      if (AMD_PyDict_SetItemString (dict.get (), "finish-value", val.get ()) < 0)
 	return nullptr;
     }
 
@@ -128,12 +128,12 @@ emit_stop_event (struct bpstat *bs, enum gdb_signal stop_signal)
 
 	  if (list == NULL)
 	    {
-	      list.reset (PyList_New (0));
+	      list.reset (AMD_PyList_New (0));
 	      if (list == NULL)
 		return -1;
 	    }
 
-	  if (PyList_Append (list.get (), current_py_bp))
+	  if (AMD_PyList_Append (list.get (), current_py_bp))
 	    return -1;
 
 	  if (first_bp == NULL)

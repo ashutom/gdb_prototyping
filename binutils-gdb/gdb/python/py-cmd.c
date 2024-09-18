@@ -119,7 +119,7 @@ cmdpy_function (const char *args, int from_tty, cmd_list_element *command)
 
   if (! args)
     args = "";
-  gdbpy_ref<> argobj (PyUnicode_Decode (args, strlen (args), host_charset (),
+  gdbpy_ref<> argobj (AMD_PyUnicode_Decode (args, strlen (args), host_charset (),
 					NULL));
   if (argobj == NULL)
     {
@@ -179,7 +179,7 @@ cmdpy_completer_helper (struct cmd_list_element *command,
       return NULL;
     }
 
-  gdbpy_ref<> textobj (PyUnicode_Decode (text, strlen (text), host_charset (),
+  gdbpy_ref<> textobj (AMD_PyUnicode_Decode (text, strlen (text), host_charset (),
 					 NULL));
   if (textobj == NULL)
     {
@@ -195,7 +195,7 @@ cmdpy_completer_helper (struct cmd_list_element *command,
     }
   else
     {
-      wordobj.reset (PyUnicode_Decode (word, strlen (word), host_charset (),
+      wordobj.reset (AMD_PyUnicode_Decode (word, strlen (word), host_charset (),
 				       NULL));
       if (wordobj == NULL)
 	{
@@ -556,7 +556,7 @@ gdbpy_initialize_commands (void)
 {
   int i;
 
-  cmdpy_object_type.tp_new = PyType_GenericNew;
+  cmdpy_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&cmdpy_object_type) < 0)
     return -1;
 
@@ -671,7 +671,7 @@ gdbpy_string_to_argv (PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple (args, "s", &input))
     return NULL;
 
-  gdbpy_ref<> py_argv (PyList_New (0));
+  gdbpy_ref<> py_argv (AMD_PyList_New (0));
   if (py_argv == NULL)
     return NULL;
 
@@ -688,7 +688,7 @@ gdbpy_string_to_argv (PyObject *self, PyObject *args)
 	  gdbpy_ref<> argp (AMD_PyUnicode_FromString (arg));
 
 	  if (argp == NULL
-	      || PyList_Append (py_argv.get (), argp.get ()) < 0)
+	      || AMD_PyList_Append (py_argv.get (), argp.get ()) < 0)
 	    return NULL;
 	}
     }

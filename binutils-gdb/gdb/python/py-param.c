@@ -320,7 +320,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 
 	if (allowed == TRIBOOL_UNKNOWN)
 	  {
-	    val = PyLong_AsLongLong (value);
+	    val = AMD_PyLong_AsLongLong (value);
 
 	    if (PyErr_Occurred ())
 	      {
@@ -908,7 +908,7 @@ gdbpy_initialize_parameters (void)
 {
   int i;
 
-  parmpy_object_type.tp_new = PyType_GenericNew;
+  parmpy_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&parmpy_object_type) < 0)
     return -1;
 

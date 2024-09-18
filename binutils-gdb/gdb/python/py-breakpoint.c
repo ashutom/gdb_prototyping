@@ -829,7 +829,7 @@ bppy_get_locations (PyObject *self, void *closure)
   auto *self_bp = (gdbpy_breakpoint_object *) self;
   BPPY_REQUIRE_VALID (self_bp);
 
-  gdbpy_ref<> list (PyList_New (0));
+  gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == nullptr)
     return nullptr;
 
@@ -846,7 +846,7 @@ bppy_get_locations (PyObject *self, void *closure)
       Py_INCREF (self);
       py_bploc->owner = self_bp;
       py_bploc->bp_loc = ref.release ();
-      if (PyList_Append (list.get (), (PyObject *) py_bploc.get ()) != 0)
+      if (AMD_PyList_Append (list.get (), (PyObject *) py_bploc.get ()) != 0)
 	return nullptr;
     }
   return list.release ();
@@ -941,7 +941,7 @@ bppy_init (PyObject *self, PyObject *args, PyObject *kwargs)
   if (lineobj != NULL)
     {
       if (PyLong_Check (lineobj))
-	line = xstrprintf ("%ld", PyLong_AsLong (lineobj));
+	line = xstrprintf ("%ld", AMD_PyLong_AsLong (lineobj));
       else if (PyUnicode_Check (lineobj))
 	line = python_string_to_host_string (lineobj);
       else
@@ -1068,7 +1068,7 @@ bppy_repr (PyObject *self)
 {
   const auto bp = (struct gdbpy_breakpoint_object*) self;
   if (bp->bp == nullptr)
-    return PyUnicode_FromFormat ("<%s (invalid)>", Py_TYPE (self)->tp_name);
+    return AMD_PyUnicode_FromFormat ("<%s (invalid)>", Py_TYPE (self)->tp_name);
 
   std::string str = " ";
   if (bp->bp->thread != -1)
@@ -1079,7 +1079,7 @@ bppy_repr (PyObject *self)
     str += string_printf ("enable_count=%d ", bp->bp->enable_count);
   str.pop_back ();
 
-  return PyUnicode_FromFormat ("<%s%s number=%d hits=%d%s>",
+  return AMD_PyUnicode_FromFormat ("<%s%s number=%d hits=%d%s>",
 			       Py_TYPE (self)->tp_name,
 			       (bp->bp->enable_state == bp_enabled
 				? "" : " disabled"), bp->bp->number,
@@ -1103,7 +1103,7 @@ build_bp_list (struct breakpoint *b, PyObject *list)
   if (bp == nullptr)
     return true;
 
-  return PyList_Append (list, bp) == 0;
+  return AMD_PyList_Append (list, bp) == 0;
 }
 
 /* See python-internal.h.  */
@@ -1113,7 +1113,7 @@ gdbpy_breakpoint_init_breakpoint_type ()
 {
   if (breakpoint_object_type.tp_new == nullptr)
     {
-      breakpoint_object_type.tp_new = PyType_GenericNew;
+      breakpoint_object_type.tp_new = AMD_PyType_GenericNew;
       if (PyType_Ready (&breakpoint_object_type) < 0)
 	{
 	  /* Reset tp_new back to nullptr so future calls to this function
@@ -1134,7 +1134,7 @@ gdbpy_breakpoints (PyObject *self, PyObject *args)
   if (bppy_live == 0)
     return PyTuple_New (0);
 
-  gdbpy_ref<> list (PyList_New (0));
+  gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == NULL)
     return NULL;
 
@@ -1170,7 +1170,7 @@ gdbpy_breakpoint_cond_says_stop (const struct extension_language_defn *extlang,
   if (bp_obj->is_finish_bp)
     bpfinishpy_pre_stop_hook (bp_obj);
 
-  if (PyObject_HasAttrString (py_bp, stop_func))
+  if (AMD_PyObject_HasAttrString (py_bp, stop_func))
     {
       gdbpy_ref<> result = gdbpy_call_method (py_bp, stop_func);
 
@@ -1215,7 +1215,7 @@ gdbpy_breakpoint_has_cond (const struct extension_language_defn *extlang,
   py_bp = (PyObject *) b->py_bp_object;
 
   gdbpy_enter enter_py (b->gdbarch);
-  return PyObject_HasAttrString (py_bp, stop_func);
+  return AMD_PyObject_HasAttrString (py_bp, stop_func);
 }
 
 
@@ -1690,7 +1690,7 @@ bplocpy_get_thread_groups (PyObject *py_self, void *closure)
   auto *self = (gdbpy_breakpoint_location_object *) py_self;
   BPPY_REQUIRE_VALID (self->owner);
   BPLOCPY_REQUIRE_VALID (self->owner, self);
-  gdbpy_ref<> list (PyList_New (0));
+  gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == nullptr)
     return nullptr;
   for (inferior *inf : all_inferiors ())
@@ -1700,7 +1700,7 @@ bplocpy_get_thread_groups (PyObject *py_self, void *closure)
 	  gdbpy_ref<> num = gdb_py_object_from_ulongest (inf->num);
 	  if (num == nullptr)
 	    return nullptr;
-	  if (PyList_Append (list.get (), num.release ()) != 0)
+	  if (AMD_PyList_Append (list.get (), num.release ()) != 0)
 	    return nullptr;
 	}
     }
@@ -1767,7 +1767,7 @@ bplocpy_repr (PyObject *py_self)
       str += fn_name;
     }
 
-  return PyUnicode_FromFormat ("<%s %s>", Py_TYPE (self)->tp_name,
+  return AMD_PyUnicode_FromFormat ("<%s %s>", Py_TYPE (self)->tp_name,
 			       str.c_str ());
 }
 

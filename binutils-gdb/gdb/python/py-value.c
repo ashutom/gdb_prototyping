@@ -644,7 +644,7 @@ valpy_string (PyObject *self, PyObject *args, PyObject *kw)
     }
 
   encoding = (user_encoding && *user_encoding) ? user_encoding : la_encoding;
-  return PyUnicode_Decode ((const char *) buffer.get (),
+  return AMD_PyUnicode_Decode ((const char *) buffer.get (),
 			   length * char_type->length (),
 			   encoding, errors);
 }
@@ -827,7 +827,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyUnicode_Decode (stb.c_str (), stb.size (), host_charset (), NULL);
+  return AMD_PyUnicode_Decode (stb.c_str (), stb.size (), host_charset (), NULL);
 }
 
 /* A helper function that implements the various cast operators.  */
@@ -966,7 +966,7 @@ value_has_field (struct value *v, PyObject *field)
 {
   struct type *parent_type, *val_type;
   enum type_code type_code;
-  gdbpy_ref<> type_object (PyObject_GetAttrString (field, "parent_type"));
+  gdbpy_ref<> type_object (AMD_PyObject_GetAttrString (field, "parent_type"));
   int has_field = 0;
 
   if (type_object == NULL)
@@ -1010,7 +1010,7 @@ value_has_field (struct value *v, PyObject *field)
 static int
 get_field_flag (PyObject *field, const char *flag_name)
 {
-  gdbpy_ref<> flag_object (PyObject_GetAttrString (field, flag_name));
+  gdbpy_ref<> flag_object (AMD_PyObject_GetAttrString (field, flag_name));
 
   if (flag_object == NULL)
     return -1;
@@ -1024,7 +1024,7 @@ get_field_flag (PyObject *field, const char *flag_name)
 static struct type *
 get_field_type (PyObject *field)
 {
-  gdbpy_ref<> ftype_obj (PyObject_GetAttrString (field, "type"));
+  gdbpy_ref<> ftype_obj (AMD_PyObject_GetAttrString (field, "type"));
   struct type *ftype;
 
   if (ftype_obj == NULL)
@@ -1084,7 +1084,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 	}
       else
 	{
-	  gdbpy_ref<> name_obj (PyObject_GetAttrString (key, "name"));
+	  gdbpy_ref<> name_obj (AMD_PyObject_GetAttrString (key, "name"));
 
 	  if (name_obj == NULL)
 	    return NULL;
@@ -1097,7 +1097,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 	    }
 	  else
 	    {
-	      if (!PyObject_HasAttrString (key, "bitpos"))
+	      if (!AMD_PyObject_HasAttrString (key, "bitpos"))
 		{
 		  AMD_PyErr_SetString((PyObject *)PyExc_AttributeError,
 				   _("gdb.Field object has no name and no "
@@ -1105,7 +1105,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 
 		  return NULL;
 		}
-	      gdbpy_ref<> bitpos_obj (PyObject_GetAttrString (key, "bitpos"));
+	      gdbpy_ref<> bitpos_obj (AMD_PyObject_GetAttrString (key, "bitpos"));
 	      if (bitpos_obj == NULL)
 		return NULL;
 	      if (!gdb_py_int_as_long (bitpos_obj.get (), &bitpos))
@@ -1296,7 +1296,7 @@ valpy_str (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyUnicode_Decode (stb.c_str (), stb.size (), host_charset (), NULL);
+  return AMD_PyUnicode_Decode (stb.c_str (), stb.size (), host_charset (), NULL);
 }
 
 /* Implements gdb.Value.is_optimized_out.  */
@@ -1995,7 +1995,7 @@ convert_value_from_python (PyObject *obj)
 	}
       else if (PyLong_Check (obj))
 	{
-	  LONGEST l = PyLong_AsLongLong (obj);
+	  LONGEST l = AMD_PyLong_AsLongLong (obj);
 
 	  if (PyErr_Occurred ())
 	    {
@@ -2370,5 +2370,5 @@ PyTypeObject value_object_type = {
   0,				  /* tp_dictoffset */
   valpy_init,			  /* tp_init */
   0,				  /* tp_alloc */
-  PyType_GenericNew,		  /* tp_new */
+  AMD_PyType_GenericNew,		  /* tp_new */
 };

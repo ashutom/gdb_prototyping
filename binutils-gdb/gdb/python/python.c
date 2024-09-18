@@ -327,7 +327,7 @@ eval_python_command (const char *command, int start_symbol,
 
 	  if (PyDict_SetItem (d, file.get (), filename_obj.get ()) < 0)
 	    return -1;
-	  if (PyDict_SetItemString (d, "__cached__", Py_None) < 0)
+	  if (AMD_PyDict_SetItemString (d, "__cached__", Py_None) < 0)
 	    return -1;
 
 	  file_set = true;
@@ -617,7 +617,7 @@ gdbpy_target_charset (PyObject *self, PyObject *args)
 {
   const char *cset = target_charset (gdbpy_enter::get_gdbarch ());
 
-  return PyUnicode_Decode (cset, strlen (cset), host_charset (), NULL);
+  return AMD_PyUnicode_Decode (cset, strlen (cset), host_charset (), NULL);
 }
 
 /* Wrapper for target_wide_charset.  */
@@ -627,7 +627,7 @@ gdbpy_target_wide_charset (PyObject *self, PyObject *args)
 {
   const char *cset = target_wide_charset (gdbpy_enter::get_gdbarch ());
 
-  return PyUnicode_Decode (cset, strlen (cset), host_charset (), NULL);
+  return AMD_PyUnicode_Decode (cset, strlen (cset), host_charset (), NULL);
 }
 
 /* Implement gdb.host_charset().  */
@@ -637,7 +637,7 @@ gdbpy_host_charset (PyObject *self, PyObject *args)
 {
   const char *cset = host_charset ();
 
-  return PyUnicode_Decode (cset, strlen (cset), host_charset (), NULL);
+  return AMD_PyUnicode_Decode (cset, strlen (cset), host_charset (), NULL);
 }
 
 /* A Python function which evaluates a string using the gdb CLI.  */
@@ -834,7 +834,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
 	      break;
 	    }
 
-	  gdbpy_ref<> obj_name (PyObject_GetAttrString (next.get (),
+	  gdbpy_ref<> obj_name (AMD_PyObject_GetAttrString (next.get (),
 							"filename"));
 
 	  if (obj_name == NULL)
@@ -880,7 +880,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
       return NULL;
     }
 
-  gdbpy_ref<> return_list (PyList_New (0));
+  gdbpy_ref<> return_list (AMD_PyList_New (0));
 
   if (return_list == NULL)
     return NULL;
@@ -919,7 +919,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
 	gdbpy_print_stack ();
       else
 	{
-	  if (PyList_Append (return_list.get (), obj.get ()) == -1)
+	  if (AMD_PyList_Append (return_list.get (), obj.get ()) == -1)
 	    return NULL;
 	}
     }
@@ -1192,9 +1192,9 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
     return EXT_LANG_RC_ERROR;
 
   if (gdb_python_module
-      && PyObject_HasAttrString (gdb_python_module, "prompt_hook"))
+      && AMD_PyObject_HasAttrString (gdb_python_module, "prompt_hook"))
     {
-      gdbpy_ref<> hook (PyObject_GetAttrString (gdb_python_module,
+      gdbpy_ref<> hook (AMD_PyObject_GetAttrString (gdb_python_module,
 						"prompt_hook"));
       if (hook == NULL)
 	{
@@ -1269,10 +1269,10 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
       return {};
     }
 
-  if (!PyObject_HasAttrString (module.get (), "colorize"))
+  if (!AMD_PyObject_HasAttrString (module.get (), "colorize"))
     return {};
 
-  gdbpy_ref<> hook (PyObject_GetAttrString (module.get (), "colorize"));
+  gdbpy_ref<> hook (AMD_PyObject_GetAttrString (module.get (), "colorize"));
   if (hook == nullptr)
     {
       gdbpy_print_stack ();
@@ -1346,10 +1346,10 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
       return {};
     }
 
-  if (!PyObject_HasAttrString (module.get (), "colorize_disasm"))
+  if (!AMD_PyObject_HasAttrString (module.get (), "colorize_disasm"))
     return {};
 
-  gdbpy_ref<> hook (PyObject_GetAttrString (module.get (),
+  gdbpy_ref<> hook (AMD_PyObject_GetAttrString (module.get (),
 					    "colorize_disasm"));
   if (hook == nullptr)
     {
@@ -1667,7 +1667,7 @@ gdbpy_print_stack_or_quit ()
 static PyObject *
 gdbpy_progspaces (PyObject *unused1, PyObject *unused2)
 {
-  gdbpy_ref<> list (PyList_New (0));
+  gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == NULL)
     return NULL;
 
@@ -1675,7 +1675,7 @@ gdbpy_progspaces (PyObject *unused1, PyObject *unused2)
     {
       gdbpy_ref<> item = pspace_to_pspace_object (ps);
 
-      if (item == NULL || PyList_Append (list.get (), item.get ()) == -1)
+      if (item == NULL || AMD_PyList_Append (list.get (), item.get ()) == -1)
 	return NULL;
     }
 
@@ -1780,7 +1780,7 @@ gdbpy_handle_missing_debuginfo (const struct extension_language_defn *extlang,
 
   /* Lookup the helper function within the GDB module.  */
   gdbpy_ref<> pyo_handler
-    (PyObject_GetAttrString (gdb_python_module, "_handle_missing_debuginfo"));
+    (AMD_PyObject_GetAttrString (gdb_python_module, "_handle_missing_debuginfo"));
   if (pyo_handler == nullptr)
     {
       gdbpy_print_stack ();
@@ -1852,7 +1852,7 @@ gdbpy_start_type_printers (const struct extension_language_defn *extlang,
       return;
     }
 
-  gdbpy_ref<> func (PyObject_GetAttrString (type_module.get (),
+  gdbpy_ref<> func (AMD_PyObject_GetAttrString (type_module.get (),
 					    "get_type_recognizers"));
   if (func == NULL)
     {
@@ -1905,7 +1905,7 @@ gdbpy_apply_type_printers (const struct extension_language_defn *extlang,
       return EXT_LANG_RC_ERROR;
     }
 
-  gdbpy_ref<> func (PyObject_GetAttrString (type_module.get (),
+  gdbpy_ref<> func (AMD_PyObject_GetAttrString (type_module.get (),
 					    "apply_type_recognizers"));
   if (func == NULL)
     {

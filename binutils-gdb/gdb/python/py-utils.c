@@ -152,7 +152,7 @@ python_string_to_host_string (PyObject *obj)
 gdbpy_ref<>
 host_string_to_python_string (const char *str)
 {
-  return gdbpy_ref<> (PyUnicode_Decode (str, strlen (str), host_charset (),
+  return gdbpy_ref<> (AMD_PyUnicode_Decode (str, strlen (str), host_charset (),
 					NULL));
 }
 
@@ -297,13 +297,13 @@ gdb_py_object_from_ulongest (ULONGEST l)
   return gdbpy_ref<> (PyLong_FromUnsignedLong (l));
 }
 
-/* Like PyLong_AsLong, but returns 0 on failure, 1 on success, and puts
+/* Like AMD_PyLong_AsLong, but returns 0 on failure, 1 on success, and puts
    the value into an out parameter.  */
 
 int
 gdb_py_int_as_long (PyObject *obj, long *result)
 {
-  *result = PyLong_AsLong (obj);
+  *result = AMD_PyLong_AsLong (obj);
   return ! (*result == -1 && PyErr_Occurred ());
 }
 
@@ -603,5 +603,5 @@ gdbpy_fix_doc_string_indentation (gdb::unique_xmalloc_ptr<char> doc)
 PyObject *
 gdb_py_invalid_object_repr (PyObject *self)
 {
-  return PyUnicode_FromFormat ("<%s (invalid)>", Py_TYPE (self)->tp_name);
+  return AMD_PyUnicode_FromFormat ("<%s (invalid)>", Py_TYPE (self)->tp_name);
 }

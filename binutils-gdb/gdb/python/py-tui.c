@@ -162,7 +162,7 @@ tui_py_window::~tui_py_window ()
   /* This can be null if the user-provided Python construction
      function failed.  */
   if (m_window != nullptr
-      && PyObject_HasAttrString (m_window.get (), "close"))
+      && AMD_PyObject_HasAttrString (m_window.get (), "close"))
     {
       gdbpy_ref<> result = gdbpy_call_method (m_window, "close");
       if (result == nullptr)
@@ -197,7 +197,7 @@ tui_py_window::rerender ()
     }
   m_inner_window.reset (newwin (h, w, y + 1, x + 1));
 
-  if (PyObject_HasAttrString (m_window.get (), "render"))
+  if (AMD_PyObject_HasAttrString (m_window.get (), "render"))
     {
       gdbpy_ref<> result = gdbpy_call_method (m_window, "render");
       if (result == nullptr)
@@ -212,7 +212,7 @@ tui_py_window::do_scroll_horizontal (int num_to_scroll)
 
   gdbpy_enter enter_py;
 
-  if (PyObject_HasAttrString (m_window.get (), "hscroll"))
+  if (AMD_PyObject_HasAttrString (m_window.get (), "hscroll"))
     {
       gdbpy_ref<> result = gdbpy_call_method (m_window, "hscroll",
 					      num_to_scroll);
@@ -228,7 +228,7 @@ tui_py_window::do_scroll_vertical (int num_to_scroll)
 
   gdbpy_enter enter_py;
 
-  if (PyObject_HasAttrString (m_window.get (), "vscroll"))
+  if (AMD_PyObject_HasAttrString (m_window.get (), "vscroll"))
     {
       gdbpy_ref<> result = gdbpy_call_method (m_window, "vscroll",
 					      num_to_scroll);
@@ -252,7 +252,7 @@ tui_py_window::click (int mouse_x, int mouse_y, int mouse_button)
 
   gdbpy_enter enter_py;
 
-  if (PyObject_HasAttrString (m_window.get (), "click"))
+  if (AMD_PyObject_HasAttrString (m_window.get (), "click"))
     {
       gdbpy_ref<> result = gdbpy_call_method (m_window, "click",
 					      mouse_x, mouse_y, mouse_button);
@@ -624,7 +624,7 @@ static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_tui ()
 {
 #ifdef TUI
-  gdbpy_tui_window_object_type.tp_new = PyType_GenericNew;
+  gdbpy_tui_window_object_type.tp_new = AMD_PyType_GenericNew;
   if (PyType_Ready (&gdbpy_tui_window_object_type) < 0)
     return -1;
 #endif	/* TUI */
