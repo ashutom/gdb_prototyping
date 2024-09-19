@@ -371,7 +371,7 @@ gdbpy_create_ptid_object (ptid_t ptid)
   ULONGEST tid;
   PyObject *ret;
 
-  ret = PyTuple_New (3);
+  ret = AMD_PyTuple_New (3);
   if (!ret)
     return NULL;
 
@@ -412,7 +412,7 @@ gdbpy_selected_thread (PyObject *self, PyObject *args)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_thread (void)
 {
-  if (PyType_Ready (&thread_object_type) < 0)
+  if (AMD_PyType_Ready (&thread_object_type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, "InferiorThread",

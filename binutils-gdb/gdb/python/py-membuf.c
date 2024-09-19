@@ -101,7 +101,7 @@ static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_membuf (void)
 {
   membuf_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&membuf_object_type) < 0)
+  if (AMD_PyType_Ready (&membuf_object_type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, "Membuf",

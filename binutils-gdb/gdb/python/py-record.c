@@ -650,11 +650,11 @@ gdbpy_initialize_record (void)
   recpy_aux_type.tp_richcompare = recpy_element_richcompare;
   recpy_aux_type.tp_hash = recpy_element_hash;
 
-  if (PyType_Ready (&recpy_record_type) < 0
-      || PyType_Ready (&recpy_insn_type) < 0
-      || PyType_Ready (&recpy_func_type) < 0
-      || PyType_Ready (&recpy_gap_type) < 0
-      || PyType_Ready (&recpy_aux_type) < 0)
+  if (AMD_PyType_Ready (&recpy_record_type) < 0
+      || AMD_PyType_Ready (&recpy_insn_type) < 0
+      || AMD_PyType_Ready (&recpy_func_type) < 0
+      || AMD_PyType_Ready (&recpy_gap_type) < 0
+      || AMD_PyType_Ready (&recpy_aux_type) < 0)
     return -1;
   else
     return 0;

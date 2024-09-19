@@ -83,7 +83,7 @@ py_varobj_iter::next ()
 	return NULL;
 
       /* If we got a memory error, just use the text as the item.  */
-      if (PyErr_ExceptionMatches (gdbpy_gdb_memory_error))
+      if (AMD_PyErr_ExceptionMatches (gdbpy_gdb_memory_error))
 	{
 	  gdbpy_err_fetch fetched_error;
 	  gdb::unique_xmalloc_ptr<char> value_str = fetched_error.to_string ();
@@ -148,7 +148,7 @@ py_varobj_get_iterator (struct varobj *var, PyObject *printer,
 {
   gdbpy_enter_varobj enter_py (var);
 
-  if (!PyObject_HasAttr (printer, gdbpy_children_cst))
+  if (!AMD_PyObject_HasAttr (printer, gdbpy_children_cst))
     return NULL;
 
   scoped_restore set_options = make_scoped_restore (&gdbpy_current_print_options,

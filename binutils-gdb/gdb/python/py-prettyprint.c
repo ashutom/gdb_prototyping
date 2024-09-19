@@ -63,14 +63,14 @@ search_pp_list (PyObject *list, PyObject *value)
 	return NULL;
 
       /* Skip if disabled.  */
-      if (PyObject_HasAttr (function, gdbpy_enabled_cst))
+      if (AMD_PyObject_HasAttr (function, gdbpy_enabled_cst))
 	{
-	  gdbpy_ref<> attr (PyObject_GetAttr (function, gdbpy_enabled_cst));
+	  gdbpy_ref<> attr (AMD_PyObject_GetAttr (function, gdbpy_enabled_cst));
 	  int cmp;
 
 	  if (attr == NULL)
 	    return NULL;
-	  cmp = PyObject_IsTrue (attr.get ());
+	  cmp = AMD_PyObject_IsTrue (attr.get ());
 	  if (cmp == -1)
 	    return NULL;
 
@@ -104,7 +104,7 @@ find_pretty_printer_from_objfiles (PyObject *value)
       if (objf == NULL)
 	{
 	  /* Ignore the error and continue.  */
-	  PyErr_Clear ();
+	  AMD_PyErr_Clear ();
 	  continue;
 	}
 
@@ -198,7 +198,7 @@ pretty_print_one_value (PyObject *printer, struct value **out_value)
   *out_value = NULL;
   try
     {
-      if (!PyObject_HasAttr (printer, gdbpy_to_string_cst))
+      if (!AMD_PyObject_HasAttr (printer, gdbpy_to_string_cst))
 	result = gdbpy_ref<>::new_reference (Py_None);
       else
 	{
@@ -234,7 +234,7 @@ gdbpy_get_display_hint (PyObject *printer)
 {
   gdb::unique_xmalloc_ptr<char> result;
 
-  if (! PyObject_HasAttr (printer, gdbpy_display_hint_cst))
+  if (! AMD_PyObject_HasAttr (printer, gdbpy_display_hint_cst))
     return NULL;
 
   gdbpy_ref<> hint (PyObject_CallMethodObjArgs (printer, gdbpy_display_hint_cst,
@@ -259,7 +259,7 @@ gdbpy_get_display_hint (PyObject *printer)
 static void
 print_stack_unless_memory_error (struct ui_file *stream)
 {
-  if (PyErr_ExceptionMatches (gdbpy_gdb_memory_error))
+  if (AMD_PyErr_ExceptionMatches (gdbpy_gdb_memory_error))
     {
       gdbpy_err_fetch fetched_error;
       gdb::unique_xmalloc_ptr<char> msg = fetched_error.to_string ();
@@ -364,7 +364,7 @@ print_children (PyObject *printer, const char *hint,
   int is_map, is_array, done_flag, pretty;
   unsigned int i;
 
-  if (! PyObject_HasAttr (printer, gdbpy_children_cst))
+  if (! AMD_PyObject_HasAttr (printer, gdbpy_children_cst))
     return;
 
   /* If we are printing a map or an array, we want some special
@@ -696,7 +696,7 @@ gdbpy_default_visualizer (PyObject *self, PyObject *args)
 static int
 set_boolean (PyObject *dict, const char *name, bool val)
 {
-  gdbpy_ref<> val_obj (PyBool_FromLong (val));
+  gdbpy_ref<> val_obj (AMD_PyBool_FromLong (val));
   if (val_obj == nullptr)
     return -1;
   return AMD_PyDict_SetItemString (dict, name, val_obj.get ());
@@ -836,7 +836,7 @@ PyTypeObject printer_object_type =
 static int
 gdbpy_initialize_prettyprint ()
 {
-  if (PyType_Ready (&printer_object_type) < 0)
+  if (AMD_PyType_Ready (&printer_object_type) < 0)
     return -1;
   return gdb_pymodule_addobject (gdb_module, "ValuePrinter",
 				 (PyObject *) &printer_object_type);

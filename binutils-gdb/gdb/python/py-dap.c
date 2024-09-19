@@ -86,7 +86,7 @@ call_dap_fn (const char *fn_name)
   if (func == nullptr)
     gdbpy_handle_exception ();
 
-  gdbpy_ref<> result_obj (PyObject_CallObject (func.get (), nullptr));
+  gdbpy_ref<> result_obj (AMD_PyObject_CallObject (func.get (), nullptr));
   if (result_obj == nullptr)
     gdbpy_handle_exception ();
 }

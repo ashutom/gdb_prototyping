@@ -126,7 +126,7 @@ build_line_table_tuple_from_pcs (int line, const std::vector<CORE_ADDR> &pcs)
   if (pcs.size () < 1)
     Py_RETURN_NONE;
 
-  gdbpy_ref<> tuple (PyTuple_New (pcs.size ()));
+  gdbpy_ref<> tuple (AMD_PyTuple_New (pcs.size ()));
 
   if (tuple == NULL)
     return NULL;
@@ -286,11 +286,11 @@ ltpy_dealloc (PyObject *self)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_linetable (void)
 {
-  if (PyType_Ready (&linetable_object_type) < 0)
+  if (AMD_PyType_Ready (&linetable_object_type) < 0)
     return -1;
-  if (PyType_Ready (&linetable_entry_object_type) < 0)
+  if (AMD_PyType_Ready (&linetable_entry_object_type) < 0)
     return -1;
-  if (PyType_Ready (&ltpy_iterator_object_type) < 0)
+  if (AMD_PyType_Ready (&ltpy_iterator_object_type) < 0)
     return -1;
 
   Py_INCREF (&linetable_object_type);

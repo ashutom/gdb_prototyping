@@ -37,7 +37,7 @@ evregpy_connect (PyObject *self, PyObject *function)
   if (!PyArg_ParseTuple (function, "O", &func))
     return NULL;
 
-  if (!PyCallable_Check (func))
+  if (!AMD_PyCallable_Check (func))
     {
       AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, "Function is not callable");
       return NULL;
@@ -103,7 +103,7 @@ evregpy_dealloc (PyObject *self)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_eventregistry (void)
 {
-  if (PyType_Ready (&eventregistry_object_type) < 0)
+  if (AMD_PyType_Ready (&eventregistry_object_type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, "EventRegistry",

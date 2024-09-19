@@ -58,11 +58,11 @@ int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw,
     void* handle = AMD_get_lib_handle();
     check_lib_handeler_execption(handle);
     // Look up the symbol
-    va_arg_pyfunc PyArg_VaParseTupleAndKeywords=NULL;
+    va_arg_pyfunc AMD_PyArg_VaParseTupleAndKeywords=NULL;
     char funname[] = "PyArg_VaParseTupleAndKeywords";
-    PyArg_VaParseTupleAndKeywords=(va_arg_pyfunc) check_symbol_resolution((void*) PyArg_VaParseTupleAndKeywords, funname); 
-    /*va_arg_pyfunc PyArg_VaParseTupleAndKeywords = (va_arg_pyfunc)dlsym(handle, "PyArg_VaParseTupleAndKeywords");
-    if (!PyArg_VaParseTupleAndKeywords) {  
+    AMD_PyArg_VaParseTupleAndKeywords=(va_arg_pyfunc) check_symbol_resolution((void*) AMD_PyArg_VaParseTupleAndKeywords, funname); 
+    /*va_arg_pyfunc AMD_PyArg_VaParseTupleAndKeywords = (va_arg_pyfunc)dlsym(handle, "AMD_PyArg_VaParseTupleAndKeywords");
+    if (!AMD_PyArg_VaParseTupleAndKeywords) {  
         fprintf(stderr, "%s\n", dlerror());  
         AMD_close_lib_handle();  
         exit(EXIT_FAILURE);  
@@ -73,12 +73,34 @@ int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw,
 
     va_start (ap, keywords);
 
-    /*int result = (*PyArg_VaParseTupleAndKeywords)(args, kw, format, const_cast<char **> (keywords), ap);  */
-    int result = (*PyArg_VaParseTupleAndKeywords)(args, kw, format, keywords, ap);  
+    /*int result = (*AMD_PyArg_VaParseTupleAndKeywords)(args, kw, format, const_cast<char **> (keywords), ap);  */
+    int result = (*AMD_PyArg_VaParseTupleAndKeywords)(args, kw, format, keywords, ap);  
     printf("Call status of the API :[ %s ]  is [ %d ]\n",funname, result);
   
     va_end (ap);
   
+    return result;
+}
+PyObject * AMD_PyUnicode_FromFormat(const char *format,...){
+    char funname[] = "PyUnicode_FromFormat";
+    pyunicode_fromformat fp=NULL;
+    fp=(pyunicode_fromformat) get_fun_pointer_from_handle((void*) fp,funname);
+
+    va_list ap;
+    va_start (ap, format);
+    PyObject * result = (*fp)(format,ap);
+    va_end (ap);
+    return result;  
+}
+PyObject * AMD_PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...){
+    char funname[] = "_PyObject_CallMethod_SizeT";
+    pyobj_callmethod fp=NULL;
+    fp=(pyobj_callmethod) get_fun_pointer_from_handle((void*) fp,funname);
+
+    va_list ap;
+    va_start (ap, format);
+    PyObject * result = (*fp)(obj,name,format,ap);
+    va_end (ap);
     return result;
 }
 
@@ -175,17 +197,6 @@ PyObject* AMD_PyUnicode_Decode(const char *s,Py_ssize_t size,const char *encodin
    fp = (pyunicode_decode) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (s,size,encoding,errors);
 }
-PyObject * AMD_PyUnicode_FromFormat(const char *format,...){
-    char funname[] = "PyUnicode_FromFormat";
-    pyunicode_fromformat fp=NULL;
-    fp=(pyunicode_fromformat) get_fun_pointer_from_handle((void*) fp,funname);
-
-    va_list ap;
-    va_start (ap, format);
-    PyObject * result = (*fp)(format,ap);
-    va_end (ap);
-    return result;  
-}
 PyObject* AMD_PyObject_GetAttrString(PyObject * ob, const char * str){
    char funname[]="PyObject_GetAttrString";
    pyobject_getattrstr fp =  NULL;
@@ -204,9 +215,111 @@ int  AMD_PyObject_HasAttrString(PyObject * ob, const char * str){
    fp = (pyobj_hasattstr) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (ob,str);
 }
-PyObject* PyObject_GetAttr(PyObject * ob, PyObject * at){
+PyObject* AMD_PyObject_GetAttr(PyObject * ob, PyObject * at){
    char funname[]="PyObject_GetAttr";
    pytobj_getattr fp =  NULL;
    fp = (pytobj_getattr) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (ob,at);    
+}
+int AMD_PyObject_SetAttr(PyObject* a, PyObject* b, PyObject* c){
+   char funname[]="PyObject_SetAttr";
+   pyobj_setattr fp =  NULL;
+   fp = (pyobj_setattr) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (a,b,c);
+}
+int AMD_PyObject_HasAttr(PyObject* a, PyObject* b){
+   char funname[]="PyObject_HasAttr";
+   pylist_append fp =  NULL;
+   fp = (pylist_append) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (a,b);
+}
+PyObject* AMD_PyObject_GenericGetAttr(PyObject * a, PyObject * b){
+   char funname[]="PyObject_GenericGetAttr";
+   pytobj_getattr fp =  NULL;
+   fp = (pytobj_getattr) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (a,b);
+}
+int AMD_PyObject_GenericSetAttr(PyObject* a, PyObject* b, PyObject* c){
+   char funname[]="PyObject_GenericSetAttr";
+   pyobj_setattr fp =  NULL;
+   fp = (pyobj_setattr) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (a,b,c);
+}
+int AMD_PyObject_IsTrue(PyObject* a){
+   char funname[]="PyObject_IsTrue";
+   pyobj_istrue fp =  NULL;
+   fp = (pyobj_istrue) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (a);
+}
+int AMD_PyCallable_Check(PyObject* a){
+   char funname[]="PyCallable_Check";
+   pyobj_istrue fp =  NULL;
+   fp = (pyobj_istrue) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (a);
+}
+PyObject * AMD_PyObject_CallObject(PyObject *callable, PyObject *args){
+   char funname[]="PyObject_CallObject";
+   pytobj_getattr fp =  NULL;
+   fp = (pytobj_getattr) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (callable,args);
+}
+int AMD_PyType_Ready(PyTypeObject* objtype){
+   char funname[]="PyType_Ready";
+   pytype_ready fp =  NULL;
+   fp = (pytype_ready) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (objtype);
+}
+int AMD_PyModule_AddIntConstant(PyObject * ob, const char * str, long val){
+   char funname[]="PyModule_AddIntConstant";
+   pytmodule_addintconstant fp =  NULL;
+   fp = (pytmodule_addintconstant) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob,str,val);
+}
+void AMD_PyErr_Clear(void){
+   char funname[]="PyErr_Clear";
+   pyerr_clear fp =  NULL;
+   fp = (pyerr_clear) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) ();   
+}
+int  AMD_PyErr_ExceptionMatches(PyObject * ob){
+   char funname[]="PyErr_ExceptionMatches";
+   pyobj_istrue fp =  NULL;
+   fp = (pyobj_istrue) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob);   
+}
+int AMD_PySequence_Check(PyObject *ob){
+   char funname[]="PySequence_Check";
+   pyobj_istrue fp =  NULL;
+   fp = (pyobj_istrue) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob);   
+}
+Py_ssize_t AMD_PySequence_Size(PyObject *ob){
+   char funname[]="PySequence_Size";
+   pysequence_size fp =  NULL;
+   fp = (pysequence_size) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob);    
+}
+PyObject * AMD_PySequence_GetItem(PyObject *ob, Py_ssize_t i){
+   char funname[]="PySequence_GetItem";
+   pysequence_getitem fp =  NULL;
+   fp = (pysequence_getitem) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob,i);   
+}
+int  AMD_PySequence_DelItem(PyObject *ob, Py_ssize_t i){
+   char funname[]="PySequence_DelItem";
+   pysequence_delitem fp =  NULL;
+   fp = (pysequence_delitem) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob,i);
+}
+PyObject * AMD_PyBool_FromLong(long ln){
+   char funname[]="PyBool_FromLong";
+   pybool_fromlong fp =  NULL;
+   fp = (pybool_fromlong) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ln);
+}
+PyObject* AMD_PyTuple_New(Py_ssize_t size){
+   char funname[]="PyTuple_New";
+   pytuple_new fp =  NULL;
+   fp = (pytuple_new) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (size);
 }

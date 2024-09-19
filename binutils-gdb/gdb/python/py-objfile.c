@@ -123,7 +123,7 @@ objfpy_get_is_file (PyObject *o, void *ignore)
   objfile_object *self = (objfile_object *) o;
 
   if (self->objfile != nullptr)
-    return PyBool_FromLong ((self->objfile->flags & OBJF_NOT_FILENAME) == 0);
+    return AMD_PyBool_FromLong ((self->objfile->flags & OBJF_NOT_FILENAME) == 0);
   Py_RETURN_NONE;
 }
 
@@ -604,7 +604,7 @@ gdbpy_lookup_objfile (PyObject *self, PyObject *args, PyObject *kw)
   by_build_id = 0;
   if (by_build_id_obj != NULL)
     {
-      int cmp = PyObject_IsTrue (by_build_id_obj);
+      int cmp = AMD_PyObject_IsTrue (by_build_id_obj);
 
       if (cmp < 0)
 	return NULL;
@@ -709,7 +709,7 @@ objfile_to_objfile_object (struct objfile *objfile)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_objfile (void)
 {
-  if (PyType_Ready (&objfile_object_type) < 0)
+  if (AMD_PyType_Ready (&objfile_object_type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, "Objfile",

@@ -234,7 +234,7 @@ bpfinishpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 
   if (internal)
     {
-      internal_bp = PyObject_IsTrue (internal);
+      internal_bp = AMD_PyObject_IsTrue (internal);
       if (internal_bp == -1)
 	{
 	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
@@ -266,11 +266,11 @@ bpfinishpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 		  value *func_value = read_var_value (function, NULL, frame);
 		  self_bpfinish->function_value
 		    = value_to_value_object (func_value);
-		  PyErr_Clear ();
+		  AMD_PyErr_Clear ();
 
 		  self_bpfinish->func_symbol
 		    = symbol_to_symbol_object (function);
-		  PyErr_Clear ();
+		  AMD_PyErr_Clear ();
 		}
 	    }
 	}
@@ -439,7 +439,7 @@ gdbpy_initialize_finishbreakpoints (void)
   if (!gdbpy_breakpoint_init_breakpoint_type ())
     return -1;
 
-  if (PyType_Ready (&finish_breakpoint_object_type) < 0)
+  if (AMD_PyType_Ready (&finish_breakpoint_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_module, "FinishBreakpoint",

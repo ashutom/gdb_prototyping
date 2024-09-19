@@ -88,7 +88,7 @@ invoke_match_method (PyObject *matcher, PyObject *py_obj_type,
   if (enabled_field == NULL)
     return NULL;
 
-  enabled = PyObject_IsTrue (enabled_field.get ());
+  enabled = AMD_PyObject_IsTrue (enabled_field.get ());
   if (enabled == -1)
     return NULL;
   if (enabled == 0)
@@ -243,7 +243,7 @@ gdbpy_get_matching_xmethod_workers
 	}
       if (match_result == Py_None)
 	; /* This means there was no match.  */
-      else if (PySequence_Check (match_result.get ()))
+      else if (AMD_PySequence_Check (match_result.get ()))
 	{
 	  gdbpy_ref<> iter (PyObject_GetIter (match_result.get ()));
 
@@ -317,9 +317,9 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
 
   if (py_argtype_list == Py_None)
     arg_count = 0;
-  else if (PySequence_Check (py_argtype_list.get ()))
+  else if (AMD_PySequence_Check (py_argtype_list.get ()))
     {
-      arg_count = PySequence_Size (py_argtype_list.get ());
+      arg_count = AMD_PySequence_Size (py_argtype_list.get ());
       if (arg_count == -1)
 	{
 	  gdbpy_print_stack ();
@@ -417,7 +417,7 @@ python_xmethod_worker::do_get_result_type (value *obj,
     (AMD_PyObject_GetAttrString (m_py_worker, get_result_type_method_name));
   if (get_result_type_method == NULL)
     {
-      PyErr_Clear ();
+      AMD_PyErr_Clear ();
       *result_type_ptr = NULL;
       return EXT_LANG_RC_OK;
     }
@@ -452,7 +452,7 @@ python_xmethod_worker::do_get_result_type (value *obj,
       return EXT_LANG_RC_ERROR;
     }
 
-  gdbpy_ref<> py_arg_tuple (PyTuple_New (args.size () + 1));
+  gdbpy_ref<> py_arg_tuple (AMD_PyTuple_New (args.size () + 1));
   if (py_arg_tuple == NULL)
     {
       gdbpy_print_stack ();
@@ -476,7 +476,7 @@ python_xmethod_worker::do_get_result_type (value *obj,
     }
 
   gdbpy_ref<> py_result_type
-    (PyObject_CallObject (get_result_type_method.get (), py_arg_tuple.get ()));
+    (AMD_PyObject_CallObject (get_result_type_method.get (), py_arg_tuple.get ()));
   if (py_result_type == NULL)
     {
       gdbpy_print_stack ();
@@ -537,7 +537,7 @@ python_xmethod_worker::invoke (struct value *obj,
       error (_("Error while executing Python code."));
     }
 
-  gdbpy_ref<> py_arg_tuple (PyTuple_New (args.size () + 1));
+  gdbpy_ref<> py_arg_tuple (AMD_PyTuple_New (args.size () + 1));
   if (py_arg_tuple == NULL)
     {
       gdbpy_print_stack ();
@@ -561,7 +561,7 @@ python_xmethod_worker::invoke (struct value *obj,
       PyTuple_SET_ITEM (py_arg_tuple.get (), i + 1, py_value_arg);
     }
 
-  gdbpy_ref<> py_result (PyObject_CallObject (m_py_worker,
+  gdbpy_ref<> py_result (AMD_PyObject_CallObject (m_py_worker,
 					      py_arg_tuple.get ()));
   if (py_result == NULL)
     {

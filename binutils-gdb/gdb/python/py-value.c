@@ -661,7 +661,7 @@ copy_py_bool_obj (bool *dest, PyObject *src_obj)
 {
   if (src_obj)
     {
-      int cmp = PyObject_IsTrue (src_obj);
+      int cmp = AMD_PyObject_IsTrue (src_obj);
       if (cmp < 0)
 	return false;
       *dest = cmp;
@@ -815,7 +815,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
 	}
     }
 
-  string_file stb (PyObject_IsTrue (styling_obj));
+  string_file stb (AMD_PyObject_IsTrue (styling_obj));
 
   try
     {
@@ -1015,7 +1015,7 @@ get_field_flag (PyObject *field, const char *flag_name)
   if (flag_object == NULL)
     return -1;
 
-  return PyObject_IsTrue (flag_object.get ());
+  return AMD_PyObject_IsTrue (flag_object.get ());
 }
 
 /* Return the "type" attribute of a gdb.Field object.
@@ -1989,7 +1989,7 @@ convert_value_from_python (PyObject *obj)
     {
       if (PyBool_Check (obj))
 	{
-	  cmp = PyObject_IsTrue (obj);
+	  cmp = AMD_PyObject_IsTrue (obj);
 	  if (cmp >= 0)
 	    value = value_from_longest (builtin_type_pybool, cmp);
 	}
@@ -2001,7 +2001,7 @@ convert_value_from_python (PyObject *obj)
 	    {
 	      /* If the error was an overflow, we can try converting to
 		 ULONGEST instead.  */
-	      if (PyErr_ExceptionMatches (PyExc_OverflowError))
+	      if (AMD_PyErr_ExceptionMatches (PyExc_OverflowError))
 		{
 		  gdbpy_err_fetch fetched_error;
 		  gdbpy_ref<> zero = gdb_py_object_from_longest (0);
@@ -2215,7 +2215,7 @@ gdbpy_is_value_object (PyObject *obj)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_values (void)
 {
-  if (PyType_Ready (&value_object_type) < 0)
+  if (AMD_PyType_Ready (&value_object_type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, "Value",

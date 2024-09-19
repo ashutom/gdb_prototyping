@@ -485,18 +485,18 @@ blpy_richcompare (PyObject *self, PyObject *other, int op)
 
   bool expected = self == other;
   bool equal = op == Py_EQ;
-  return PyBool_FromLong (equal == expected);
+  return AMD_PyBool_FromLong (equal == expected);
 }
 
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_blocks (void)
 {
   block_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&block_object_type) < 0)
+  if (AMD_PyType_Ready (&block_object_type) < 0)
     return -1;
 
   block_syms_iterator_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&block_syms_iterator_object_type) < 0)
+  if (AMD_PyType_Ready (&block_syms_iterator_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_module, "Block",

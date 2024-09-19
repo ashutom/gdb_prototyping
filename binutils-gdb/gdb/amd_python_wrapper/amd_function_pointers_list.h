@@ -23,9 +23,16 @@ typedef PyObject* (*pyobject_getattrstr) (PyObject *, const char *);
 typedef int  (*pyobj_setattstr) (PyObject *, const char *, PyObject *);
 typedef int  (*pyobj_hasattstr) (PyObject *, const char *);
 typedef PyObject* (*pytobj_getattr) (PyObject *, PyObject *);
-
-
-
-
+typedef int  (*pyobj_setattr) (PyObject *, PyObject *, PyObject *);
+typedef int (*pyobj_istrue) (PyObject* a);
+typedef int (*pytype_ready) (PyTypeObject* objtype);
+typedef int (*pytmodule_addintconstant) (PyObject *, const char *, long);
+typedef void (*pyerr_clear) (void);
+typedef Py_ssize_t (*pysequence_size) (PyObject *ob);
+typedef PyObject * (*pysequence_getitem) (PyObject *o, Py_ssize_t i);
+typedef int  (*pysequence_delitem) (PyObject *o, Py_ssize_t i);
+typedef PyObject* (*pybool_fromlong) (long ln);
+typedef PyObject* (*pyobj_callmethod) (PyObject *obj, const char *name, const char *format, ...);
+typedef PyObject* (*pytuple_new) (Py_ssize_t size);
 
 #endif //_AMD_FUNCTION_POINTER_LIST_H_

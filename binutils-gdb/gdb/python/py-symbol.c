@@ -160,7 +160,7 @@ sympy_is_argument (PyObject *self, void *closure)
 
   SYMPY_REQUIRE_VALID (self, symbol);
 
-  return PyBool_FromLong (symbol->is_argument ());
+  return AMD_PyBool_FromLong (symbol->is_argument ());
 }
 
 static PyObject *
@@ -173,7 +173,7 @@ sympy_is_constant (PyObject *self, void *closure)
 
   theclass = symbol->aclass ();
 
-  return PyBool_FromLong (theclass == LOC_CONST || theclass == LOC_CONST_BYTES);
+  return AMD_PyBool_FromLong (theclass == LOC_CONST || theclass == LOC_CONST_BYTES);
 }
 
 static PyObject *
@@ -186,7 +186,7 @@ sympy_is_function (PyObject *self, void *closure)
 
   theclass = symbol->aclass ();
 
-  return PyBool_FromLong (theclass == LOC_BLOCK);
+  return AMD_PyBool_FromLong (theclass == LOC_BLOCK);
 }
 
 static PyObject *
@@ -199,7 +199,7 @@ sympy_is_variable (PyObject *self, void *closure)
 
   theclass = symbol->aclass ();
 
-  return PyBool_FromLong (!symbol->is_argument ()
+  return AMD_PyBool_FromLong (!symbol->is_argument ()
 			  && (theclass == LOC_LOCAL || theclass == LOC_REGISTER
 			      || theclass == LOC_STATIC || theclass == LOC_COMPUTED
 			      || theclass == LOC_OPTIMIZED_OUT));
@@ -439,7 +439,7 @@ gdbpy_lookup_symbol (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  gdbpy_ref<> ret_tuple (PyTuple_New (2));
+  gdbpy_ref<> ret_tuple (AMD_PyTuple_New (2));
   if (ret_tuple == NULL)
     return NULL;
 
@@ -456,7 +456,7 @@ gdbpy_lookup_symbol (PyObject *self, PyObject *args, PyObject *kw)
     }
   PyTuple_SET_ITEM (ret_tuple.get (), 0, sym_obj);
 
-  bool_obj = PyBool_FromLong (is_a_field_of_this.type != NULL);
+  bool_obj = AMD_PyBool_FromLong (is_a_field_of_this.type != NULL);
   PyTuple_SET_ITEM (ret_tuple.get (), 1, bool_obj);
 
   return ret_tuple.release ();
@@ -640,46 +640,46 @@ gdbpy_lookup_static_symbols (PyObject *self, PyObject *args, PyObject *kw)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_symbols (void)
 {
-  if (PyType_Ready (&symbol_object_type) < 0)
+  if (AMD_PyType_Ready (&symbol_object_type) < 0)
     return -1;
 
-  if (PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_UNDEF", LOC_UNDEF) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_CONST",
+  if (AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_UNDEF", LOC_UNDEF) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_CONST",
 				  LOC_CONST) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_STATIC",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_STATIC",
 				  LOC_STATIC) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_REGISTER",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_REGISTER",
 				  LOC_REGISTER) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_ARG",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_ARG",
 				  LOC_ARG) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_REF_ARG",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_REF_ARG",
 				  LOC_REF_ARG) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_LOCAL",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_LOCAL",
 				  LOC_LOCAL) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_TYPEDEF",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_TYPEDEF",
 				  LOC_TYPEDEF) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_LABEL",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_LABEL",
 				  LOC_LABEL) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_BLOCK",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_BLOCK",
 				  LOC_BLOCK) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_CONST_BYTES",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_CONST_BYTES",
 				  LOC_CONST_BYTES) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_UNRESOLVED",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_UNRESOLVED",
 				  LOC_UNRESOLVED) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_OPTIMIZED_OUT",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_OPTIMIZED_OUT",
 				  LOC_OPTIMIZED_OUT) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_COMPUTED",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_COMPUTED",
 				  LOC_COMPUTED) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_COMMON_BLOCK",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_COMMON_BLOCK",
 				  LOC_COMMON_BLOCK) < 0
-      || PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_REGPARM_ADDR",
+      || AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_LOC_REGPARM_ADDR",
 				  LOC_REGPARM_ADDR) < 0)
     return -1;
 
 #define SYM_DOMAIN(X)							\
-  if (PyModule_AddIntConstant (gdb_module, "SYMBOL_" #X "_DOMAIN",	\
+  if (AMD_PyModule_AddIntConstant (gdb_module, "SYMBOL_" #X "_DOMAIN",	\
 			       to_scripting_domain (X ## _DOMAIN)) < 0	\
-      || PyModule_AddIntConstant (gdb_module, "SEARCH_" #X "_DOMAIN",	\
+      || AMD_PyModule_AddIntConstant (gdb_module, "SEARCH_" #X "_DOMAIN",	\
 				  to_scripting_domain (SEARCH_ ## X ## _DOMAIN)) < 0) \
     return -1;
 #include "sym-domains.def"

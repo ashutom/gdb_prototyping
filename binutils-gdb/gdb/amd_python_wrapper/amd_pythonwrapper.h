@@ -16,29 +16,19 @@ PyObject * AMD_PyUnicode_FromFormat(
     ...
 );
 
-int  AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type);
-int  AMD_PyObject_TypeCheck(PyObject *ob, PyTypeObject*);
+int AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type);
+int AMD_PyObject_TypeCheck(PyObject *ob, PyTypeObject*);
 PyObject* AMD_PyObject_GetAttrString(PyObject *, const char *);
-int  AMD_PyObject_SetAttrString(PyObject *, const char *, PyObject *);
-int  AMD_PyObject_HasAttrString(PyObject *, const char *);
-PyObject* PyObject_GetAttr(PyObject *, PyObject *);
-/*PyAPI_FUNC(int) PyObject_SetAttr(PyObject *, PyObject *, PyObject *);
-PyAPI_FUNC(int) PyObject_HasAttr(PyObject *, PyObject *);
-PyAPI_FUNC(PyObject *) PyObject_SelfIter(PyObject *);
-PyAPI_FUNC(PyObject *) PyObject_GenericGetAttr(PyObject *, PyObject *);
-PyAPI_FUNC(int) PyObject_GenericSetAttr(PyObject *, PyObject *, PyObject *);
-#if !defined(Py_LIMITED_API) || Py_LIMITED_API+0 >= 0x03030000
-PyAPI_FUNC(int) PyObject_GenericSetDict(PyObject *, PyObject *, void *);
-#endif
-PyAPI_FUNC(Py_hash_t) PyObject_Hash(PyObject *);
-PyAPI_FUNC(Py_hash_t) PyObject_HashNotImplemented(PyObject *);
-PyAPI_FUNC(int) PyObject_IsTrue(PyObject *);
-PyAPI_FUNC(int) PyObject_Not(PyObject *);
-PyAPI_FUNC(int) PyCallable_Check(PyObject *);
-PyAPI_FUNC(void) PyObject_ClearWeakRefs(PyObject *);
-PyAPI_FUNC(PyObject *) PyObject_CallObject(PyObject *callable,
-                                           PyObject *args);
-*/
+int AMD_PyObject_SetAttrString(PyObject *, const char *, PyObject *);
+int AMD_PyObject_HasAttrString(PyObject *, const char *);
+PyObject* AMD_PyObject_GetAttr(PyObject * ob, PyObject * at);
+int AMD_PyObject_SetAttr(PyObject* a, PyObject* b, PyObject* c);
+int AMD_PyObject_HasAttr(PyObject *, PyObject *);
+PyObject* AMD_PyObject_GenericGetAttr(PyObject * a, PyObject * b);
+int AMD_PyObject_GenericSetAttr(PyObject* a, PyObject* b, PyObject* c);
+int AMD_PyObject_IsTrue(PyObject *);
+int AMD_PyCallable_Check(PyObject *);
+PyObject* AMD_PyObject_CallObject(PyObject *callable, PyObject *args);
 void AMD_PyErr_SetString(PyObject *exception, const char* );
 PyObject* AMD_PyUnicode_FromString(const char *ustr);
 PyObject* AMD_PyUnicode_Decode(
@@ -50,36 +40,28 @@ PyObject* AMD_PyUnicode_Decode(
 PyObject* AMD_PyList_New(int size);
 PyObject* AMD_PyDict_New();
 PyObject* AMD_PyType_GenericNew(PyTypeObject *,PyObject *, PyObject *);
-
+void AMD_PyErr_Clear(void);
 int AMD_PyList_Append(PyObject * ob1, PyObject * ob2);
 int AMD_PyDict_SetItemString(PyObject *dp, const char *key, PyObject *item);
-/* 
-PyType_Ready
-_Py_NoneStruct
+int AMD_PyType_Ready(PyTypeObject *);
+int AMD_PyModule_AddIntConstant(PyObject *, const char *, long);
+int  AMD_PyErr_ExceptionMatches(PyObject *);
+int  AMD_PySequence_Check(PyObject *o);
+Py_ssize_t AMD_PySequence_Size(PyObject *o);
+PyObject * AMD_PySequence_GetItem(PyObject *o, Py_ssize_t i);
+int  AMD_PySequence_DelItem(PyObject *o, Py_ssize_t i);
+PyObject * AMD_PyBool_FromLong(long);
+PyObject * AMD_PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...);
+PyObject * AMD_PyTuple_New(Py_ssize_t size);
+PyAPI_FUNC(PyObject *) AMD_PyList_AsTuple(PyObject *);
+
+/*Py_INCREF  // its define as static :: static inline void _Py_INCREF(PyObject *op)
+Py_DECREF
+_Py_NoneStruct  
 _Py_FalseStruct
-_Py_TrueStruct
+_Py_TrueStruct   //#define Py_True ((PyObject *) &_Py_TrueStruct) ==> PyAPI_DATA(struct _longobject) _Py_TrueStruct;
 _Py_NotImplementedStruct
 _PyObject_CallMethod_SizeT
-PyModule_AddIntConstant
-PyObject_IsTrue
-PyObject_HasAttr
-PyObject_GetAttr
-AMD_PyObject_GetAttrString
-PyObject_CallObject
-PyObject_IsTrue
-PyErr_Clear
-PyErr_ExceptionMatches
-PySequence_Check
-PySequence_Size
-PySequence_GetItem
-PyModule_Create2
-PyImport_GetModuleDict
-PyModule_AddIntConstant
-_PyObject_CallMethod_SizeT
-PySequence_DelItem
-Py_INCREF
-Py_DECREF
-
 */
 
 long AMD_PyLong_AsLong(PyObject *ob);

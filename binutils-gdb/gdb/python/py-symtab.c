@@ -512,11 +512,11 @@ static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_symtabs (void)
 {
   symtab_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&symtab_object_type) < 0)
+  if (AMD_PyType_Ready (&symtab_object_type) < 0)
     return -1;
 
   sal_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&sal_object_type) < 0)
+  if (AMD_PyType_Ready (&sal_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_module, "Symtab",

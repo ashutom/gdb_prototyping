@@ -182,7 +182,7 @@ get_attr (PyObject *obj, PyObject *attr_name)
       return gdbpy_parameter_value (make_setting (self));
     }
 
-  return PyObject_GenericGetAttr (obj, attr_name);
+  return AMD_PyObject_GenericGetAttr (obj, attr_name);
 }
 
 /* Set a parameter value from a Python value.  Return 0 on success.  Returns
@@ -255,7 +255,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 			   _("A boolean argument is required."));
 	  return -1;
 	}
-      cmp = PyObject_IsTrue (value);
+      cmp = AMD_PyObject_IsTrue (value);
       if (cmp < 0)
 	  return -1;
       self->value.boolval = cmp;
@@ -273,7 +273,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	self->value.autoboolval = AUTO_BOOLEAN_AUTO;
       else
 	{
-	  cmp = PyObject_IsTrue (value);
+	  cmp = AMD_PyObject_IsTrue (value);
 	  if (cmp < 0 )
 	    return -1;	
 	  if (cmp == 1)
@@ -299,7 +299,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	    gdb::unique_xmalloc_ptr<char>
 	      str (python_string_to_host_string (value));
 	    const char *s = str != nullptr ? str.get () : nullptr;
-	    PyErr_Clear ();
+	    AMD_PyErr_Clear ();
 
 	    for (const literal_def *l = extra_literals;
 		 l->literal != nullptr;
@@ -403,7 +403,7 @@ set_attr (PyObject *obj, PyObject *attr_name, PyObject *val)
       return set_parameter_value ((parmpy_object *) obj, val);
     }
 
-  return PyObject_GenericSetAttr (obj, attr_name, val);
+  return AMD_PyObject_GenericSetAttr (obj, attr_name, val);
 }
 
 /* Build up the path to command C, but drop the first component of the
@@ -459,9 +459,9 @@ get_doc_string (PyObject *object, enum doc_string_type doc_type,
     }
   gdb_assert (attr != nullptr);
 
-  if (PyObject_HasAttr (object, attr))
+  if (AMD_PyObject_HasAttr (object, attr))
     {
-      gdbpy_ref<> ds_obj (PyObject_GetAttr (object, attr));
+      gdbpy_ref<> ds_obj (AMD_PyObject_GetAttr (object, attr));
 
       if (ds_obj != NULL && gdbpy_is_string (ds_obj.get ()))
 	{
@@ -540,7 +540,7 @@ get_set_value (const char *args, int from_tty,
       return;
     }
 
-  if (PyObject_HasAttr (obj, set_doc_func.get ()))
+  if (AMD_PyObject_HasAttr (obj, set_doc_func.get ()))
     {
       set_doc_string = call_doc_function (obj, set_doc_func.get (), NULL);
       if (! set_doc_string)
@@ -575,7 +575,7 @@ get_show_value (struct ui_file *file, int from_tty,
       return;
     }
 
-  if (PyObject_HasAttr (obj, show_doc_func.get ()))
+  if (AMD_PyObject_HasAttr (obj, show_doc_func.get ()))
     {
       gdbpy_ref<> val_obj (AMD_PyUnicode_FromString (value));
 
@@ -733,14 +733,14 @@ compute_enum_values (parmpy_object *self, PyObject *enum_values)
       return 0;
     }
 
-  if (! PySequence_Check (enum_values))
+  if (! AMD_PySequence_Check (enum_values))
     {
       AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("The enumeration is not a sequence."));
       return 0;
     }
 
-  size = PySequence_Size (enum_values);
+  size = AMD_PySequence_Size (enum_values);
   if (size < 0)
     return 0;
   if (size == 0)
@@ -755,7 +755,7 @@ compute_enum_values (parmpy_object *self, PyObject *enum_values)
 
   for (i = 0; i < size; ++i)
     {
-      gdbpy_ref<> item (PySequence_GetItem (enum_values, i));
+      gdbpy_ref<> item (AMD_PySequence_GetItem (enum_values, i));
 
       if (item == NULL)
 	return 0;
@@ -909,7 +909,7 @@ gdbpy_initialize_parameters (void)
   int i;
 
   parmpy_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&parmpy_object_type) < 0)
+  if (AMD_PyType_Ready (&parmpy_object_type) < 0)
     return -1;
 
   set_doc_cst = AMD_PyUnicode_FromString ("set_doc");
@@ -921,7 +921,7 @@ gdbpy_initialize_parameters (void)
 
   for (i = 0; parm_constants[i].name; ++i)
     {
-      if (PyModule_AddIntConstant (gdb_module,
+      if (AMD_PyModule_AddIntConstant (gdb_module,
 				   parm_constants[i].name,
 				   parm_constants[i].value) < 0)
 	return -1;

@@ -23,12 +23,12 @@
 #include "python-internal.h"
 
 /* Return a pointer to the py_insn_type object (see py-instruction.c), but
-   ensure that PyType_Ready has been called for the type first.  If the
-   PyType_Ready call is successful then subsequent calls to this function
-   will not call PyType_Ready, the type pointer will just be returned.
+   ensure that AMD_PyType_Ready has been called for the type first.  If the
+   AMD_PyType_Ready call is successful then subsequent calls to this function
+   will not call AMD_PyType_Ready, the type pointer will just be returned.
 
-   If the PyType_Ready call is not successful then nullptr is returned and
-   subsequent calls to this function will call PyType_Ready again.  */
+   If the AMD_PyType_Ready call is not successful then nullptr is returned and
+   subsequent calls to this function will call AMD_PyType_Ready again.  */
 
 extern PyTypeObject *py_insn_get_insn_type ();
 

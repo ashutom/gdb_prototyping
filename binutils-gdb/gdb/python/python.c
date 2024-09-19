@@ -361,9 +361,9 @@ eval_python_command (const char *command, int start_symbol,
       /* CPython also just ignores errors here.  These should be
 	 expected to be exceedingly rare anyway.  */
       if (PyDict_DelItemString (d, "__file__") < 0)
-	PyErr_Clear ();
+	AMD_PyErr_Clear ();
       if (PyDict_DelItemString (d, "__cached__") < 0)
-	PyErr_Clear ();
+	AMD_PyErr_Clear ();
 
       if (save_error.has_value ())
 	save_error->restore ();
@@ -659,7 +659,7 @@ execute_gdb_command (PyObject *self, PyObject *args, PyObject *kw)
   bool from_tty = false;
   if (from_tty_obj != nullptr)
     {
-      int cmp = PyObject_IsTrue (from_tty_obj);
+      int cmp = AMD_PyObject_IsTrue (from_tty_obj);
       if (cmp < 0)
 	return nullptr;
       from_tty = (cmp != 0);
@@ -668,7 +668,7 @@ execute_gdb_command (PyObject *self, PyObject *args, PyObject *kw)
   bool to_string = false;
   if (to_string_obj != nullptr)
     {
-      int cmp = PyObject_IsTrue (to_string_obj);
+      int cmp = AMD_PyObject_IsTrue (to_string_obj);
       if (cmp < 0)
 	return nullptr;
       to_string = (cmp != 0);
@@ -799,7 +799,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
   /* Parse minsyms keyword.  */
   if (minsyms_p_obj != NULL)
     {
-      int cmp = PyObject_IsTrue (minsyms_p_obj);
+      int cmp = AMD_PyObject_IsTrue (minsyms_p_obj);
       if (cmp < 0)
 	return NULL;
       minsyms_p = cmp;
@@ -910,7 +910,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
 	symbol_name = p.msymbol.minsym->linkage_name ();
 
       gdbpy_ref<> argList (Py_BuildValue("(s)", symbol_name.c_str ()));
-      gdbpy_ref<> obj (PyObject_CallObject ((PyObject *)
+      gdbpy_ref<> obj (AMD_PyObject_CallObject ((PyObject *)
 					    &breakpoint_object_type,
 					    argList.get ()));
 
@@ -977,7 +977,7 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
 
   if (!sals.empty ())
     {
-      result.reset (PyTuple_New (sals.size ()));
+      result.reset (AMD_PyTuple_New (sals.size ()));
       if (result == NULL)
 	return NULL;
       for (size_t i = 0; i < sals.size (); ++i)
@@ -992,7 +992,7 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
   else
     result = gdbpy_ref<>::new_reference (Py_None);
 
-  gdbpy_ref<> return_result (PyTuple_New (2));
+  gdbpy_ref<> return_result (AMD_PyTuple_New (2));
   if (return_result == NULL)
     return NULL;
 
@@ -1028,7 +1028,7 @@ gdbpy_parse_and_eval (PyObject *self, PyObject *args, PyObject *kw)
   parser_flags flags = 0;
   if (global_context_obj != NULL)
     {
-      int cmp = PyObject_IsTrue (global_context_obj);
+      int cmp = AMD_PyObject_IsTrue (global_context_obj);
       if (cmp < 0)
 	return nullptr;
       if (cmp)
@@ -1121,7 +1121,7 @@ struct gdbpy_event
   {
     gdbpy_enter enter_py;
 
-    gdbpy_ref<> call_result (PyObject_CallObject (m_func, NULL));
+    gdbpy_ref<> call_result (AMD_PyObject_CallObject (m_func, NULL));
     if (call_result == NULL)
       gdbpy_print_stack ();
   }
@@ -1143,7 +1143,7 @@ gdbpy_post_event (PyObject *self, PyObject *args)
   if (!PyArg_ParseTuple (args, "O", &func))
     return NULL;
 
-  if (!PyCallable_Check (func))
+  if (!AMD_PyCallable_Check (func))
     {
       AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
 		       _("Posted event is not callable"));
@@ -1202,7 +1202,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	  return EXT_LANG_RC_ERROR;
 	}
 
-      if (PyCallable_Check (hook.get ()))
+      if (AMD_PyCallable_Check (hook.get ()))
 	{
 	  gdbpy_ref<> current_prompt (AMD_PyUnicode_FromString (current_gdb_prompt));
 	  if (current_prompt == NULL)
@@ -1279,7 +1279,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
       return {};
     }
 
-  if (!PyCallable_Check (hook.get ()))
+  if (!AMD_PyCallable_Check (hook.get ()))
     return {};
 
   gdbpy_ref<> fname_arg (AMD_PyUnicode_FromString (filename.c_str ()));
@@ -1357,7 +1357,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
       return {};
     }
 
-  if (!PyCallable_Check (hook.get ()))
+  if (!AMD_PyCallable_Check (hook.get ()))
     return {};
 
   gdbpy_ref<> content_arg (PyBytes_FromString (content.c_str ()));
@@ -1596,7 +1596,7 @@ gdbpy_print_stack (void)
   /* Print "none", just clear exception.  */
   if (gdbpy_should_print_stack == python_excp_none)
     {
-      PyErr_Clear ();
+      AMD_PyErr_Clear ();
     }
   /* Print "full" message and backtrace.  */
   else if (gdbpy_should_print_stack == python_excp_full)
@@ -1634,7 +1634,7 @@ gdbpy_print_stack (void)
 	      gdb_printf (gdb_stderr,
 			  _("Error occurred computing Python error "
 			    "message.\n"));
-	      PyErr_Clear ();
+	      AMD_PyErr_Clear ();
 	    }
 	  else
 	    gdb_printf (gdb_stderr, "Python Exception %s: %s\n",
@@ -1652,9 +1652,9 @@ gdbpy_print_stack (void)
 void
 gdbpy_print_stack_or_quit ()
 {
-  if (PyErr_ExceptionMatches (PyExc_KeyboardInterrupt))
+  if (AMD_PyErr_ExceptionMatches (PyExc_KeyboardInterrupt))
     {
-      PyErr_Clear ();
+      AMD_PyErr_Clear ();
       throw_quit ("Quit");
     }
   gdbpy_print_stack ();
@@ -1805,7 +1805,7 @@ gdbpy_handle_missing_debuginfo (const struct extension_language_defn *extlang,
 
   if (PyBool_Check (pyo_execute_ret.get ()))
     {
-      bool try_again = PyObject_IsTrue (pyo_execute_ret.get ());
+      bool try_again = AMD_PyObject_IsTrue (pyo_execute_ret.get ());
       return ext_lang_missing_debuginfo_result (try_again);
     }
 
@@ -2288,9 +2288,9 @@ init_done:
     return false;
 
   /* Add stream constants.  */
-  if (PyModule_AddIntConstant (gdb_module, "STDOUT", 0) < 0
-      || PyModule_AddIntConstant (gdb_module, "STDERR", 1) < 0
-      || PyModule_AddIntConstant (gdb_module, "STDLOG", 2) < 0)
+  if (AMD_PyModule_AddIntConstant (gdb_module, "STDOUT", 0) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "STDERR", 1) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "STDLOG", 2) < 0)
     return false;
 
   gdbpy_gdb_error = PyErr_NewException ("gdb.error", PyExc_RuntimeError, NULL);

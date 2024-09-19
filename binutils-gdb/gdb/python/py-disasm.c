@@ -650,7 +650,7 @@ disasmpy_set_enabled (PyObject *self, PyObject *args, PyObject *kw)
       return nullptr;
     }
 
-  python_print_insn_enabled = PyObject_IsTrue (newstate);
+  python_print_insn_enabled = AMD_PyObject_IsTrue (newstate);
   Py_RETURN_NONE;
 }
 
@@ -867,9 +867,9 @@ gdbpy_disassembler::read_memory_func (bfd_vma memaddr, gdb_byte *buff,
 	 Remember, the disassembler might just be probing to see if these
 	 bytes can be read, if we automatically call the memory error
 	 function, we can end up registering an error prematurely.  */
-      if (PyErr_ExceptionMatches (gdbpy_gdb_memory_error))
+      if (AMD_PyErr_ExceptionMatches (gdbpy_gdb_memory_error))
 	{
-	  PyErr_Clear ();
+	  AMD_PyErr_Clear ();
 	  return -1;
 	}
 
@@ -1043,14 +1043,14 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
     }
   else
     {
-      if (!PySequence_Check (parts_list))
+      if (!AMD_PySequence_Check (parts_list))
 	{
 	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
 			   _("'parts' argument is not a sequence"));
 	  return -1;
 	}
 
-      Py_ssize_t parts_count = PySequence_Size (parts_list);
+      Py_ssize_t parts_count = AMD_PySequence_Size (parts_list);
       if (parts_count <= 0)
 	{
 	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
@@ -1064,7 +1064,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
       struct gdbarch *gdbarch = nullptr;
       for (Py_ssize_t i = 0; i < parts_count; ++i)
 	{
-	  gdbpy_ref<> part (PySequence_GetItem (parts_list, i));
+	  gdbpy_ref<> part (AMD_PySequence_GetItem (parts_list, i));
 
 	  if (part == nullptr)
 	    return -1;
@@ -1270,7 +1270,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
 	 an unknown error (return -1 without first calling the
 	 memory_error_func callback).  */
 
-      if (PyErr_ExceptionMatches (gdbpy_gdb_memory_error))
+      if (AMD_PyErr_ExceptionMatches (gdbpy_gdb_memory_error))
 	{
 	  /* A gdb.MemoryError might have an address attribute which
 	     contains the address at which the memory error occurred.  If
@@ -1278,7 +1278,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
 	     just using the address of the instruction we were asked to
 	     disassemble.  */
 	  gdbpy_err_fetch err;
-	  PyErr_Clear ();
+	  AMD_PyErr_Clear ();
 
 	  CORE_ADDR addr;
 	  if (err.value () != nullptr
@@ -1295,7 +1295,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
 	  info->memory_error_func (-1, addr, info);
 	  return std::optional<int> (-1);
 	}
-      else if (PyErr_ExceptionMatches (gdbpy_gdberror_exc))
+      else if (AMD_PyErr_ExceptionMatches (gdbpy_gdberror_exc))
 	{
 	  gdbpy_err_fetch err;
 	  gdb::unique_xmalloc_ptr<char> msg = err.to_string ();
@@ -1658,12 +1658,12 @@ gdbpy_initialize_disasm ()
   for (int i = 0; i <= (int) dis_style_comment_start; ++i)
     {
       const char *style_name = get_style_name ((enum disassembler_style) i);
-      if (PyModule_AddIntConstant (gdb_disassembler_module, style_name, i) < 0)
+      if (AMD_PyModule_AddIntConstant (gdb_disassembler_module, style_name, i) < 0)
 	return -1;
     }
 
   disasm_info_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&disasm_info_object_type) < 0)
+  if (AMD_PyType_Ready (&disasm_info_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_disassembler_module, "DisassembleInfo",
@@ -1671,7 +1671,7 @@ gdbpy_initialize_disasm ()
     return -1;
 
   disasm_result_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&disasm_result_object_type) < 0)
+  if (AMD_PyType_Ready (&disasm_result_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_disassembler_module, "DisassemblerResult",
@@ -1679,7 +1679,7 @@ gdbpy_initialize_disasm ()
     return -1;
 
   disasm_part_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&disasm_part_object_type) < 0)
+  if (AMD_PyType_Ready (&disasm_part_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_disassembler_module, "DisassemblerPart",
@@ -1687,7 +1687,7 @@ gdbpy_initialize_disasm ()
     return -1;
 
   disasm_addr_part_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&disasm_addr_part_object_type) < 0)
+  if (AMD_PyType_Ready (&disasm_addr_part_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_disassembler_module,
@@ -1696,7 +1696,7 @@ gdbpy_initialize_disasm ()
     return -1;
 
   disasm_text_part_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&disasm_text_part_object_type) < 0)
+  if (AMD_PyType_Ready (&disasm_text_part_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_disassembler_module,

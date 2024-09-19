@@ -276,7 +276,7 @@ archpy_integer_type (PyObject *self, PyObject *args, PyObject *kw)
 
   /* Assume signed by default.  */
   bool is_signed = (is_signed_obj == nullptr
-		    || PyObject_IsTrue (is_signed_obj));
+		    || AMD_PyObject_IsTrue (is_signed_obj));
 
   struct gdbarch *gdbarch;
   ARCHPY_REQUIRE_VALID (self, gdbarch);
@@ -360,7 +360,7 @@ static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_arch (void)
 {
   arch_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&arch_object_type) < 0)
+  if (AMD_PyType_Ready (&arch_object_type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, "Architecture",

@@ -107,7 +107,7 @@ cmdpy_function (const char *args, int from_tty, cmd_list_element *command)
 
   if (! obj)
     error (_("Invalid invocation of Python command object."));
-  if (! PyObject_HasAttr ((PyObject *) obj, invoke_cst))
+  if (! AMD_PyObject_HasAttr ((PyObject *) obj, invoke_cst))
     {
       if (obj->command->is_prefix ())
 	{
@@ -127,7 +127,7 @@ cmdpy_function (const char *args, int from_tty, cmd_list_element *command)
       error (_("Could not convert arguments to Python string."));
     }
 
-  gdbpy_ref<> ttyobj (PyBool_FromLong (from_tty));
+  gdbpy_ref<> ttyobj (AMD_PyBool_FromLong (from_tty));
   gdbpy_ref<> result (PyObject_CallMethodObjArgs ((PyObject *) obj, invoke_cst,
 						  argobj.get (), ttyobj.get (),
 						  NULL));
@@ -173,7 +173,7 @@ cmdpy_completer_helper (struct cmd_list_element *command,
 
   if (obj == NULL)
     error (_("Invalid invocation of Python command object."));
-  if (!PyObject_HasAttr ((PyObject *) obj, complete_cst))
+  if (!AMD_PyObject_HasAttr ((PyObject *) obj, complete_cst))
     {
       /* If there is no complete method, don't error.  */
       return NULL;
@@ -291,7 +291,7 @@ cmdpy_completer (struct cmd_list_element *command,
       else if (value >= 0 && value < (long) N_COMPLETERS)
 	completers[value].completer (command, tracker, text, word);
     }
-  else if (PySequence_Check (resultobj.get ()))
+  else if (AMD_PySequence_Check (resultobj.get ()))
     {
       gdbpy_ref<> iter (PyObject_GetIter (resultobj.get ()));
 
@@ -476,7 +476,7 @@ cmdpy_init (PyObject *self, PyObject *args, PyObject *kw)
 
   if (is_prefix_obj != NULL)
     {
-      int cmp = PyObject_IsTrue (is_prefix_obj);
+      int cmp = AMD_PyObject_IsTrue (is_prefix_obj);
       if (cmp < 0)
 	return -1;
 
@@ -484,9 +484,9 @@ cmdpy_init (PyObject *self, PyObject *args, PyObject *kw)
     }
 
   gdb::unique_xmalloc_ptr<char> docstring = nullptr;
-  if (PyObject_HasAttr (self, gdbpy_doc_cst))
+  if (AMD_PyObject_HasAttr (self, gdbpy_doc_cst))
     {
-      gdbpy_ref<> ds_obj (PyObject_GetAttr (self, gdbpy_doc_cst));
+      gdbpy_ref<> ds_obj (AMD_PyObject_GetAttr (self, gdbpy_doc_cst));
 
       if (ds_obj != NULL && gdbpy_is_string (ds_obj.get ()))
 	{
@@ -511,7 +511,7 @@ cmdpy_init (PyObject *self, PyObject *args, PyObject *kw)
 
 	  /* If we have our own "invoke" method, then allow unknown
 	     sub-commands.  */
-	  allow_unknown = PyObject_HasAttr (self, invoke_cst);
+	  allow_unknown = AMD_PyObject_HasAttr (self, invoke_cst);
 	  cmd = add_prefix_cmd (cmd_name.get (),
 				(enum command_class) cmdtype,
 				NULL, docstring.release (), &obj->sub_list,
@@ -557,33 +557,33 @@ gdbpy_initialize_commands (void)
   int i;
 
   cmdpy_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&cmdpy_object_type) < 0)
+  if (AMD_PyType_Ready (&cmdpy_object_type) < 0)
     return -1;
 
   /* Note: alias and user are special.  */
-  if (PyModule_AddIntConstant (gdb_module, "COMMAND_NONE", no_class) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_RUNNING", class_run) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_DATA", class_vars) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_STACK", class_stack) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_FILES", class_files) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_SUPPORT",
+  if (AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_NONE", no_class) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_RUNNING", class_run) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_DATA", class_vars) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_STACK", class_stack) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_FILES", class_files) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_SUPPORT",
 				  class_support) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_STATUS", class_info) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_BREAKPOINTS",
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_STATUS", class_info) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_BREAKPOINTS",
 				  class_breakpoint) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_TRACEPOINTS",
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_TRACEPOINTS",
 				  class_trace) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_OBSCURE",
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_OBSCURE",
 				  class_obscure) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_MAINTENANCE",
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_MAINTENANCE",
 				  class_maintenance) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_USER", class_user) < 0
-      || PyModule_AddIntConstant (gdb_module, "COMMAND_TUI", class_tui) < 0)
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_USER", class_user) < 0
+      || AMD_PyModule_AddIntConstant (gdb_module, "COMMAND_TUI", class_tui) < 0)
     return -1;
 
   for (i = 0; i < N_COMPLETERS; ++i)
     {
-      if (PyModule_AddIntConstant (gdb_module, completers[i].name, i) < 0)
+      if (AMD_PyModule_AddIntConstant (gdb_module, completers[i].name, i) < 0)
 	return -1;
     }
 

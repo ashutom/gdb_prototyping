@@ -427,7 +427,7 @@ static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_registers ()
 {
   register_descriptor_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&register_descriptor_object_type) < 0)
+  if (AMD_PyType_Ready (&register_descriptor_object_type) < 0)
     return -1;
   if (gdb_pymodule_addobject
       (gdb_module, "RegisterDescriptor",
@@ -435,7 +435,7 @@ gdbpy_initialize_registers ()
     return -1;
 
   reggroup_iterator_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&reggroup_iterator_object_type) < 0)
+  if (AMD_PyType_Ready (&reggroup_iterator_object_type) < 0)
     return -1;
   if (gdb_pymodule_addobject
       (gdb_module, "RegisterGroupsIterator",
@@ -443,7 +443,7 @@ gdbpy_initialize_registers ()
     return -1;
 
   reggroup_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&reggroup_object_type) < 0)
+  if (AMD_PyType_Ready (&reggroup_object_type) < 0)
     return -1;
   if (gdb_pymodule_addobject
       (gdb_module, "RegisterGroup",
@@ -451,7 +451,7 @@ gdbpy_initialize_registers ()
     return -1;
 
   register_descriptor_iterator_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&register_descriptor_iterator_object_type) < 0)
+  if (AMD_PyType_Ready (&register_descriptor_iterator_object_type) < 0)
     return -1;
   return (gdb_pymodule_addobject
 	  (gdb_module, "RegisterDescriptorIterator",

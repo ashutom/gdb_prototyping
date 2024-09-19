@@ -68,7 +68,7 @@ int
 gdbpy_initialize_event_generic (PyTypeObject *type,
 				const char *name)
 {
-  if (PyType_Ready (type) < 0)
+  if (AMD_PyType_Ready (type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, name, (PyObject *) type);

@@ -650,7 +650,7 @@ emit_executable_changed_event (eventregistry_object *registry,
 			     py_pspace.get ()) < 0)
     return -1;
 
-  gdbpy_ref<> py_reload_p (PyBool_FromLong (reload_p ? 1 : 0));
+  gdbpy_ref<> py_reload_p (AMD_PyBool_FromLong (reload_p ? 1 : 0));
   if (py_reload_p == nullptr
       || evpy_add_attribute (event_obj.get (), "reload",
 			     py_reload_p.get ()) < 0)
@@ -747,7 +747,7 @@ gdbpy_initialize_pspace (void)
   gdb::observers::free_program_space.attach (gdbpy_free_program_space_event,
 					     "py-progspace");
 
-  if (PyType_Ready (&pspace_object_type) < 0)
+  if (AMD_PyType_Ready (&pspace_object_type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, "Progspace",

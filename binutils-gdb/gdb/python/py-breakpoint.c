@@ -194,7 +194,7 @@ bppy_set_enabled (PyObject *self, PyObject *newvalue, void *closure)
       return -1;
     }
 
-  cmp = PyObject_IsTrue (newvalue);
+  cmp = AMD_PyObject_IsTrue (newvalue);
   if (cmp < 0)
     return -1;
 
@@ -235,7 +235,7 @@ bppy_set_silent (PyObject *self, PyObject *newvalue, void *closure)
       return -1;
     }
 
-  cmp = PyObject_IsTrue (newvalue);
+  cmp = AMD_PyObject_IsTrue (newvalue);
   if (cmp < 0)
     return -1;
   else
@@ -954,14 +954,14 @@ bppy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 
   if (internal)
     {
-      internal_bp = PyObject_IsTrue (internal);
+      internal_bp = AMD_PyObject_IsTrue (internal);
       if (internal_bp == -1)
 	return -1;
     }
 
   if (temporary != NULL)
     {
-      temporary_bp = PyObject_IsTrue (temporary);
+      temporary_bp = AMD_PyObject_IsTrue (temporary);
       if (temporary_bp == -1)
 	return -1;
     }
@@ -983,7 +983,7 @@ bppy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 	  {
 	    location_spec_up locspec;
 	    symbol_name_match_type func_name_match_type
-	      = (qualified != NULL && PyObject_IsTrue (qualified)
+	      = (qualified != NULL && AMD_PyObject_IsTrue (qualified)
 		  ? symbol_name_match_type::FULL
 		  : symbol_name_match_type::WILD);
 
@@ -1114,10 +1114,10 @@ gdbpy_breakpoint_init_breakpoint_type ()
   if (breakpoint_object_type.tp_new == nullptr)
     {
       breakpoint_object_type.tp_new = AMD_PyType_GenericNew;
-      if (PyType_Ready (&breakpoint_object_type) < 0)
+      if (AMD_PyType_Ready (&breakpoint_object_type) < 0)
 	{
 	  /* Reset tp_new back to nullptr so future calls to this function
-	     will try calling PyType_Ready again.  */
+	     will try calling AMD_PyType_Ready again.  */
 	  breakpoint_object_type.tp_new = nullptr;
 	  return false;
 	}
@@ -1132,7 +1132,7 @@ PyObject *
 gdbpy_breakpoints (PyObject *self, PyObject *args)
 {
   if (bppy_live == 0)
-    return PyTuple_New (0);
+    return AMD_PyTuple_New (0);
 
   gdbpy_ref<> list (AMD_PyList_New (0));
   if (list == NULL)
@@ -1144,7 +1144,7 @@ gdbpy_breakpoints (PyObject *self, PyObject *args)
     if (!build_bp_list (&bp, list.get ()))
       return nullptr;
 
-  return PyList_AsTuple (list.get ());
+  return AMD_PyList_AsTuple (list.get ());
 }
 
 /* Call the "stop" method (if implemented) in the breakpoint
@@ -1177,7 +1177,7 @@ gdbpy_breakpoint_cond_says_stop (const struct extension_language_defn *extlang,
       stop = 1;
       if (result != NULL)
 	{
-	  int evaluate = PyObject_IsTrue (result.get ());
+	  int evaluate = AMD_PyObject_IsTrue (result.get ());
 
 	  if (evaluate == -1)
 	    gdbpy_print_stack ();
@@ -1373,7 +1373,7 @@ gdbpy_initialize_breakpoints (void)
   /* Add breakpoint types constants.  */
   for (i = 0; pybp_codes[i].name; ++i)
     {
-      if (PyModule_AddIntConstant (gdb_module, pybp_codes[i].name,
+      if (AMD_PyModule_AddIntConstant (gdb_module, pybp_codes[i].name,
 				   pybp_codes[i].code) < 0)
 	return -1;
     }
@@ -1381,7 +1381,7 @@ gdbpy_initialize_breakpoints (void)
   /* Add watchpoint types constants.  */
   for (i = 0; pybp_watch_types[i].name; ++i)
     {
-      if (PyModule_AddIntConstant (gdb_module, pybp_watch_types[i].name,
+      if (AMD_PyModule_AddIntConstant (gdb_module, pybp_watch_types[i].name,
 				   pybp_watch_types[i].code) < 0)
 	return -1;
     }
@@ -1394,7 +1394,7 @@ gdbpy_initialize_breakpoints (void)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_breakpoint_locations ()
 {
-  if (PyType_Ready (&breakpoint_location_object_type) < 0)
+  if (AMD_PyType_Ready (&breakpoint_location_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_module, "BreakpointLocation",
@@ -1407,7 +1407,7 @@ gdbpy_initialize_breakpoint_locations ()
 
 
 /* Helper function that overrides this Python object's
-   PyObject_GenericSetAttr to allow extra validation of the attribute
+   AMD_PyObject_GenericSetAttr to allow extra validation of the attribute
    being set.  */
 
 static int
@@ -1442,7 +1442,7 @@ local_setattro (PyObject *self, PyObject *name, PyObject *v)
 	}
     }
 
-  return PyObject_GenericSetAttr (self, name, v);
+  return AMD_PyObject_GenericSetAttr (self, name, v);
 }
 
 static gdb_PyGetSetDef breakpoint_object_getset[] = {
@@ -1585,7 +1585,7 @@ bplocpy_set_enabled (PyObject *py_self, PyObject *newvalue, void *closure)
       return -1;
     }
 
-  int cmp = PyObject_IsTrue (newvalue);
+  int cmp = AMD_PyObject_IsTrue (newvalue);
   if (cmp < 0)
     return -1;
 
@@ -1650,7 +1650,7 @@ bplocpy_get_source_location (PyObject *py_self, void *closure)
   BPLOCPY_REQUIRE_VALID (self->owner, self);
   if (self->bp_loc->symtab)
     {
-      gdbpy_ref<> tup (PyTuple_New (2));
+      gdbpy_ref<> tup (AMD_PyTuple_New (2));
       if (tup == nullptr)
 	return nullptr;
       /* symtab->filename is never NULL. */

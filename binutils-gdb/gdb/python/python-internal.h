@@ -176,7 +176,7 @@ struct gdbpy_method_format<unsigned>
   static constexpr char format = 'I';
 };
 
-/* A helper function to compute the PyObject_CallMethod /
+/* A helper function to compute the AMD_PyObject_CallMethod /
    Py_BuildValue format given the argument types.  */
 
 template<typename... Args>
@@ -186,21 +186,21 @@ gdbpy_make_fmt ()
   return { gdbpy_method_format<Args>::format..., '\0' };
 }
 
-/* Typesafe wrapper around PyObject_CallMethod.
+/* Typesafe wrapper around AMD_PyObject_CallMethod.
 
    This variant accepts no arguments.  */
 
 static inline gdbpy_ref<>
 gdbpy_call_method (PyObject *o, const char *method)
 {
-  /* PyObject_CallMethod's 'method' and 'format' parameters were missing the
+  /* AMD_PyObject_CallMethod's 'method' and 'format' parameters were missing the
      'const' qualifier before Python 3.4.  */
-  return gdbpy_ref<> (PyObject_CallMethod (o,
+  return gdbpy_ref<> (AMD_PyObject_CallMethod (o,
 					   const_cast<char *> (method),
 					   nullptr));
 }
 
-/* Typesafe wrapper around PyObject_CallMethod.
+/* Typesafe wrapper around AMD_PyObject_CallMethod.
 
    This variant accepts any number of arguments and automatically
    computes the format string, ensuring that format/argument
@@ -213,9 +213,9 @@ gdbpy_call_method (PyObject *o, const char *method,
 {
   constexpr const auto fmt = gdbpy_make_fmt<Arg, Args...> ();
 
-  /* PyObject_CallMethod's 'method' and 'format' parameters were missing the
+  /* AMD_PyObject_CallMethod's 'method' and 'format' parameters were missing the
      'const' qualifier before Python 3.4.  */
-  return gdbpy_ref<> (PyObject_CallMethod (o,
+  return gdbpy_ref<> (AMD_PyObject_CallMethod (o,
 					   const_cast<char *> (method),
 					   const_cast<char *> (fmt.data ()),
 					   arg, args...));
@@ -230,13 +230,13 @@ gdbpy_call_method (const gdbpy_ref<> &o, const char *method, Args... args)
   return gdbpy_call_method (o.get (), method, args...);
 }
 
-/* Poison PyObject_CallMethod.  The typesafe wrapper gdbpy_call_method should be
+/* Poison AMD_PyObject_CallMethod.  The typesafe wrapper gdbpy_call_method should be
    used instead.  */
-#undef PyObject_CallMethod
+#undef AMD_PyObject_CallMethod
 #ifdef __GNUC__
-# pragma GCC poison PyObject_CallMethod
+# pragma GCC poison AMD_PyObject_CallMethod
 #else
-# define PyObject_CallMethod POISONED_PyObject_CallMethod
+# define AMD_PyObject_CallMethod POISONED_PyObject_CallMethod
 #endif
 
 /* The 'name' parameter of PyErr_NewException was missing the 'const'
@@ -335,7 +335,7 @@ gdb_PyArg_ParseTupleAndKeywords (PyObject *args, PyObject *kw,
   va_start (ap, keywords);
   /* Ashutosh : replacing the API with AMD API 
 
-  res = PyArg_VaParseTupleAndKeywords (args, kw, format,
+  res = AMD_PyArg_VaParseTupleAndKeywords (args, kw, format,
 				       const_cast<char **> (keywords),
 				       ap);
   */

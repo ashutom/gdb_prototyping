@@ -415,7 +415,7 @@ infpy_threads (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  tuple = PyTuple_New (inf_obj->threads->size ());
+  tuple = AMD_PyTuple_New (inf_obj->threads->size ());
   if (!tuple)
     return NULL;
 
@@ -527,7 +527,7 @@ gdbpy_inferiors (PyObject *unused, PyObject *unused2)
 	return NULL;
     }
 
-  return PyList_AsTuple (list.get ());
+  return AMD_PyList_AsTuple (list.get ());
 }
 
 /* Membuf and memory manipulation.  */
@@ -908,10 +908,10 @@ infpy_set_args (PyObject *self, PyObject *value, void *closure)
 	return -1;
       inf->inferior->set_args (std::string (str.get ()));
     }
-  else if (PySequence_Check (value))
+  else if (AMD_PySequence_Check (value))
     {
       std::vector<gdb::unique_xmalloc_ptr<char>> args;
-      Py_ssize_t len = PySequence_Size (value);
+      Py_ssize_t len = AMD_PySequence_Size (value);
       if (len == -1)
 	return -1;
       for (Py_ssize_t i = 0; i < len; ++i)
@@ -1009,7 +1009,7 @@ gdbpy_selected_inferior (PyObject *self, PyObject *args)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_inferior (void)
 {
-  if (PyType_Ready (&inferior_object_type) < 0)
+  if (AMD_PyType_Ready (&inferior_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_module, "Inferior",

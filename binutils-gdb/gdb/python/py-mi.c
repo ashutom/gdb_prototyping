@@ -262,10 +262,10 @@ serialize_mi_result_1 (PyObject *result, const char *field_name)
 	  serialize_mi_result_1 (value, key_string.get ());
 	}
     }
-  else if (PySequence_Check (result) && !PyUnicode_Check (result))
+  else if (AMD_PySequence_Check (result) && !PyUnicode_Check (result))
     {
       ui_out_emit_list list_emitter (uiout, field_name);
-      Py_ssize_t len = PySequence_Size (result);
+      Py_ssize_t len = AMD_PySequence_Size (result);
       if (len == -1)
 	gdbpy_handle_exception ();
       for (Py_ssize_t i = 0; i < len; ++i)

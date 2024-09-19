@@ -39,7 +39,7 @@ static gdbpy_ref<>
 convert_values_to_python (int argc, struct value **argv)
 {
   int i;
-  gdbpy_ref<> result (PyTuple_New (argc));
+  gdbpy_ref<> result (AMD_PyTuple_New (argc));
 
   if (result == NULL)
     return NULL;
@@ -137,7 +137,7 @@ static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_functions (void)
 {
   fnpy_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&fnpy_object_type) < 0)
+  if (AMD_PyType_Ready (&fnpy_object_type) < 0)
     return -1;
 
   return gdb_pymodule_addobject (gdb_module, "Function",

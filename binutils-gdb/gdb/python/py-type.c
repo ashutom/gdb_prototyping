@@ -195,12 +195,12 @@ convert_field (struct type *type, int field)
   if (AMD_PyObject_SetAttrString (result.get (), "name", arg.get ()) < 0)
     return NULL;
 
-  arg.reset (PyBool_FromLong (type->field (field).is_artificial ()));
+  arg.reset (AMD_PyBool_FromLong (type->field (field).is_artificial ()));
   if (AMD_PyObject_SetAttrString (result.get (), "artificial", arg.get ()) < 0)
     return NULL;
 
   if (type->code () == TYPE_CODE_STRUCT)
-    arg.reset (PyBool_FromLong (field < TYPE_N_BASECLASSES (type)));
+    arg.reset (AMD_PyBool_FromLong (field < TYPE_N_BASECLASSES (type)));
   else
     arg = gdbpy_ref<>::new_reference (Py_False);
   if (AMD_PyObject_SetAttrString (result.get (), "is_base_class", arg.get ()) < 0)
@@ -260,7 +260,7 @@ make_fielditem (struct type *type, int i, enum gdbpy_iter_kind kind)
 	gdbpy_ref<> value = convert_field (type, i);
 	if (value == NULL)
 	  return NULL;
-	gdbpy_ref<> item (PyTuple_New (2));
+	gdbpy_ref<> item (AMD_PyTuple_New (2));
 	if (item == NULL)
 	  return NULL;
 	PyTuple_SET_ITEM (item.get (), 0, key.release ());
@@ -675,7 +675,7 @@ typy_range (PyObject *self, PyObject *args)
   if (high_bound == NULL)
     return NULL;
 
-  gdbpy_ref<> result (PyTuple_New (2));
+  gdbpy_ref<> result (AMD_PyTuple_New (2));
   if (result == NULL)
     return NULL;
 
@@ -1318,10 +1318,10 @@ typy_get (PyObject *self, PyObject *args)
   /* typy_getitem returned error status.  If the exception is
      KeyError, clear the exception status and return the defval
      instead.  Otherwise return the exception unchanged.  */
-  if (!PyErr_ExceptionMatches (PyExc_KeyError))
+  if (!AMD_PyErr_ExceptionMatches (PyExc_KeyError))
     return NULL;
 
-  PyErr_Clear ();
+  AMD_PyErr_Clear ();
   Py_INCREF (defval);
   return defval;
 }
@@ -1524,16 +1524,16 @@ gdbpy_lookup_type (PyObject *self, PyObject *args, PyObject *kw)
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_types (void)
 {
-  if (PyType_Ready (&type_object_type) < 0)
+  if (AMD_PyType_Ready (&type_object_type) < 0)
     return -1;
-  if (PyType_Ready (&field_object_type) < 0)
+  if (AMD_PyType_Ready (&field_object_type) < 0)
     return -1;
-  if (PyType_Ready (&type_iterator_object_type) < 0)
+  if (AMD_PyType_Ready (&type_iterator_object_type) < 0)
     return -1;
 
   for (const auto &item : pyty_codes)
     {
-      if (PyModule_AddIntConstant (gdb_module, item.name, item.code) < 0)
+      if (AMD_PyModule_AddIntConstant (gdb_module, item.name, item.code) < 0)
 	return -1;
     }
 

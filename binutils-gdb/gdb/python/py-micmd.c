@@ -447,7 +447,7 @@ static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_micommands ()
 {
   micmdpy_object_type.tp_new = AMD_PyType_GenericNew;
-  if (PyType_Ready (&micmdpy_object_type) < 0)
+  if (AMD_PyType_Ready (&micmdpy_object_type) < 0)
     return -1;
 
   if (gdb_pymodule_addobject (gdb_module, "MICommand",
@@ -514,7 +514,7 @@ micmdpy_set_installed (PyObject *self, PyObject *newvalue, void *closure)
 {
   struct micmdpy_object *micmd_obj = (struct micmdpy_object *) self;
 
-  bool installed_p = PyObject_IsTrue (newvalue);
+  bool installed_p = AMD_PyObject_IsTrue (newvalue);
   if (installed_p == (micmd_obj->mi_command != nullptr))
     return 0;
 
