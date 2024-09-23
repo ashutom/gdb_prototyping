@@ -645,7 +645,8 @@ CPPFLAGS =
 # are sometimes a little generic, we think that the risk of collision
 # with other header files is high.  If that happens, we try to mitigate
 # a bit the consequences by putting the Python includes last in the list.
-INTERNAL_CPPFLAGS = $(CPPFLAGS)  -I/usr/include/python3.9 -I/usr/include/python3.9 -Iamd_python_wrapper \
+INTERNAL_CPPFLAGS = $(CPPFLAGS)  -I/usr/include/python3.9 -I$(srcdir)/amd_python_wrapper \
+#INTERNAL_CPPFLAGS = $(CPPFLAGS)  -I/usr/include/python3.9 -Iamd_python_wrapper \
 	
 
 # INTERNAL_CFLAGS is the aggregate of all other *CFLAGS macros.
