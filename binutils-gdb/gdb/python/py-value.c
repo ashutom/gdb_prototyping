@@ -1933,7 +1933,7 @@ valpy_float (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyFloat_FromDouble (d);
+  return AMD_PyFloat_FromDouble (d);
 }
 
 /* Returns an object for a value, without releasing it from the
@@ -2027,7 +2027,7 @@ convert_value_from_python (PyObject *obj)
 	}
       else if (PyFloat_Check (obj))
 	{
-	  double d = PyFloat_AsDouble (obj);
+	  double d = AMD_PyFloat_AsDouble (obj);
 
 	  if (! PyErr_Occurred ())
 	    value = value_from_host_double (builtin_type_pyfloat, d);

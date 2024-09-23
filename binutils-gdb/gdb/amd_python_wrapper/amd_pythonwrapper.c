@@ -730,3 +730,111 @@ void AMD_PyErr_Print(void){
    fp = (pyerr_clear) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (); //execute   
 }
+PyObject* AMD_PyFloat_FromDouble(double val){
+   char funname[]="PyFloat_FromDouble";
+   pyfloat_fromdouble fp =  NULL;
+   fp = (pyfloat_fromdouble) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (val); //execute
+}
+double AMD_PyFloat_AsDouble(PyObject * ob){
+   char funname[]="PyFloat_AsDouble";
+   pyfloat_asdouble fp =  NULL;
+   fp = (pyfloat_asdouble) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob); //execute
+}
+PyObject* AMD_PySequence_Concat(PyObject *o1, PyObject *o2){
+   char funname[]="PySequence_Concat";
+   pytobj_getattr fp =  NULL;
+   fp = (pytobj_getattr) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (o1,o2); //execute   
+}
+PyObject * AMD_PySys_GetObject(const char * str){
+   char funname[]="PySys_GetObject";
+   py_convert_str_to_pyobj fp =  NULL;
+   fp = (py_convert_str_to_pyobj) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (str); //execute   
+}
+void AMD_PySys_SetPath(const wchar_t * str){
+   char funname[]="PySys_SetPath";
+   pysys_setpath fp =  NULL;
+   fp = (pysys_setpath) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (str); //execute   
+}
+int AMD_PyOS_InterruptOccurred(void){
+   char funname[]="PyOS_InterruptOccurred";
+   pyos_interruptoccurred fp =  NULL;
+   fp = (pyos_interruptoccurred) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (); //execute 
+}
+PyObject* AMD_PyImport_AddModule(const char *name ){
+   char funname[]="PyImport_AddModule";
+   py_convert_str_to_pyobj fp =  NULL;
+   fp = (py_convert_str_to_pyobj) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (name); //execute
+}
+int AMD_PyImport_ExtendInittab(struct _inittab *newtab){
+   char funname[]="PyImport_ExtendInittab";
+   pyimport_extendinitab fp =  NULL;
+   fp = (pyimport_extendinitab) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (newtab); //execute
+}
+PyObject* AMD_PyEval_EvalCode(PyObject * o1, PyObject *o2, PyObject * o3){
+   char funname[]="PyEval_EvalCode";
+   pyeval_evalcode fp =  NULL;
+   fp = (pyeval_evalcode) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (o1,o2,o3); //execute
+}
+PyThreadState* AMD_PyEval_SaveThread(void){
+   char funname[]="PyEval_SaveThread";
+   pyeval_savethread fp =  NULL;
+   fp = (pyeval_savethread) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (); //execute
+}
+void AMD_PyEval_RestoreThread(PyThreadState * th){
+   char funname[]="PyEval_RestoreThread";
+   pyeval_restorethread fp =  NULL;
+   fp = (pyeval_restorethread) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (th); //execute
+}
+int AMD_PyRun_InteractiveLoop(FILE *filep, const char *filename){
+   char funname[]="PyRun_InteractiveLoopFlags";
+   pyrun_interactiveloopflags fp =  NULL;
+   fp = (pyrun_interactiveloopflags) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (filep,filename, NULL); //execute
+}
+PyObject* AMD_PyRun_String(const char *  name, int v, PyObject * o1, PyObject * o2){
+   char funname[]="PyRun_StringFlags";
+   pyrun_stringflags fp =  NULL;
+   fp = (pyrun_stringflags) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (name,v,o1,o2,NULL); //execute
+}
+PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int start, PyCompilerFlags *flags,int optimize){
+   char funname[]="Py_CompileStringExFlags";
+   py_compilestringexflags fp =  NULL;
+   fp = (py_compilestringexflags) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (str,filename,start,flags,optimize); //execute
+}
+void AMD_Py_CompileStringExFlags(const wchar_t * str){
+   char funname[]="Py_CompileStringExFlags";
+   pysys_setpath fp =  NULL;
+   fp = (pysys_setpath) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (str); //execute   
+}
+void AMD_Py_CompileStringExFlags(const wchar_t * str){
+   char funname[]="Py_CompileStringExFlags";
+   pysys_setpath fp =  NULL;
+   fp = (pysys_setpath) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (str); //execute   
+}
+void AMD_Py_Initialize(void){
+   char funname[]="Py_Initialize";
+   pyerr_clear fp =  NULL;
+   fp = (pyerr_clear) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (); //execute
+}
+void AMD_Py_Finalize(void){
+   char funname[]="Py_Finalize";
+   pyerr_clear fp =  NULL;
+   fp = (pyerr_clear) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (); //execute
+}

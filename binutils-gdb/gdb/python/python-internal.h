@@ -251,23 +251,23 @@ gdb_PyErr_NewException (const char *name, PyObject *base, PyObject *dict)
 
 #define AMD_PyErr_NewException gdb_PyErr_NewException
 
-/* PySys_GetObject's 'name' parameter was missing the 'const'
+/* AMD_PySys_GetObject's 'name' parameter was missing the 'const'
    qualifier before Python 3.4.  Hence, we wrap it in a function to
    avoid errors when compiled with -Werror.  */
 
 static inline PyObject *
 gdb_PySys_GetObject (const char *name)
 {
-  return PySys_GetObject (const_cast<char *> (name));
+  return AMD_PySys_GetObject (const_cast<char *> (name));
 }
 
-#define PySys_GetObject gdb_PySys_GetObject
+#define AMD_PySys_GetObject gdb_PySys_GetObject
 
-/* PySys_SetPath was deprecated in Python 3.11.  Disable the deprecated
+/* AMD_PySys_SetPath was deprecated in Python 3.11.  Disable the deprecated
    code for Python 3.10 and newer.  */
 #if PY_VERSION_HEX < 0x030a0000
 
-/* PySys_SetPath's 'path' parameter was missing the 'const' qualifier
+/* AMD_PySys_SetPath's 'path' parameter was missing the 'const' qualifier
    before Python 3.6.  Hence, we wrap it in a function to avoid errors
    when compiled with -Werror.  */
 
@@ -276,10 +276,10 @@ gdb_PySys_GetObject (const char *name)
 static inline void
 gdb_PySys_SetPath (const GDB_PYSYS_SETPATH_CHAR *path)
 {
-  PySys_SetPath (const_cast<GDB_PYSYS_SETPATH_CHAR *> (path));
+  AMD_PySys_SetPath (const_cast<GDB_PYSYS_SETPATH_CHAR *> (path));
 }
 
-#define PySys_SetPath gdb_PySys_SetPath
+#define AMD_PySys_SetPath gdb_PySys_SetPath
 #endif
 
 /* Wrap PyGetSetDef to allow convenient construction with string
@@ -901,14 +901,14 @@ class gdbpy_allow_threads
 public:
 
   gdbpy_allow_threads ()
-    : m_save (PyEval_SaveThread ())
+    : m_save (AMD_PyEval_SaveThread ())
   {
     gdb_assert (m_save != nullptr);
   }
 
   ~gdbpy_allow_threads ()
   {
-    PyEval_RestoreThread (m_save);
+    AMD_PyEval_RestoreThread (m_save);
   }
 
   DISABLE_COPY_AND_ASSIGN (gdbpy_allow_threads);

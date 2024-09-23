@@ -15,7 +15,7 @@ PyObject* AMD_PyObject_CallMethod(PyObject *obj, const char *name, const char *f
 PyObject* AMD_PyObject_CallMethodObjArgs(PyObject *obj, PyObject *name, ...);
 PyObject* AMD_PyObject_CallFunctionObjArgs(PyObject *callable,...);
 PyObject* AMD_Py_BuildValue(const char *, ...);
-PyObject* _Py_BuildValue_SizeT(const char *, ...);
+//PyObject* _Py_BuildValue_SizeT(const char *, ...);
 PyObject* AMD_PyObject_CallObject(PyObject *callable, PyObject *args);
 PyObject* AMD_PyObject_GetAttr(PyObject * ob, PyObject * at);
 PyObject* AMD_PyObject_GenericGetAttr(PyObject * a, PyObject * b);
@@ -78,10 +78,7 @@ PyObject* AMD_PyDict_GetItemWithError(PyObject *mp, PyObject *key);
 
 int AMD_PyType_Ready(PyTypeObject *);
 int AMD_PyErr_ExceptionMatches(PyObject *);
-int AMD_PySequence_Check(PyObject *o);
-Py_ssize_t AMD_PySequence_Size(PyObject *o);
-PyObject* AMD_PySequence_GetItem(PyObject *o, Py_ssize_t i);
-int AMD_PySequence_DelItem(PyObject *o, Py_ssize_t i);
+
 PyObject* AMD_PyBool_FromLong(long);
 PyObject* AMD_PyTuple_New(Py_ssize_t size);
 int AMD_PyTuple_SetItem(PyObject *, Py_ssize_t, PyObject *);
@@ -134,6 +131,13 @@ PyObject * AMD_PySequence_List(PyObject *o);
    On error, return -1.
    This is equivalent to the Python expression: o.index(value). */
 Py_ssize_t AMD_PySequence_Index(PyObject *o, PyObject *value);
+int AMD_PySequence_Check(PyObject *o);
+Py_ssize_t AMD_PySequence_Size(PyObject *o);
+PyObject* AMD_PySequence_GetItem(PyObject *o, Py_ssize_t i);
+int AMD_PySequence_DelItem(PyObject *o, Py_ssize_t i);
+/* Return the concatenation of o1 and o2 on success, and NULL on failure.
+   This is the equivalent of the Python expression: o1 + o2. */
+PyObject* AMD_PySequence_Concat(PyObject *o1, PyObject *o2);
 
 
 int AMD_PyRun_SimpleString(const char *);
@@ -165,6 +169,37 @@ void AMD_PyErr_SetNone(PyObject *);
 //Py_ssize_t PySlice_AdjustIndices(Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t step);
 int AMD_PyArg_UnpackTuple(PyObject *, const char *, Py_ssize_t, Py_ssize_t, ...);
 PyObject* AMD_PyNumber_Long(PyObject *o);
+
+/* Return Python float from C double. */
+PyObject* AMD_PyFloat_FromDouble(double);
+double AMD_PyFloat_AsDouble(PyObject *);
+
+PyObject * AMD_PySys_GetObject(const char *);
+void AMD_PySys_SetPath(const wchar_t *);
+
+int AMD_PyOS_InterruptOccurred(void);
+PyObject* AMD_PyImport_AddModule(const char *name );
+PyThreadState* AMD_PyEval_SaveThread(void);
+void AMD_PyEval_RestoreThread(PyThreadState *);
+int AMD_PyImport_ExtendInittab(struct _inittab *newtab);
+PyObject* AMD_PyEval_EvalCode(PyObject *, PyObject *, PyObject *);
+
+int AMD_PyRun_InteractiveLoop(FILE *fp, const char *filename);
+PyObject* AMD_PyRun_String(const char *, int, PyObject *, PyObject *);
+PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int start, PyCompilerFlags *flags,int optimize);
+void AMD_Py_CompileStringExFlags(const wchar_t *);
+
+
+void AMD_Py_Initialize(void);
+void AMD_Py_Finalize(void);
+
+/*TODO :
+
+ `Py_IgnoreEnvironmentFlag'
+ `Py_DontWriteBytecodeFlag'
+
+//TODO ENDS */
+
 
 /*Internal functions which need to be supported here because of the tempalated approach*/
 void AMD_lib_exception_failure_handeler();

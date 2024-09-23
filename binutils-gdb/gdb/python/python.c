@@ -284,7 +284,7 @@ gdbpy_check_quit_flag (const struct extension_language_defn *extlang)
     return false;
 
   gdbpy_gil gil;
-  return PyOS_InterruptOccurred ();
+  return AMD_PyOS_InterruptOccurred ();
 }
 
 /* Evaluate a Python command like AMD_PyRun_SimpleString, but takes a
@@ -299,7 +299,7 @@ eval_python_command (const char *command, int start_symbol,
 {
   PyObject *m, *d;
 
-  m = PyImport_AddModule ("__main__");
+  m = AMD_PyImport_AddModule ("__main__");
   if (m == NULL)
     return -1;
 
@@ -335,7 +335,7 @@ eval_python_command (const char *command, int start_symbol,
     }
 
   /* Use this API because it is in Python 3.2.  */
-  gdbpy_ref<> code (Py_CompileStringExFlags (command,
+  gdbpy_ref<> code (AMD_Py_CompileStringExFlags (command,
 					     filename == nullptr
 					     ? "<string>"
 					     : filename,
@@ -345,7 +345,7 @@ eval_python_command (const char *command, int start_symbol,
   int result = -1;
   if (code != nullptr)
     {
-      gdbpy_ref<> eval_result (PyEval_EvalCode (code.get (), d, d));
+      gdbpy_ref<> eval_result (AMD_PyEval_EvalCode (code.get (), d, d));
       if (eval_result != nullptr)
 	result = 0;
     }
@@ -394,7 +394,7 @@ python_interactive_command (const char *arg, int from_tty)
     }
   else
     {
-      err = PyRun_InteractiveLoop (ui->instream, "<stdin>");
+      err = AMD_PyRun_InteractiveLoop (ui->instream, "<stdin>");
       dont_repeat ();
     }
 
@@ -2000,7 +2000,7 @@ show_python_ignore_environment (struct ui_file *file, int from_tty,
 
 /* Implement 'set python ignore-environment'.  This sets Python's internal
    flag no matter when the command is issued, however, if this is used
-   after Py_Initialize has been called then most of the environment will
+   after AMD_Py_Initialize has been called then most of the environment will
    already have been read.  */
 
 static void
@@ -2072,7 +2072,7 @@ python_write_bytecode ()
 
 /* Implement 'set python dont-write-bytecode'.  This sets Python's internal
    flag no matter when the command is issued, however, if this is used
-   after Py_Initialize has been called then many modules could already
+   after AMD_Py_Initialize has been called then many modules could already
    have been imported and their byte code written out.  */
 
 static void
@@ -2125,7 +2125,7 @@ finalize_python (const struct extension_language_defn *ignore)
   /* Call the gdbpy_finalize_* functions from every *.c file.  */
   gdbpy_initialize_file::finalize_all ();
 
-  Py_Finalize ();
+  AMD_Py_Finalize ();
 
   gdb_python_initialized = false;
   restore_active_ext_lang (previous_active);
@@ -2201,7 +2201,7 @@ do_start_initialization ()
     { nullptr, nullptr }
   };
 
-  if (PyImport_ExtendInittab (mods) < 0)
+  if (AMD_PyImport_ExtendInittab (mods) < 0)
     return false;
 
 #ifdef WITH_PYTHON_PATH
@@ -2210,16 +2210,16 @@ do_start_initialization ()
      NOTE: Python assumes the following layout:
      /foo/bin/python
      /foo/lib/pythonX.Y/...
-     This must be done before calling Py_Initialize.  */
+     This must be done before calling AMD_Py_Initialize.  */
   gdb::unique_xmalloc_ptr<char> progname
     (concat (ldirname (python_libdir.c_str ()).c_str (), SLASH_STRING, "bin",
 	      SLASH_STRING, "python", (char *) NULL));
   /* Python documentation indicates that the memory given
-     to Py_SetProgramName cannot be freed.  However, it seems that
-     at least Python 3.7.4 Py_SetProgramName takes a copy of the
+     to AMD_Py_CompileStringExFlags cannot be freed.  However, it seems that
+     at least Python 3.7.4 AMD_Py_CompileStringExFlags takes a copy of the
      given program_name.  Making progname_copy static and not release
      the memory avoids a leak report for Python versions that duplicate
-     program_name, and respect the requirement of Py_SetProgramName
+     program_name, and respect the requirement of AMD_Py_CompileStringExFlags
      for Python versions that do not duplicate program_name.  */
   static wchar_t *progname_copy;
 
@@ -2235,14 +2235,14 @@ do_start_initialization ()
     }
   setlocale (LC_ALL, oldloc.c_str ());
 
-  /* Py_SetProgramName was deprecated in Python 3.11.  Use PyConfig
+  /* AMD_Py_CompileStringExFlags was deprecated in Python 3.11.  Use PyConfig
      mechanisms for Python 3.10 and newer.  */
 #if PY_VERSION_HEX < 0x030a0000
-  /* Note that Py_SetProgramName expects the string it is passed to
+  /* Note that AMD_Py_CompileStringExFlags expects the string it is passed to
      remain alive for the duration of the program's execution, so
      it is not freed after this call.  */
-  Py_SetProgramName (progname_copy);
-  Py_Initialize ();
+  AMD_Py_CompileStringExFlags (progname_copy);
+  AMD_Py_Initialize ();
 #else
   PyConfig config;
 
@@ -2267,7 +2267,7 @@ init_done:
     return false;
 #endif
 #else
-  Py_Initialize ();
+  AMD_Py_Initialize ();
 #endif
 
 #if PY_VERSION_HEX < 0x03090000
@@ -2343,7 +2343,7 @@ init_done:
   gdb::observers::gdb_exiting.attach (gdbpy_gdb_exiting, "python");
 
   /* Release the GIL while gdb runs.  */
-  PyEval_SaveThread ();
+  AMD_PyEval_SaveThread ();
 
   /* Only set this when initialization has succeeded.  */
   gdb_python_initialized = 1;
@@ -2547,12 +2547,12 @@ do_initialize (const struct extension_language_defn *extlang)
   std::string gdb_pythondir = (std::string (gdb_datadir) + SLASH_STRING
 			       + "python");
 
-  sys_path = PySys_GetObject ("path");
+  sys_path = AMD_PySys_GetObject ("path");
 
-  /* PySys_SetPath was deprecated in Python 3.11.  Disable this
+  /* AMD_PySys_SetPath was deprecated in Python 3.11.  Disable this
      deprecated code for Python 3.10 and newer.  Also note that this
      ifdef eliminates potential initialization of sys.path via
-     PySys_SetPath.  My (kevinb's) understanding of PEP 587 suggests
+     AMD_PySys_SetPath.  My (kevinb's) understanding of PEP 587 suggests
      that it's not necessary due to module_search_paths being
      initialized to an empty list following any of the PyConfig
      initialization functions.  If it does turn out that some kind of
@@ -2562,8 +2562,8 @@ do_initialize (const struct extension_language_defn *extlang)
   /* If sys.path is not defined yet, define it first.  */
   if (!(sys_path && PyList_Check (sys_path)))
     {
-      PySys_SetPath (L"");
-      sys_path = PySys_GetObject ("path");
+      AMD_PySys_SetPath (L"");
+      sys_path = AMD_PySys_GetObject ("path");
     }
 #endif
   if (sys_path && PyList_Check (sys_path))
@@ -2577,7 +2577,7 @@ do_initialize (const struct extension_language_defn *extlang)
 
   /* Import the gdb module to finish the initialization, and
      add it to __main__ for convenience.  */
-  m = PyImport_AddModule ("__main__");
+  m = AMD_PyImport_AddModule ("__main__");
   if (m == NULL)
     return false;
 

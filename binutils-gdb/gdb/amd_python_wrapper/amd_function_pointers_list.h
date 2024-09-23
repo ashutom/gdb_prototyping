@@ -64,6 +64,20 @@ typedef char* (*pybytes_asstring) (PyObject * ob);
 typedef void (*pyerr_setnone) (PyObject * ob);
 typedef int  (*pymodule_addstringconstant) (PyObject* ob, const char *str , const char * fr);
 typedef PyObject* (*pyerr_newexception) (const char *name, PyObject *base, PyObject *dict);
+typedef PyObject* (*pyfloat_fromdouble) (double);
+typedef double (*pyfloat_asdouble) (PyObject *);
+typedef void  (*pysys_setpath) (const wchar_t *);
+typedef int  (*pyos_interruptoccurred) (void);
+typedef int  (*pyimport_extendinitab) (struct _inittab *newtab);
+typedef PyObject* (*pyeval_evalcode) (PyObject *, PyObject *, PyObject *);
+typedef PyThreadState* (*pyeval_savethread) (void);
+typedef void (*pyeval_restorethread) (PyThreadState *);
+typedef int  (*pyrun_interactiveloopflags) (FILE *fp, const char *filename, PyCompilerFlags *flags);
+typedef PyObject* (*pyrun_stringflags) (const char *, int, PyObject *, PyObject *, PyCompilerFlags *);
+typedef PyObject* (*py_compilestringexflags) (const char *str, const char *filename, int start, PyCompilerFlags *flags,int optimize);
+
+
+
 
 
 #endif //_AMD_FUNCTION_POINTER_LIST_H_
