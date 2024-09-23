@@ -122,7 +122,7 @@ typedef unsigned long long gdb_py_ulongest;
 typedef PY_LONG_LONG gdb_py_longest;
 typedef unsigned PY_LONG_LONG gdb_py_ulongest;
 #endif
-#define gdb_py_long_as_ulongest PyLong_AsUnsignedLongLong
+#define gdb_py_long_as_ulongest AMD_PyLong_AsUnsignedLongLong
 #define gdb_py_long_as_long_and_overflow PyLong_AsLongLongAndOverflow
 
 #else /* HAVE_LONG_LONG */
@@ -148,7 +148,7 @@ typedef long Py_hash_t;
 #endif
 
 /* A template variable holding the format character (as for
-   Py_BuildValue) for a given type.  */
+   AMD_Py_BuildValue) for a given type.  */
 template<typename T>
 struct gdbpy_method_format {};
 
@@ -177,7 +177,7 @@ struct gdbpy_method_format<unsigned>
 };
 
 /* A helper function to compute the AMD_PyObject_CallMethod /
-   Py_BuildValue format given the argument types.  */
+   AMD_Py_BuildValue format given the argument types.  */
 
 template<typename... Args>
 constexpr std::array<char, sizeof... (Args) + 1>
@@ -239,17 +239,17 @@ gdbpy_call_method (const gdbpy_ref<> &o, const char *method, Args... args)
 # define AMD_PyObject_CallMethod POISONED_PyObject_CallMethod
 #endif
 
-/* The 'name' parameter of PyErr_NewException was missing the 'const'
+/* The 'name' parameter of AMD_PyErr_NewException was missing the 'const'
    qualifier in Python <= 3.4.  Hence, we wrap it in a function to
    avoid errors when compiled with -Werror.  */
 
 static inline PyObject*
 gdb_PyErr_NewException (const char *name, PyObject *base, PyObject *dict)
 {
-  return PyErr_NewException (const_cast<char *> (name), base, dict);
+  return AMD_PyErr_NewException (const_cast<char *> (name), base, dict);
 }
 
-#define PyErr_NewException gdb_PyErr_NewException
+#define AMD_PyErr_NewException gdb_PyErr_NewException
 
 /* PySys_GetObject's 'name' parameter was missing the 'const'
    qualifier before Python 3.4.  Hence, we wrap it in a function to
@@ -783,7 +783,7 @@ public:
   bool type_matches (PyObject *type) const
   {
     gdbpy_ref<> err_type = this->type ();
-    return PyErr_GivenExceptionMatches (err_type.get (), type);
+    return AMD_PyErr_GivenExceptionMatches (err_type.get (), type);
   }
 
   /* Return a new reference to the exception value object.  */

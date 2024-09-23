@@ -272,7 +272,7 @@ gdbpy_enter::finalize ()
 static void
 gdbpy_set_quit_flag (const struct extension_language_defn *extlang)
 {
-  PyErr_SetInterrupt ();
+  AMD_PyErr_SetInterrupt ();
 }
 
 /* Return true if the quit flag has been set, false otherwise.  */
@@ -303,7 +303,7 @@ eval_python_command (const char *command, int start_symbol,
   if (m == NULL)
     return -1;
 
-  d = PyModule_GetDict (m);
+  d = AMD_PyModule_GetDict (m);
   if (d == NULL)
     return -1;
 
@@ -909,7 +909,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
       else
 	symbol_name = p.msymbol.minsym->linkage_name ();
 
-      gdbpy_ref<> argList (Py_BuildValue("(s)", symbol_name.c_str ()));
+      gdbpy_ref<> argList (AMD_Py_BuildValue("(s)", symbol_name.c_str ()));
       gdbpy_ref<> obj (AMD_PyObject_CallObject ((PyObject *)
 					    &breakpoint_object_type,
 					    argList.get ()));
@@ -1326,7 +1326,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
       return {};
     }
 
-  return std::string (PyBytes_AsString (result.get ()));
+  return std::string (AMD_PyBytes_AsString (result.get ()));
 }
 
 /* This is the extension_language_ops.colorize_disasm "method".  */
@@ -1360,7 +1360,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
   if (!AMD_PyCallable_Check (hook.get ()))
     return {};
 
-  gdbpy_ref<> content_arg (PyBytes_FromString (content.c_str ()));
+  gdbpy_ref<> content_arg (AMD_PyBytes_FromString (content.c_str ()));
   if (content_arg == nullptr)
     {
       gdbpy_print_stack ();
@@ -1395,7 +1395,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
       return {};
     }
 
-  return std::string (PyBytes_AsString (result.get ()));
+  return std::string (AMD_PyBytes_AsString (result.get ()));
 }
 
 
@@ -1601,8 +1601,8 @@ gdbpy_print_stack (void)
   /* Print "full" message and backtrace.  */
   else if (gdbpy_should_print_stack == python_excp_full)
     {
-      PyErr_Print ();
-      /* PyErr_Print doesn't necessarily end output with a newline.
+      AMD_PyErr_Print ();
+      /* AMD_PyErr_Print doesn't necessarily end output with a newline.
 	 This works because Python's stdout/stderr is fed through
 	 gdb_printf.  */
       try
@@ -2281,9 +2281,9 @@ init_done:
   if (gdb_module == NULL)
     return false;
 
-  if (PyModule_AddStringConstant (gdb_module, "VERSION", version) < 0
-      || PyModule_AddStringConstant (gdb_module, "HOST_CONFIG", host_name) < 0
-      || PyModule_AddStringConstant (gdb_module, "TARGET_CONFIG",
+  if (AMD_PyModule_AddStringConstant (gdb_module, "VERSION", version) < 0
+      || AMD_PyModule_AddStringConstant (gdb_module, "HOST_CONFIG", host_name) < 0
+      || AMD_PyModule_AddStringConstant (gdb_module, "TARGET_CONFIG",
 				     target_name) < 0)
     return false;
 
@@ -2293,19 +2293,19 @@ init_done:
       || AMD_PyModule_AddIntConstant (gdb_module, "STDLOG", 2) < 0)
     return false;
 
-  gdbpy_gdb_error = PyErr_NewException ("gdb.error", PyExc_RuntimeError, NULL);
+  gdbpy_gdb_error = AMD_PyErr_NewException ("gdb.error", PyExc_RuntimeError, NULL);
   if (gdbpy_gdb_error == NULL
       || gdb_pymodule_addobject (gdb_module, "error", gdbpy_gdb_error) < 0)
     return false;
 
-  gdbpy_gdb_memory_error = PyErr_NewException ("gdb.MemoryError",
+  gdbpy_gdb_memory_error = AMD_PyErr_NewException ("gdb.MemoryError",
 					       gdbpy_gdb_error, NULL);
   if (gdbpy_gdb_memory_error == NULL
       || gdb_pymodule_addobject (gdb_module, "MemoryError",
 				 gdbpy_gdb_memory_error) < 0)
     return false;
 
-  gdbpy_gdberror_exc = PyErr_NewException ("gdb.GdbError", NULL, NULL);
+  gdbpy_gdberror_exc = AMD_PyErr_NewException ("gdb.GdbError", NULL, NULL);
   if (gdbpy_gdberror_exc == NULL
       || gdb_pymodule_addobject (gdb_module, "GdbError",
 				 gdbpy_gdberror_exc) < 0)
@@ -2569,7 +2569,7 @@ do_initialize (const struct extension_language_defn *extlang)
   if (sys_path && PyList_Check (sys_path))
     {
       gdbpy_ref<> pythondir (AMD_PyUnicode_FromString (gdb_pythondir.c_str ()));
-      if (pythondir == NULL || PyList_Insert (sys_path, 0, pythondir.get ()))
+      if (pythondir == NULL || AMD_PyList_Insert (sys_path, 0, pythondir.get ()))
 	return false;
     }
   else

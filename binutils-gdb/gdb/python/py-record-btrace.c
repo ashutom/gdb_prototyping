@@ -296,7 +296,7 @@ recpy_bt_insn_data (PyObject *self, void *closure)
   if (object == NULL)
     return NULL;
 
-  return PyMemoryView_FromObject (object);
+  return AMD_PyMemoryView_FromObject (object);
 }
 
 /* Implementation of RecordInstruction.decoded [str] for btrace.
@@ -320,7 +320,7 @@ recpy_bt_insn_decoded (PyObject *self, void *closure)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyBytes_FromString (strfile.string ().c_str ());
+  return AMD_PyBytes_FromString (strfile.string ().c_str ());
 }
 
 /* Implementation of RecordFunctionSegment.level [int] for btrace.

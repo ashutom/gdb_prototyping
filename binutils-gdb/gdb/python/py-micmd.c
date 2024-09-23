@@ -202,7 +202,7 @@ mi_command_py::invoke (struct mi_parse *parse) const
       gdbpy_ref<> str (AMD_PyUnicode_Decode (parse->argv[i],
 					 strlen (parse->argv[i]),
 					 host_charset (), nullptr));
-      if (PyList_SetItem (argobj.get (), i, str.release ()) < 0)
+      if (AMD_PyList_SetItem (argobj.get (), i, str.release ()) < 0)
 	gdbpy_handle_exception ();
     }
 

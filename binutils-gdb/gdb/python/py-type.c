@@ -337,7 +337,7 @@ typy_fields (PyObject *self, PyObject *args)
   if (r == NULL)
     return NULL;
 
-  return Py_BuildValue ("[O]", r.get ());
+  return AMD_Py_BuildValue ("[O]", r.get ());
 }
 
 /* Return a sequence of all field names.  Each field is a gdb.Field object.  */
@@ -1308,7 +1308,7 @@ typy_get (PyObject *self, PyObject *args)
 {
   PyObject *key, *defval = Py_None, *result;
 
-  if (!PyArg_UnpackTuple (args, "get", 1, 2, &key, &defval))
+  if (!AMD_PyArg_UnpackTuple (args, "get", 1, 2, &key, &defval))
     return NULL;
 
   result = typy_getitem (self, key);

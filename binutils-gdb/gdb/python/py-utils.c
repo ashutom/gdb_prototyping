@@ -63,12 +63,12 @@ static gdb::unique_xmalloc_ptr<char>
 unicode_to_encoded_string (PyObject *unicode_str, const char *charset)
 {
   /* Translate string to named charset.  */
-  gdbpy_ref<> string (PyUnicode_AsEncodedString (unicode_str, charset, NULL));
+  gdbpy_ref<> string (AMD_PyUnicode_AsEncodedString (unicode_str, charset, NULL));
   if (string == NULL)
     return NULL;
 
   return gdb::unique_xmalloc_ptr<char>
-    (xstrdup (PyBytes_AsString (string.get ())));
+    (xstrdup (AMD_PyBytes_AsString (string.get ())));
 }
 
 /* Returns a PyObject with the contents of the given unicode string
@@ -79,7 +79,7 @@ static gdbpy_ref<>
 unicode_to_encoded_python_string (PyObject *unicode_str, const char *charset)
 {
   /* Translate string to named charset.  */
-  return gdbpy_ref<> (PyUnicode_AsEncodedString (unicode_str, charset, NULL));
+  return gdbpy_ref<> (AMD_PyUnicode_AsEncodedString (unicode_str, charset, NULL));
 }
 
 /* Returns a newly allocated string with the contents of the given
@@ -171,7 +171,7 @@ gdbpy_is_string (PyObject *obj)
 gdb::unique_xmalloc_ptr<char>
 gdbpy_obj_to_string (PyObject *obj)
 {
-  gdbpy_ref<> str_obj (PyObject_Str (obj));
+  gdbpy_ref<> str_obj (AMD_PyObject_Str (obj));
 
   if (str_obj != NULL)
     return python_string_to_host_string (str_obj.get ());
@@ -191,7 +191,7 @@ gdbpy_err_fetch::to_string () const
      and type is "foo".
      So the algorithm we use is to print `str (value)' if it's not
      None, otherwise we print `str (type)'.
-     Using str (aka PyObject_Str) will fetch the error message from
+     Using str (aka AMD_PyObject_Str) will fetch the error message from
      gdb.GdbError ("message").  */
 
   gdbpy_ref<> value = this->value ();
@@ -252,7 +252,7 @@ get_addr_from_python (PyObject *obj, CORE_ADDR *addr)
     }
   else
     {
-      gdbpy_ref<> num (PyNumber_Long (obj));
+      gdbpy_ref<> num (AMD_PyNumber_Long (obj));
       gdb_py_ulongest val;
 
       if (num == NULL)
@@ -282,8 +282,8 @@ gdbpy_ref<>
 gdb_py_object_from_longest (LONGEST l)
 {
   if (sizeof (l) > sizeof (long))
-    return gdbpy_ref<> (PyLong_FromLongLong (l));
-  return gdbpy_ref<> (PyLong_FromLong (l));
+    return gdbpy_ref<> (AMD_PyLong_FromLongLong (l));
+  return gdbpy_ref<> (AMD_PyLong_FromLong (l));
 }
 
 /* Convert a ULONGEST to the appropriate Python object -- either an
@@ -293,7 +293,7 @@ gdbpy_ref<>
 gdb_py_object_from_ulongest (ULONGEST l)
 {
   if (sizeof (l) > sizeof (unsigned long))
-    return gdbpy_ref<> (PyLong_FromUnsignedLongLong (l));
+    return gdbpy_ref<> (AMD_PyLong_FromUnsignedLongLong (l));
   return gdbpy_ref<> (PyLong_FromUnsignedLong (l));
 }
 
@@ -327,7 +327,7 @@ gdb_py_generic_dict (PyObject *self, void *closure)
   return result;
 }
 
-/* Like PyModule_AddObject, but does not steal a reference to
+/* Like AMD_PyModule_AddObject, but does not steal a reference to
    OBJECT.  */
 
 int
@@ -336,7 +336,7 @@ gdb_pymodule_addobject (PyObject *module, const char *name, PyObject *object)
   int result;
 
   Py_INCREF (object);
-  result = PyModule_AddObject (module, name, object);
+  result = AMD_PyModule_AddObject (module, name, object);
   if (result < 0)
     Py_DECREF (object);
   return result;

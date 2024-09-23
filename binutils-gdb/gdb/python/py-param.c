@@ -175,7 +175,7 @@ static PyObject *
 get_attr (PyObject *obj, PyObject *attr_name)
 {
   if (PyUnicode_Check (attr_name)
-      && ! PyUnicode_CompareWithASCIIString (attr_name, "value"))
+      && ! AMD_PyUnicode_CompareWithASCIIString (attr_name, "value"))
     {
       parmpy_object *self = (parmpy_object *) obj;
 
@@ -392,7 +392,7 @@ static int
 set_attr (PyObject *obj, PyObject *attr_name, PyObject *val)
 {
   if (PyUnicode_Check (attr_name)
-      && ! PyUnicode_CompareWithASCIIString (attr_name, "value"))
+      && ! AMD_PyUnicode_CompareWithASCIIString (attr_name, "value"))
     {
       if (!val)
 	{
