@@ -274,7 +274,7 @@ get_py_iter_from_func (PyObject *filter, const char *func)
 	    }
 	  else
 	    {
-	      return PyObject_GetIter (result.get ());
+	      return AMD_PyObject_GetIter (result.get ());
 	    }
 	}
     }
@@ -436,7 +436,7 @@ enumerate_args (PyObject *iter,
       commas in the argument output is correct.  At the end of the
       loop block collect another item from the iterator, and, if it is
       not null emit a comma.  */
-  gdbpy_ref<> item (PyIter_Next (iter));
+  gdbpy_ref<> item (AMD_PyIter_Next (iter));
   if (item == NULL && PyErr_Occurred ())
     return EXT_LANG_BT_ERROR;
 
@@ -517,7 +517,7 @@ enumerate_args (PyObject *iter,
       /* Collect the next item from the iterator.  If
 	 this is the last item, do not print the
 	 comma.  */
-      item.reset (PyIter_Next (iter));
+      item.reset (AMD_PyIter_Next (iter));
       if (item != NULL)
 	out->text (", ");
       else if (PyErr_Occurred ())
@@ -565,7 +565,7 @@ enumerate_locals (PyObject *iter,
       int local_indent = 8 + (8 * indent);
       std::optional<ui_out_emit_tuple> tuple;
 
-      gdbpy_ref<> item (PyIter_Next (iter));
+      gdbpy_ref<> item (AMD_PyIter_Next (iter));
       if (item == NULL)
 	break;
 
@@ -712,7 +712,7 @@ py_print_args (PyObject *filter,
     {
       if (args_iter != Py_None)
 	{
-	  gdbpy_ref<> item (PyIter_Next (args_iter.get ()));
+	  gdbpy_ref<> item (AMD_PyIter_Next (args_iter.get ()));
 
 	  if (item != NULL)
 	    out->text ("...");
@@ -1057,7 +1057,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 
 	  indent++;
 
-	  while ((item = PyIter_Next (elided.get ())))
+	  while ((item = AMD_PyIter_Next (elided.get ())))
 	    {
 	      gdbpy_ref<> item_ref (item);
 
@@ -1087,7 +1087,7 @@ bootstrap_python_frame_filters (const frame_info_ptr &frame,
   if (frame_obj == NULL)
     return NULL;
 
-  gdbpy_ref<> module (PyImport_ImportModule ("gdb.frames"));
+  gdbpy_ref<> module (AMD_PyImport_ImportModule ("gdb.frames"));
   if (module == NULL)
     return NULL;
 
@@ -1104,7 +1104,7 @@ bootstrap_python_frame_filters (const frame_info_ptr &frame,
   if (py_frame_high == NULL)
     return NULL;
 
-  gdbpy_ref<> iterable (PyObject_CallFunctionObjArgs (sort_func.get (),
+  gdbpy_ref<> iterable (AMD_PyObject_CallFunctionObjArgs (sort_func.get (),
 						      frame_obj.get (),
 						      py_frame_low.get (),
 						      py_frame_high.get (),
@@ -1113,7 +1113,7 @@ bootstrap_python_frame_filters (const frame_info_ptr &frame,
     return NULL;
 
   if (iterable != Py_None)
-    return PyObject_GetIter (iterable.get ());
+    return AMD_PyObject_GetIter (iterable.get ());
   else
     return iterable.release ();
 }
@@ -1204,7 +1204,7 @@ gdbpy_apply_frame_filter (const struct extension_language_defn *extlang,
 
   while (true)
     {
-      gdbpy_ref<> item (PyIter_Next (iterable.get ()));
+      gdbpy_ref<> item (AMD_PyIter_Next (iterable.get ()));
 
       if (item == NULL)
 	{

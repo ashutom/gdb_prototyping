@@ -88,18 +88,18 @@ evpy_emit_event (PyObject *event,
      notifying listeners to avoid skipping callbacks
      in the case of a callback being disconnected during
      a notification.  */
-  gdbpy_ref<> callback_list_copy (PySequence_List (registry->callbacks));
+  gdbpy_ref<> callback_list_copy (AMD_PySequence_List (registry->callbacks));
   if (callback_list_copy == NULL)
     return -1;
 
-  for (i = 0; i < PyList_Size (callback_list_copy.get ()); i++)
+  for (i = 0; i < AMD_PyList_Size (callback_list_copy.get ()); i++)
     {
-      PyObject *func = PyList_GetItem (callback_list_copy.get (), i);
+      PyObject *func = AMD_PyList_GetItem (callback_list_copy.get (), i);
 
       if (func == NULL)
 	return -1;
 
-      gdbpy_ref<> func_result (PyObject_CallFunctionObjArgs (func, event,
+      gdbpy_ref<> func_result (AMD_PyObject_CallFunctionObjArgs (func, event,
 							     NULL));
 
       if (func_result == NULL)

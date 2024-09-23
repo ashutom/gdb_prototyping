@@ -138,7 +138,7 @@ build_line_table_tuple_from_pcs (int line, const std::vector<CORE_ADDR> &pcs)
 
       if (obj == NULL)
 	return NULL;
-      else if (PyTuple_SetItem (tuple.get (), i, obj.release ()) != 0)
+      else if (AMD_PyTuple_SetItem (tuple.get (), i, obj.release ()) != 0)
 	return NULL;
     }
 

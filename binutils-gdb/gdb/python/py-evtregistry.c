@@ -62,11 +62,11 @@ evregpy_disconnect (PyObject *self, PyObject *function)
   if (!PyArg_ParseTuple (function, "O", &func))
     return NULL;
 
-  index = PySequence_Index (callback_list, func);
+  index = AMD_PySequence_Index (callback_list, func);
   if (index < 0)
     Py_RETURN_NONE;
 
-  if (PySequence_DelItem (callback_list, index) < 0)
+  if (AMD_PySequence_DelItem (callback_list, index) < 0)
     return NULL;
 
   Py_RETURN_NONE;
@@ -118,7 +118,7 @@ evregpy_no_listeners_p (eventregistry_object *registry)
 {
   /* REGISTRY can be nullptr if gdb failed to find the data directory
      at startup.  */
-  return registry == nullptr || PyList_Size (registry->callbacks) == 0;
+  return registry == nullptr || AMD_PyList_Size (registry->callbacks) == 0;
 }
 
 GDBPY_INITIALIZE_FILE (gdbpy_initialize_eventregistry);

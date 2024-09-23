@@ -65,7 +65,7 @@ gdbpy_readline_wrapper (FILE *sys_stdin, FILE *sys_stdout,
   /* Detect EOF (Ctrl-D).  */
   if (p == NULL)
     {
-      q = (char *) PyMem_RawMalloc (1);
+      q = (char *) AMD_PyMem_RawMalloc (1);
       if (q != NULL)
 	q[0] = '\0';
       return q;
@@ -74,7 +74,7 @@ gdbpy_readline_wrapper (FILE *sys_stdin, FILE *sys_stdout,
   n = strlen (p);
 
   /* Copy the line to Python and return.  */
-  q = (char *) PyMem_RawMalloc (n + 2);
+  q = (char *) AMD_PyMem_RawMalloc (n + 2);
   if (q != NULL)
     {
       strcpy (q, p);
@@ -95,7 +95,7 @@ gdbpy_initialize_gdb_readline (void)
      and prevent conflicts.  For now, this file implements a
      sys.meta_path finder that simply fails to import the readline
      module.  */
-  if (PyRun_SimpleString ("\
+  if (AMD_PyRun_SimpleString ("\
 import sys\n\
 \n\
 class GdbRemoveReadlineFinder:\n\

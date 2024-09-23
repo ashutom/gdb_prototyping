@@ -209,7 +209,7 @@ mi_command_py::invoke (struct mi_parse *parse) const
   gdb_assert (this->m_pyobj != nullptr);
   gdb_assert (PyErr_Occurred () == nullptr);
   gdbpy_ref<> results
-    (PyObject_CallMethodObjArgs ((PyObject *) this->m_pyobj.get (), invoke_cst,
+    (AMD_PyObject_CallMethodObjArgs ((PyObject *) this->m_pyobj.get (), invoke_cst,
 				 argobj.get (), nullptr));
   if (results == nullptr)
     gdbpy_handle_exception ();

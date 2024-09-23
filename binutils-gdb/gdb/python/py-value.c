@@ -148,8 +148,8 @@ convert_buffer_and_type_to_value (PyObject *obj, struct type *type,
   Py_buffer_up buffer_up;
   Py_buffer py_buf;
 
-  if (PyObject_CheckBuffer (obj) 
-      && PyObject_GetBuffer (obj, &py_buf, PyBUF_SIMPLE) == 0)
+  if (AMD_PyObject_CheckBuffer (obj) 
+      && AMD_PyObject_GetBuffer (obj, &py_buf, PyBUF_SIMPLE) == 0)
     {
       /* Got a buffer, py_buf, out of obj.  Cause it to be released
 	 when it goes out of scope.  */
@@ -1368,7 +1368,7 @@ valpy_get_bytes (PyObject *self, void *closure)
     }
 
   value_obj->content_bytes
-    =  PyBytes_FromStringAndSize ((const char *) contents.data (),
+    =  AMD_PyBytes_FromStringAndSize ((const char *) contents.data (),
 				  contents.size ());
   Py_XINCREF (value_obj->content_bytes);
   return value_obj->content_bytes;
@@ -2047,7 +2047,7 @@ convert_value_from_python (PyObject *obj)
 	{
 	  PyObject *result;
 
-	  result = PyObject_CallMethodObjArgs (obj, gdbpy_value_cst,  NULL);
+	  result = AMD_PyObject_CallMethodObjArgs (obj, gdbpy_value_cst,  NULL);
 	  value = ((value_object *) result)->value->copy ();
 	}
       else

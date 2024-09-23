@@ -55,10 +55,10 @@ search_pp_list (PyObject *list, PyObject *value)
 {
   Py_ssize_t pp_list_size, list_index;
 
-  pp_list_size = PyList_Size (list);
+  pp_list_size = AMD_PyList_Size (list);
   for (list_index = 0; list_index < pp_list_size; list_index++)
     {
-      PyObject *function = PyList_GetItem (list, list_index);
+      PyObject *function = AMD_PyList_GetItem (list, list_index);
       if (! function)
 	return NULL;
 
@@ -78,7 +78,7 @@ search_pp_list (PyObject *list, PyObject *value)
 	    continue;
 	}
 
-      gdbpy_ref<> printer (PyObject_CallFunctionObjArgs (function, value,
+      gdbpy_ref<> printer (AMD_PyObject_CallFunctionObjArgs (function, value,
 							 NULL));
       if (printer == NULL)
 	return NULL;
@@ -202,7 +202,7 @@ pretty_print_one_value (PyObject *printer, struct value **out_value)
 	result = gdbpy_ref<>::new_reference (Py_None);
       else
 	{
-	  result.reset (PyObject_CallMethodObjArgs (printer, gdbpy_to_string_cst,
+	  result.reset (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_to_string_cst,
 						    NULL));
 	  if (result != NULL)
 	    {
@@ -237,7 +237,7 @@ gdbpy_get_display_hint (PyObject *printer)
   if (! AMD_PyObject_HasAttr (printer, gdbpy_display_hint_cst))
     return NULL;
 
-  gdbpy_ref<> hint (PyObject_CallMethodObjArgs (printer, gdbpy_display_hint_cst,
+  gdbpy_ref<> hint (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_display_hint_cst,
 						NULL));
   if (hint != NULL)
     {
@@ -372,7 +372,7 @@ print_children (PyObject *printer, const char *hint,
   is_map = hint && ! strcmp (hint, "map");
   is_array = hint && ! strcmp (hint, "array");
 
-  gdbpy_ref<> children (PyObject_CallMethodObjArgs (printer, gdbpy_children_cst,
+  gdbpy_ref<> children (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_children_cst,
 						    NULL));
   if (children == NULL)
     {
@@ -380,7 +380,7 @@ print_children (PyObject *printer, const char *hint,
       return;
     }
 
-  gdbpy_ref<> iter (PyObject_GetIter (children.get ()));
+  gdbpy_ref<> iter (AMD_PyObject_GetIter (children.get ()));
   if (iter == NULL)
     {
       print_stack_unless_memory_error (stream);
@@ -405,7 +405,7 @@ print_children (PyObject *printer, const char *hint,
       PyObject *py_v;
       const char *name;
 
-      gdbpy_ref<> item (PyIter_Next (iter.get ()));
+      gdbpy_ref<> item (AMD_PyIter_Next (iter.get ()));
       if (item == NULL)
 	{
 	  if (PyErr_Occurred ())

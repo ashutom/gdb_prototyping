@@ -869,7 +869,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
 
   /* A (gdb.UnwindInfo, str) tuple, or None.  */
   gdbpy_ref<> pyo_execute_ret
-    (PyObject_CallFunctionObjArgs (pyo_execute.get (),
+    (AMD_PyObject_CallFunctionObjArgs (pyo_execute.get (),
 				   pyo_pending_frame.get (), NULL));
   if (pyo_execute_ret == nullptr)
     {
@@ -904,7 +904,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
 
   /* Received UnwindInfo, cache data.  */
   PyObject *pyo_unwind_info = PyTuple_GET_ITEM (pyo_execute_ret.get (), 0);
-  if (PyObject_IsInstance (pyo_unwind_info,
+  if (AMD_PyObject_IsInstance (pyo_unwind_info,
 			   (PyObject *) &unwind_info_object_type) <= 0)
     error (_("A Unwinder should return gdb.UnwindInfo instance."));
 

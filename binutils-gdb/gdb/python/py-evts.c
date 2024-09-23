@@ -54,7 +54,7 @@ add_new_registry (eventregistry_object **registryp, const char *name)
 PyMODINIT_FUNC
 gdbpy_events_mod_func ()
 {
-  gdb_py_events.module = PyModule_Create (&EventModuleDef);
+  gdb_py_events.module = AMD_PyModule_Create (&EventModuleDef);
   if (gdb_py_events.module == nullptr)
     return nullptr;
 

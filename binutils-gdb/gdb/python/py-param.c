@@ -498,7 +498,7 @@ static gdb::unique_xmalloc_ptr<char>
 call_doc_function (PyObject *obj, PyObject *method, PyObject *arg)
 {
   gdb::unique_xmalloc_ptr<char> data;
-  gdbpy_ref<> result (PyObject_CallMethodObjArgs (obj, method, arg, NULL));
+  gdbpy_ref<> result (AMD_PyObject_CallMethodObjArgs (obj, method, arg, NULL));
 
   if (result == NULL)
     return NULL;

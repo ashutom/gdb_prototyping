@@ -306,7 +306,7 @@ typy_fields_items (PyObject *self, enum gdbpy_iter_kind kind)
   if (iter == nullptr)
     return nullptr;
 
-  return PySequence_List (iter.get ());
+  return AMD_PySequence_List (iter.get ());
 }
 
 /* Return a sequence of all fields.  Each field is a gdb.Field object.  */
@@ -679,8 +679,8 @@ typy_range (PyObject *self, PyObject *args)
   if (result == NULL)
     return NULL;
 
-  if (PyTuple_SetItem (result.get (), 0, low_bound.release ()) != 0
-      || PyTuple_SetItem (result.get (), 1, high_bound.release ()) != 0)
+  if (AMD_PyTuple_SetItem (result.get (), 0, low_bound.release ()) != 0
+      || AMD_PyTuple_SetItem (result.get (), 1, high_bound.release ()) != 0)
     return NULL;
   return result.release ();
 }

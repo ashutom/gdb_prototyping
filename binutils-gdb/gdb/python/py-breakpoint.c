@@ -1661,8 +1661,8 @@ bplocpy_get_source_location (PyObject *py_self, void *closure)
       auto line = gdb_py_object_from_ulongest (self->bp_loc->line_number);
       if (line == nullptr)
 	return nullptr;
-      if (PyTuple_SetItem (tup.get (), 0, filename.release ()) == -1
-	  || PyTuple_SetItem (tup.get (), 1, line.release ()) == -1)
+      if (AMD_PyTuple_SetItem (tup.get (), 0, filename.release ()) == -1
+	  || AMD_PyTuple_SetItem (tup.get (), 1, line.release ()) == -1)
 	return nullptr;
       return tup.release ();
     }

@@ -290,7 +290,7 @@ recpy_bt_insn_data (PyObject *self, void *closure)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  object = PyBytes_FromStringAndSize ((const char *) buffer.data (),
+  object = AMD_PyBytes_FromStringAndSize ((const char *) buffer.data (),
 				      insn->size);
 
   if (object == NULL)
@@ -828,7 +828,7 @@ recpy_call_filter (const uint64_t payload, const uint64_t ip,
   else
     py_ip = gdb_py_object_from_ulongest (ip);
 
-  gdbpy_ref<> py_result (PyObject_CallFunctionObjArgs ((PyObject *) ptw_filter,
+  gdbpy_ref<> py_result (AMD_PyObject_CallFunctionObjArgs ((PyObject *) ptw_filter,
 							py_payload.get (),
 							py_ip.get (),
 							nullptr));
@@ -865,7 +865,7 @@ recpy_call_filter (const uint64_t payload, const uint64_t ip,
 static PyObject *
 get_ptwrite_filter ()
 {
-  gdbpy_ref<> module (PyImport_ImportModule ("gdb.ptwrite"));
+  gdbpy_ref<> module (AMD_PyImport_ImportModule ("gdb.ptwrite"));
 
   if (PyErr_Occurred ())
   {

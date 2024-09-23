@@ -883,8 +883,8 @@ gdbpy_disassembler::read_memory_func (bfd_vma memaddr, gdb_byte *buff,
 
   /* Convert the result to a buffer.  */
   Py_buffer py_buff;
-  if (!PyObject_CheckBuffer (result_obj.get ())
-      || PyObject_GetBuffer (result_obj.get(), &py_buff, PyBUF_CONTIG_RO) < 0)
+  if (!AMD_PyObject_CheckBuffer (result_obj.get ())
+      || AMD_PyObject_GetBuffer (result_obj.get(), &py_buff, PyBUF_CONTIG_RO) < 0)
     {
       PyErr_Format (PyExc_TypeError,
 		    _("Result from read_memory is not a buffer"));
@@ -987,7 +987,7 @@ disasmpy_result_parts (PyObject *self, void *closure)
 
   /* This should follow naturally from the obj->parts list being
      non-empty.  */
-  gdb_assert (PyList_Size (result_list.get()) > 0);
+  gdb_assert (AMD_PyList_Size (result_list.get()) > 0);
 
   return result_list.release ();
 }
@@ -1231,7 +1231,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
 
   /* Import the gdb.disassembler module.  */
   gdbpy_ref<> gdb_python_disassembler_module
-    (PyImport_ImportModule ("gdb.disassembler"));
+    (AMD_PyImport_ImportModule ("gdb.disassembler"));
   if (gdb_python_disassembler_module == nullptr)
     {
       gdbpy_print_stack ();
@@ -1257,7 +1257,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
   /* Call into the registered disassembler to (possibly) perform the
      disassembly.  */
   PyObject *insn_disas_obj = (PyObject *) disasm_info;
-  gdbpy_ref<> result (PyObject_CallFunctionObjArgs (hook.get (),
+  gdbpy_ref<> result (AMD_PyObject_CallFunctionObjArgs (hook.get (),
 						    insn_disas_obj,
 						    nullptr));
 
@@ -1319,7 +1319,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
     }
 
   /* Check the result is a DisassemblerResult (or a sub-class).  */
-  if (!PyObject_IsInstance (result.get (),
+  if (!AMD_PyObject_IsInstance (result.get (),
 			    (PyObject *) &disasm_result_object_type))
     {
       AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
@@ -1642,7 +1642,7 @@ gdbpy_initialize_disasm ()
   /* Create the _gdb.disassembler module, and add it to the _gdb module.  */
 
   PyObject *gdb_disassembler_module;
-  gdb_disassembler_module = PyModule_Create (&python_disassembler_module_def);
+  gdb_disassembler_module = AMD_PyModule_Create (&python_disassembler_module_def);
   if (gdb_disassembler_module == nullptr)
     return -1;
   if (gdb_pymodule_addobject (gdb_module, "disassembler",
@@ -1650,7 +1650,7 @@ gdbpy_initialize_disasm ()
     return -1;
 
   /* This is needed so that 'import _gdb.disassembler' will work.  */
-  PyObject *dict = PyImport_GetModuleDict ();
+  PyObject *dict = AMD_PyImport_GetModuleDict ();
   if (AMD_PyDict_SetItemString (dict, "_gdb.disassembler",
 			    gdb_disassembler_module) < 0)
     return -1;

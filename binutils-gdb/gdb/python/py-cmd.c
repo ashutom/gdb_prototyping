@@ -128,7 +128,7 @@ cmdpy_function (const char *args, int from_tty, cmd_list_element *command)
     }
 
   gdbpy_ref<> ttyobj (AMD_PyBool_FromLong (from_tty));
-  gdbpy_ref<> result (PyObject_CallMethodObjArgs ((PyObject *) obj, invoke_cst,
+  gdbpy_ref<> result (AMD_PyObject_CallMethodObjArgs ((PyObject *) obj, invoke_cst,
 						  argobj.get (), ttyobj.get (),
 						  NULL));
 
@@ -204,7 +204,7 @@ cmdpy_completer_helper (struct cmd_list_element *command,
 	}
     }
 
-  gdbpy_ref<> resultobj (PyObject_CallMethodObjArgs ((PyObject *) obj,
+  gdbpy_ref<> resultobj (AMD_PyObject_CallMethodObjArgs ((PyObject *) obj,
 						     complete_cst,
 						     textobj.get (),
 						     wordobj.get (), NULL));
@@ -293,7 +293,7 @@ cmdpy_completer (struct cmd_list_element *command,
     }
   else if (AMD_PySequence_Check (resultobj.get ()))
     {
-      gdbpy_ref<> iter (PyObject_GetIter (resultobj.get ()));
+      gdbpy_ref<> iter (AMD_PyObject_GetIter (resultobj.get ()));
 
       if (iter == NULL)
 	{
@@ -303,7 +303,7 @@ cmdpy_completer (struct cmd_list_element *command,
 
       while (true)
 	{
-	  gdbpy_ref<> elt (PyIter_Next (iter.get ()));
+	  gdbpy_ref<> elt (AMD_PyIter_Next (iter.get ()));
 	  if (elt == NULL)
 	    {
 	      if (PyErr_Occurred() != nullptr)

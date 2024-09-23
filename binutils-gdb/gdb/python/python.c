@@ -223,7 +223,7 @@ gdbpy_enter::gdbpy_enter  (struct gdbarch *gdbarch,
 
   m_previous_active = set_active_ext_lang (&extension_language_python);
 
-  m_state = PyGILState_Ensure ();
+  m_state = AMD_PyGILState_Ensure ();
 
   python_gdbarch = gdbarch;
   if (language != nullptr)
@@ -250,7 +250,7 @@ gdbpy_enter::~gdbpy_enter ()
     set_language (m_language->la_language);
 
   restore_active_ext_lang (m_previous_active);
-  PyGILState_Release (m_state);
+  AMD_PyGILState_Release (m_state);
 }
 
 struct gdbarch *
@@ -287,7 +287,7 @@ gdbpy_check_quit_flag (const struct extension_language_defn *extlang)
   return PyOS_InterruptOccurred ();
 }
 
-/* Evaluate a Python command like PyRun_SimpleString, but takes a
+/* Evaluate a Python command like AMD_PyRun_SimpleString, but takes a
    Python start symbol, and does not automatically print the stack on
    errors.  FILENAME is used to set the file name in error messages;
    NULL means that this is evaluating a string, not the contents of a
@@ -818,14 +818,14 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
      destructor that frees the contents of the allocated strings.  */
   if (symtab_list != NULL)
     {
-      gdbpy_ref<> iter (PyObject_GetIter (symtab_list));
+      gdbpy_ref<> iter (AMD_PyObject_GetIter (symtab_list));
 
       if (iter == NULL)
 	return NULL;
 
       while (true)
 	{
-	  gdbpy_ref<> next (PyIter_Next (iter.get ()));
+	  gdbpy_ref<> next (AMD_PyIter_Next (iter.get ()));
 
 	  if (next == NULL)
 	    {
@@ -986,7 +986,7 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
 	  if (obj == NULL)
 	    return NULL;
 
-	  PyTuple_SetItem (result.get (), i, obj);
+	  AMD_PyTuple_SetItem (result.get (), i, obj);
 	}
     }
   else
@@ -1005,8 +1005,8 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
   else
     unparsed = gdbpy_ref<>::new_reference (Py_None);
 
-  PyTuple_SetItem (return_result.get (), 0, unparsed.release ());
-  PyTuple_SetItem (return_result.get (), 1, result.release ());
+  AMD_PyTuple_SetItem (return_result.get (), 0, unparsed.release ());
+  AMD_PyTuple_SetItem (return_result.get (), 1, result.release ());
 
   return return_result.release ();
 }
@@ -1212,7 +1212,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	    }
 
 	  gdbpy_ref<> result
-	    (PyObject_CallFunctionObjArgs (hook.get (), current_prompt.get (),
+	    (AMD_PyObject_CallFunctionObjArgs (hook.get (), current_prompt.get (),
 					   NULL));
 	  if (result == NULL)
 	    {
@@ -1262,7 +1262,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
 
   gdbpy_enter enter_py;
 
-  gdbpy_ref<> module (PyImport_ImportModule ("gdb.styling"));
+  gdbpy_ref<> module (AMD_PyImport_ImportModule ("gdb.styling"));
   if (module == nullptr)
     {
       gdbpy_print_stack ();
@@ -1294,7 +1294,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
      the encoding for itself.  This removes the need for us to figure out
      (guess?) at how the content is encoded, which is probably a good
      thing.  */
-  gdbpy_ref<> contents_arg (PyBytes_FromStringAndSize (contents.c_str (),
+  gdbpy_ref<> contents_arg (AMD_PyBytes_FromStringAndSize (contents.c_str (),
 						       contents.size ()));
   if (contents_arg == nullptr)
     {
@@ -1306,7 +1306,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
      contents (a bytes object).  This function should return either a bytes
      object, the same contents with styling applied, or None to indicate
      that no styling should be performed.  */
-  gdbpy_ref<> result (PyObject_CallFunctionObjArgs (hook.get (),
+  gdbpy_ref<> result (AMD_PyObject_CallFunctionObjArgs (hook.get (),
 						    fname_arg.get (),
 						    contents_arg.get (),
 						    nullptr));
@@ -1339,7 +1339,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
 
   gdbpy_enter enter_py;
 
-  gdbpy_ref<> module (PyImport_ImportModule ("gdb.styling"));
+  gdbpy_ref<> module (AMD_PyImport_ImportModule ("gdb.styling"));
   if (module == nullptr)
     {
       gdbpy_print_stack ();
@@ -1374,7 +1374,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
       return {};
     }
 
-  gdbpy_ref<> result (PyObject_CallFunctionObjArgs (hook.get (),
+  gdbpy_ref<> result (AMD_PyObject_CallFunctionObjArgs (hook.get (),
 						    content_arg.get (),
 						    gdbarch_arg.get (),
 						    nullptr));
@@ -1789,7 +1789,7 @@ gdbpy_handle_missing_debuginfo (const struct extension_language_defn *extlang,
 
   /* Call the function, passing in the Python objfile object.  */
   gdbpy_ref<> pyo_execute_ret
-    (PyObject_CallFunctionObjArgs (pyo_handler.get (), pyo_objfile.get (),
+    (AMD_PyObject_CallFunctionObjArgs (pyo_handler.get (), pyo_objfile.get (),
 				   nullptr));
   if (pyo_execute_ret == nullptr)
     {
@@ -1845,7 +1845,7 @@ gdbpy_start_type_printers (const struct extension_language_defn *extlang,
 
   gdbpy_enter enter_py;
 
-  gdbpy_ref<> type_module (PyImport_ImportModule ("gdb.types"));
+  gdbpy_ref<> type_module (AMD_PyImport_ImportModule ("gdb.types"));
   if (type_module == NULL)
     {
       gdbpy_print_stack ();
@@ -1860,7 +1860,7 @@ gdbpy_start_type_printers (const struct extension_language_defn *extlang,
       return;
     }
 
-  printers_obj = PyObject_CallFunctionObjArgs (func.get (), (char *) NULL);
+  printers_obj = AMD_PyObject_CallFunctionObjArgs (func.get (), (char *) NULL);
   if (printers_obj == NULL)
     gdbpy_print_stack ();
   else
@@ -1898,7 +1898,7 @@ gdbpy_apply_type_printers (const struct extension_language_defn *extlang,
       return EXT_LANG_RC_ERROR;
     }
 
-  gdbpy_ref<> type_module (PyImport_ImportModule ("gdb.types"));
+  gdbpy_ref<> type_module (AMD_PyImport_ImportModule ("gdb.types"));
   if (type_module == NULL)
     {
       gdbpy_print_stack ();
@@ -1913,7 +1913,7 @@ gdbpy_apply_type_printers (const struct extension_language_defn *extlang,
       return EXT_LANG_RC_ERROR;
     }
 
-  gdbpy_ref<> result_obj (PyObject_CallFunctionObjArgs (func.get (),
+  gdbpy_ref<> result_obj (AMD_PyObject_CallFunctionObjArgs (func.get (),
 							printers_obj,
 							type_obj.get (),
 							(char *) NULL));
@@ -2119,7 +2119,7 @@ finalize_python (const struct extension_language_defn *ignore)
      SIGINT handler is gdb's.  We still need to tell it to notify Python.  */
   previous_active = set_active_ext_lang (&extension_language_python);
 
-  (void) PyGILState_Ensure ();
+  (void) AMD_PyGILState_Ensure ();
   gdbpy_enter::finalize ();
 
   /* Call the gdbpy_finalize_* functions from every *.c file.  */
@@ -2151,7 +2151,7 @@ PyMODINIT_FUNC init__gdb_module (void);
 PyMODINIT_FUNC
 init__gdb_module (void)
 {
-  return PyModule_Create (&python_GdbModuleDef);
+  return AMD_PyModule_Create (&python_GdbModuleDef);
 }
 
 /* Emit a gdb.GdbExitingEvent, return a negative value if there are any
@@ -2277,7 +2277,7 @@ init_done:
   PyEval_InitThreads ();
 #endif
 
-  gdb_module = PyImport_ImportModule ("_gdb");
+  gdb_module = AMD_PyImport_ImportModule ("_gdb");
   if (gdb_module == NULL)
     return false;
 
@@ -2583,7 +2583,7 @@ do_initialize (const struct extension_language_defn *extlang)
 
   /* Keep the reference to gdb_python_module since it is in a global
      variable.  */
-  gdb_python_module = PyImport_ImportModule ("gdb");
+  gdb_python_module = AMD_PyImport_ImportModule ("gdb");
   if (gdb_python_module == NULL)
     {
       gdbpy_print_stack ();

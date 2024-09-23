@@ -78,7 +78,7 @@ call_dap_fn (const char *fn_name)
 {
   gdbpy_enter enter_py;
 
-  gdbpy_ref<> dap_module (PyImport_ImportModule ("gdb.dap"));
+  gdbpy_ref<> dap_module (AMD_PyImport_ImportModule ("gdb.dap"));
   if (dap_module == nullptr)
     gdbpy_handle_exception ();
 

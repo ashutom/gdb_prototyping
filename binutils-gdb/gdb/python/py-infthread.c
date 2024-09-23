@@ -339,7 +339,7 @@ thpy_thread_handle (PyObject *self, PyObject *args)
       return NULL;
     }
 
-  PyObject *object = PyBytes_FromStringAndSize ((const char *) hv.data (),
+  PyObject *object = AMD_PyBytes_FromStringAndSize ((const char *) hv.data (),
 						hv.size());
   return object;
 }

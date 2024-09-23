@@ -330,7 +330,7 @@ struct py_send_packet_callbacks : public send_remote_packet_callbacks
   void received (gdb::array_view<const char> &buf) override
   {
     if (buf.size () > 0 && buf.data ()[0] != '\0')
-      m_result.reset (PyBytes_FromStringAndSize (buf.data (), buf.size ()));
+      m_result.reset (AMD_PyBytes_FromStringAndSize (buf.data (), buf.size ()));
     else
       {
 	/* We didn't get back any result data; set the result to None.  */
@@ -388,7 +388,7 @@ connpy_send_packet (PyObject *self, PyObject *args, PyObject *kw)
     {
       /* We encode the string to bytes using the ascii codec, if this fails
 	 then a suitable error will have been set.  */
-      packet_obj = PyUnicode_AsASCIIString (packet_obj);
+      packet_obj = AMD_PyUnicode_AsASCIIString (packet_obj);
       if (packet_obj == nullptr)
 	return nullptr;
     }
@@ -402,7 +402,7 @@ connpy_send_packet (PyObject *self, PyObject *args, PyObject *kw)
 
   Py_ssize_t packet_len = 0;
   char *packet_str_nonconst = nullptr;
-  if (PyBytes_AsStringAndSize (packet_obj, &packet_str_nonconst,
+  if (AMD_PyBytes_AsStringAndSize (packet_obj, &packet_str_nonconst,
 			       &packet_len) < 0)
     return nullptr;
   const char *packet_str = packet_str_nonconst;

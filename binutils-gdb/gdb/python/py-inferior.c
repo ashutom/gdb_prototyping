@@ -564,7 +564,7 @@ infpy_read_memory (PyObject *self, PyObject *args, PyObject *kw)
 
   void *p = malloc (length);
   if (p == nullptr)
-    return PyErr_NoMemory ();
+    return AMD_PyErr_NoMemory ();
   buffer.reset ((gdb_byte *) p);
 
   try
@@ -750,8 +750,8 @@ infpy_thread_from_thread_handle (PyObject *self, PyObject *args, PyObject *kw)
   Py_buffer_up buffer_up;
   Py_buffer py_buf;
 
-  if (PyObject_CheckBuffer (handle_obj)
-      && PyObject_GetBuffer (handle_obj, &py_buf, PyBUF_SIMPLE) == 0)
+  if (AMD_PyObject_CheckBuffer (handle_obj)
+      && AMD_PyObject_GetBuffer (handle_obj, &py_buf, PyBUF_SIMPLE) == 0)
     {
       buffer_up.reset (&py_buf);
       bytes = (const gdb_byte *) py_buf.buf;

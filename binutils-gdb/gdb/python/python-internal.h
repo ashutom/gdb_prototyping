@@ -95,8 +95,8 @@
    GIL-related functions will not be defined.  However,
    PyGILState_STATE will be.  */
 #ifndef WITH_THREAD
-#define PyGILState_Ensure() ((PyGILState_STATE) 0)
-#define PyGILState_Release(ARG) ((void)(ARG))
+#define AMD_PyGILState_Ensure() ((PyGILState_STATE) 0)
+#define AMD_PyGILState_Release(ARG) ((void)(ARG))
 #define PyEval_InitThreads()
 #define PyThreadState_Swap(ARG) ((void)(ARG))
 #define PyEval_ReleaseLock()
@@ -140,11 +140,11 @@ typedef unsigned long gdb_py_ulongest;
 typedef long Py_hash_t;
 #endif
 
-/* PyMem_RawMalloc appeared in Python 3.4.  For earlier versions, we can just
+/* AMD_PyMem_RawMalloc appeared in Python 3.4.  For earlier versions, we can just
    fall back to PyMem_Malloc.  */
 
 #if PY_VERSION_HEX < 0x03040000
-#define PyMem_RawMalloc PyMem_Malloc
+#define AMD_PyMem_RawMalloc PyMem_Malloc
 #endif
 
 /* A template variable holding the format character (as for
@@ -727,7 +727,7 @@ public:
 
 PyMODINIT_FUNC gdbpy_events_mod_func ();
 
-/* A wrapper for PyErr_Fetch that handles reference counting for the
+/* A wrapper for AMD_PyErr_Fetch that handles reference counting for the
    caller.  */
 class gdbpy_err_fetch
 {
@@ -738,29 +738,29 @@ public:
 #if PY_VERSION_HEX < 0x030c0000
     PyObject *error_type, *error_value, *error_traceback;
 
-    PyErr_Fetch (&error_type, &error_value, &error_traceback);
+    AMD_PyErr_Fetch (&error_type, &error_value, &error_traceback);
     m_error_type.reset (error_type);
     m_error_value.reset (error_value);
     m_error_traceback.reset (error_traceback);
 #else
-    /* PyErr_Fetch is deprecated in python 3.12, use PyErr_GetRaisedException
+    /* AMD_PyErr_Fetch is deprecated in python 3.12, use PyErr_GetRaisedException
        instead.  */
     m_exc.reset (PyErr_GetRaisedException ());
 #endif
   }
 
-  /* Call PyErr_Restore using the values stashed in this object.
+  /* Call AMD_PyErr_Restore using the values stashed in this object.
      After this call, this object is invalid and neither the to_string
      nor restore methods may be used again.  */
 
   void restore ()
   {
 #if PY_VERSION_HEX < 0x030c0000
-    PyErr_Restore (m_error_type.release (),
+    AMD_PyErr_Restore (m_error_type.release (),
 		   m_error_value.release (),
 		   m_error_traceback.release ());
 #else
-    /* PyErr_Restore is deprecated in python 3.12, use PyErr_SetRaisedException
+    /* AMD_PyErr_Restore is deprecated in python 3.12, use PyErr_SetRaisedException
        instead.  */
     PyErr_SetRaisedException (m_exc.release ());
 #endif
@@ -797,7 +797,7 @@ public:
 	error_type = m_error_type.release ();
 	error_value = m_error_value.release ();
 	error_traceback = m_error_traceback.release ();
-	PyErr_NormalizeException (&error_type, &error_value, &error_traceback);
+	AMD_PyErr_NormalizeException (&error_type, &error_value, &error_traceback);
 	m_error_type.reset (error_type);
 	m_error_value.reset (error_value);
 	m_error_traceback.reset (error_traceback);
@@ -877,7 +877,7 @@ class gdbpy_enter
   const struct language_defn *m_language;
 
   /* An optional is used here because we don't want to call
-     PyErr_Fetch too early.  */
+     AMD_PyErr_Fetch too early.  */
   std::optional<gdbpy_err_fetch> m_error;
 };
 
@@ -926,13 +926,13 @@ class gdbpy_gil
 public:
 
   gdbpy_gil ()
-    : m_state (PyGILState_Ensure ())
+    : m_state (AMD_PyGILState_Ensure ())
   {
   }
 
   ~gdbpy_gil ()
   {
-    PyGILState_Release (m_state);
+    AMD_PyGILState_Release (m_state);
   }
 
   DISABLE_COPY_AND_ASSIGN (gdbpy_gil);
@@ -1058,7 +1058,7 @@ struct Py_buffer_deleter
 {
   void operator() (Py_buffer *b) const
   {
-    PyBuffer_Release (b);
+    AMD_PyBuffer_Release (b);
   }
 };
 

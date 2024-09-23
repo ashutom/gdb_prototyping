@@ -106,7 +106,7 @@ invoke_match_method (PyObject *matcher, PyObject *py_obj_type,
   if (py_xmethod_name == NULL)
     return NULL;
 
-  return PyObject_CallMethodObjArgs (matcher, py_match_method_name,
+  return AMD_PyObject_CallMethodObjArgs (matcher, py_match_method_name,
 				     py_obj_type, py_xmethod_name.get (),
 				     NULL);
 }
@@ -213,7 +213,7 @@ gdbpy_get_matching_xmethod_workers
 	}
     }
 
-  gdbpy_ref<> list_iter (PyObject_GetIter (py_xmethod_matcher_list.get ()));
+  gdbpy_ref<> list_iter (AMD_PyObject_GetIter (py_xmethod_matcher_list.get ()));
   if (list_iter == NULL)
     {
       gdbpy_print_stack ();
@@ -221,7 +221,7 @@ gdbpy_get_matching_xmethod_workers
     }
   while (true)
     {
-      gdbpy_ref<> matcher (PyIter_Next (list_iter.get ()));
+      gdbpy_ref<> matcher (AMD_PyIter_Next (list_iter.get ()));
       if (matcher == NULL)
 	{
 	  if (PyErr_Occurred ())
@@ -245,7 +245,7 @@ gdbpy_get_matching_xmethod_workers
 	; /* This means there was no match.  */
       else if (AMD_PySequence_Check (match_result.get ()))
 	{
-	  gdbpy_ref<> iter (PyObject_GetIter (match_result.get ()));
+	  gdbpy_ref<> iter (AMD_PyObject_GetIter (match_result.get ()));
 
 	  if (iter == NULL)
 	    {
@@ -256,7 +256,7 @@ gdbpy_get_matching_xmethod_workers
 	    {
 	      struct xmethod_worker *worker;
 
-	      gdbpy_ref<> py_worker (PyIter_Next (iter.get ()));
+	      gdbpy_ref<> py_worker (AMD_PyIter_Next (iter.get ()));
 	      if (py_worker == NULL)
 		{
 		  if (PyErr_Occurred ())
@@ -307,7 +307,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
     }
 
   gdbpy_ref<> py_argtype_list
-    (PyObject_CallMethodObjArgs (m_py_worker, py_get_arg_types_method_name,
+    (AMD_PyObject_CallMethodObjArgs (m_py_worker, py_get_arg_types_method_name,
 				 NULL));
   if (py_argtype_list == NULL)
     {
@@ -326,7 +326,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
 	  return EXT_LANG_RC_ERROR;
 	}
 
-      list_iter.reset (PyObject_GetIter (py_argtype_list.get ()));
+      list_iter.reset (AMD_PyObject_GetIter (py_argtype_list.get ()));
       if (list_iter == NULL)
 	{
 	  gdbpy_print_stack ();
@@ -343,7 +343,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
     {
       while (true)
 	{
-	  gdbpy_ref<> item (PyIter_Next (list_iter.get ()));
+	  gdbpy_ref<> item (AMD_PyIter_Next (list_iter.get ()));
 	  if (item == NULL)
 	    {
 	      if (PyErr_Occurred ())

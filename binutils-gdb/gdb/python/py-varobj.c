@@ -74,7 +74,7 @@ py_varobj_iter::next ()
   scoped_restore set_options = make_scoped_restore (&gdbpy_current_print_options,
 						    &m_opts);
 
-  gdbpy_ref<> item (PyIter_Next (m_iter));
+  gdbpy_ref<> item (AMD_PyIter_Next (m_iter));
 
   if (item == NULL)
     {
@@ -154,7 +154,7 @@ py_varobj_get_iterator (struct varobj *var, PyObject *printer,
   scoped_restore set_options = make_scoped_restore (&gdbpy_current_print_options,
 						    opts);
 
-  gdbpy_ref<> children (PyObject_CallMethodObjArgs (printer, gdbpy_children_cst,
+  gdbpy_ref<> children (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_children_cst,
 						    NULL));
   if (children == NULL)
     {
@@ -162,7 +162,7 @@ py_varobj_get_iterator (struct varobj *var, PyObject *printer,
       error (_("Null value returned for children"));
     }
 
-  gdbpy_ref<> iter (PyObject_GetIter (children.get ()));
+  gdbpy_ref<> iter (AMD_PyObject_GetIter (children.get ()));
   if (iter == NULL)
     {
       gdbpy_print_stack ();

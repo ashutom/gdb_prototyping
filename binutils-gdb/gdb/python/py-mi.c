@@ -282,7 +282,7 @@ serialize_mi_result_1 (PyObject *result, const char *field_name)
       ui_out_emit_list list_emitter (uiout, field_name);
       while (true)
 	{
-	  item.reset (PyIter_Next (result));
+	  item.reset (AMD_PyIter_Next (result));
 	  if (item == nullptr)
 	    {
 	      if (PyErr_Occurred () != nullptr)
