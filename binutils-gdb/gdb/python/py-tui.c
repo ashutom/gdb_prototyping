@@ -180,7 +180,7 @@ tui_py_window::~tui_py_window ()
 void
 tui_py_window::rerender ()
 {
-  tui_batch_rendering batch;
+  //tui_batch_rendering batch;
 
   tui_win_info::rerender ();
 
@@ -208,7 +208,7 @@ tui_py_window::rerender ()
 void
 tui_py_window::do_scroll_horizontal (int num_to_scroll)
 {
-  tui_batch_rendering batch;
+  //tui_batch_rendering batch;
 
   gdbpy_enter enter_py;
 
@@ -224,7 +224,7 @@ tui_py_window::do_scroll_horizontal (int num_to_scroll)
 void
 tui_py_window::do_scroll_vertical (int num_to_scroll)
 {
-  tui_batch_rendering batch;
+  //tui_batch_rendering batch;
 
   gdbpy_enter enter_py;
 
@@ -248,7 +248,7 @@ tui_py_window::resize (int height_, int width_, int origin_x_, int origin_y_)
 void
 tui_py_window::click (int mouse_x, int mouse_y, int mouse_button)
 {
-  tui_batch_rendering batch;
+  //tui_batch_rendering batch;
 
   gdbpy_enter enter_py;
 
@@ -266,7 +266,7 @@ tui_py_window::output (const char *text, bool full_window)
 {
   if (m_inner_window != nullptr)
     {
-      tui_batch_rendering batch;
+      //tui_batch_rendering batch;
 
       if (full_window)
 	werase (m_inner_window.get ());
