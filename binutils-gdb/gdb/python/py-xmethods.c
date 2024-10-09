@@ -153,7 +153,7 @@ gdbpy_get_matching_xmethod_workers
 
       gdbpy_ref<> objfile_matchers (objfpy_get_xmethods (py_objfile.get (),
 							 NULL));
-      gdbpy_ref<> temp (AMD_PySequence_Concat (py_xmethod_matcher_list.get (),
+      gdbpy_ref<> temp (PySequence_Concat (py_xmethod_matcher_list.get (),
 					   objfile_matchers.get ()));
       if (temp == NULL)
 	{
@@ -172,7 +172,7 @@ gdbpy_get_matching_xmethod_workers
       gdbpy_ref<> pspace_matchers (pspy_get_xmethods (py_progspace.get (),
 						      NULL));
 
-      gdbpy_ref<> temp (AMD_PySequence_Concat (py_xmethod_matcher_list.get (),
+      gdbpy_ref<> temp (PySequence_Concat (py_xmethod_matcher_list.get (),
 					   pspace_matchers.get ()));
       if (temp == NULL)
 	{
@@ -196,7 +196,7 @@ gdbpy_get_matching_xmethod_workers
 							matchers_attr_str));
       if (gdb_matchers != NULL)
 	{
-	  gdbpy_ref<> temp (AMD_PySequence_Concat (py_xmethod_matcher_list.get (),
+	  gdbpy_ref<> temp (PySequence_Concat (py_xmethod_matcher_list.get (),
 					       gdb_matchers.get ()));
 	  if (temp == NULL)
 	    {
@@ -357,7 +357,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
 	  struct type *arg_type = type_object_to_type (item.get ());
 	  if (arg_type == NULL)
 	    {
-	      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 			       _("Arg type returned by the get_arg_types "
 				 "method of a debug method worker object is "
 				 "not a gdb.Type object."));
@@ -376,7 +376,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
 
       if (arg_type == NULL)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 			   _("Arg type returned by the get_arg_types method "
 			     "of an xmethod worker object is not a gdb.Type "
 			     "object."));
@@ -486,7 +486,7 @@ python_xmethod_worker::do_get_result_type (value *obj,
   *result_type_ptr = type_object_to_type (py_result_type.get ());
   if (*result_type_ptr == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Type returned by the get_result_type method of an"
 			 " xmethod worker object is not a gdb.Type object."));
       gdbpy_print_stack ();

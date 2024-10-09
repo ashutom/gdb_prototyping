@@ -53,7 +53,7 @@ struct gdbpy_breakpoint_location_object
 #define BPLOCPY_REQUIRE_VALID(Breakpoint, Location)                         \
     do {                                                                    \
       if ((Breakpoint)->bp != (Location)->bp_loc->owner)                    \
-	return PyErr_Format (PyExc_RuntimeError,                            \
+	return PyErr_Format ((*AMD_PyExc_RuntimeError),                            \
 			     _("Breakpoint location is invalid."));	    \
     } while (0)
 
@@ -63,7 +63,7 @@ struct gdbpy_breakpoint_location_object
     do {                                                                    \
       if ((Breakpoint)->bp != (Location)->bp_loc->owner)                    \
 	{                                                                   \
-	  PyErr_Format (PyExc_RuntimeError,                                 \
+	  PyErr_Format ((*AMD_PyExc_RuntimeError),                                 \
 			_("Breakpoint location is invalid."));		    \
 	  return -1;                                                        \
 	}                                                                   \
@@ -182,14 +182,14 @@ bppy_set_enabled (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete `enabled' attribute."));
 
       return -1;
     }
   else if (! PyBool_Check (newvalue))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value of `enabled' must be a boolean."));
       return -1;
     }
@@ -224,13 +224,13 @@ bppy_set_silent (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete `silent' attribute."));
       return -1;
     }
   else if (! PyBool_Check (newvalue))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value of `silent' must be a boolean."));
       return -1;
     }
@@ -255,7 +255,7 @@ bppy_set_thread (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete `thread' attribute."));
       return -1;
     }
@@ -266,14 +266,14 @@ bppy_set_thread (PyObject *self, PyObject *newvalue, void *closure)
 
       if (!valid_global_thread_id (id))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Invalid thread ID."));
 	  return -1;
 	}
 
       if (self_bp->bp->task != -1)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Cannot set both task and thread attributes."));
 	  return -1;
 	}
@@ -282,14 +282,14 @@ bppy_set_thread (PyObject *self, PyObject *newvalue, void *closure)
     id = -1;
   else
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value of `thread' must be an integer or None."));
       return -1;
     }
 
   if (self_bp->bp->inferior != -1 && id != -1)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Cannot have both 'thread' and 'inferior' "
 			 "conditions on a breakpoint"));
       return -1;
@@ -312,7 +312,7 @@ bppy_set_inferior (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete 'inferior' attribute."));
       return -1;
     }
@@ -323,7 +323,7 @@ bppy_set_inferior (PyObject *self, PyObject *newvalue, void *closure)
 
       if (!valid_global_inferior_id (id))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Invalid inferior ID."));
 	  return -1;
 	}
@@ -332,7 +332,7 @@ bppy_set_inferior (PyObject *self, PyObject *newvalue, void *closure)
     id = -1;
   else
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value of 'inferior' must be an integer or None."));
       return -1;
     }
@@ -340,7 +340,7 @@ bppy_set_inferior (PyObject *self, PyObject *newvalue, void *closure)
   if (self_bp->bp->type != bp_breakpoint
       && self_bp->bp->type != bp_hardware_breakpoint)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Cannot set 'inferior' attribute on a gdb.Breakpoint "
 			 "of this type"));
       return -1;
@@ -348,7 +348,7 @@ bppy_set_inferior (PyObject *self, PyObject *newvalue, void *closure)
 
   if (self_bp->bp->thread != -1 && id != -1)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Cannot have both 'thread' and 'inferior' conditions "
 			 "on a breakpoint"));
       return -1;
@@ -356,7 +356,7 @@ bppy_set_inferior (PyObject *self, PyObject *newvalue, void *closure)
 
   if (self_bp->bp->task != -1 && id != -1)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Cannot have both 'task' and 'inferior' conditions "
 			 "on a breakpoint"));
       return -1;
@@ -379,7 +379,7 @@ bppy_set_task (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete `task' attribute."));
       return -1;
     }
@@ -399,14 +399,14 @@ bppy_set_task (PyObject *self, PyObject *newvalue, void *closure)
 
       if (! valid_id)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Invalid task ID."));
 	  return -1;
 	}
 
       if (self_bp->bp->thread != -1)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Cannot set both task and thread attributes."));
 	  return -1;
 	}
@@ -415,7 +415,7 @@ bppy_set_task (PyObject *self, PyObject *newvalue, void *closure)
     id = -1;
   else
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value of `task' must be an integer or None."));
       return -1;
     }
@@ -461,13 +461,13 @@ bppy_set_ignore_count (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete `ignore_count' attribute."));
       return -1;
     }
   else if (!PyLong_Check (newvalue))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value of `ignore_count' must be an integer."));
       return -1;
     }
@@ -500,7 +500,7 @@ bppy_set_hit_count (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete `hit_count' attribute."));
       return -1;
     }
@@ -593,7 +593,7 @@ bppy_set_condition (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete `condition' attribute."));
       return -1;
     }
@@ -866,7 +866,7 @@ bppy_init_validate_args (const char *spec, char *source,
     {
       if (source != NULL || function != NULL || label != NULL || line != NULL)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Breakpoints specified with spec cannot "
 			     "have source, function, label or line defined."));
 	  return -1;
@@ -878,7 +878,7 @@ bppy_init_validate_args (const char *spec, char *source,
 	 define a watchpoint with an explicit location.  */
       if (type == bp_watchpoint)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Watchpoints cannot be set by explicit "
 			     "location parameters."));
 	  return -1;
@@ -889,7 +889,7 @@ bppy_init_validate_args (const char *spec, char *source,
 	  if (source == NULL && function == NULL && label == NULL
 	      && line == NULL)
 	    {
-	      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			       _("Neither spec nor explicit location set."));
 	      return -1;
 	    }
@@ -898,7 +898,7 @@ bppy_init_validate_args (const char *spec, char *source,
 	  if (source != NULL && function == NULL && label == NULL
 	      && line == NULL)
 	    {
-	      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			       _("Specifying a source must also include a "
 				 "line, label or function."));
 	      return -1;
@@ -946,7 +946,7 @@ bppy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 	line = python_string_to_host_string (lineobj);
       else
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Line keyword should be an integer or a string. "));
 	  return -1;
 	}
@@ -1273,7 +1273,7 @@ gdbpy_breakpoint_created (struct breakpoint *bp)
     }
   else
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Error while creating breakpoint from GDB."));
       gdbpy_print_stack ();
     }
@@ -1437,7 +1437,7 @@ local_setattro (PyObject *self, PyObject *name, PyObject *v)
 			       " currently a %s stop condition defined for"
 			       " this breakpoint."),
 			     ext_lang_capitalized_name (extlang));
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, error_text.c_str ());
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), error_text.c_str ());
 	  return -1;
 	}
     }
@@ -1574,13 +1574,13 @@ bplocpy_set_enabled (PyObject *py_self, PyObject *newvalue, void *closure)
 
   if (newvalue == nullptr)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete 'enabled' attribute."));
       return -1;
     }
   else if (!PyBool_Check (newvalue))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value of 'enabled' must be a boolean."));
       return -1;
     }

@@ -54,7 +54,7 @@ struct block_syms_iterator_object {
     block = block_object_to_block (block_obj);		\
     if (block == NULL)					\
       {							\
-	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,	\
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),	\
 			 _("Block is invalid."));	\
 	return NULL;					\
       }							\
@@ -66,7 +66,7 @@ struct block_syms_iterator_object {
   do {									\
     if (block_obj->block == NULL)					\
       {									\
-	      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,	\
+	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),	\
 			 _("Source block for iterator is invalid."));	\
 	return NULL;							\
       }									\
@@ -246,7 +246,7 @@ blpy_getitem (PyObject *self, PyObject *key)
       return symbol_to_symbol_object (sym);
     }
 
-  PyErr_SetObject (PyExc_KeyError, key);
+  PyErr_SetObject ((*AMD_PyExc_KeyError), key);
   return nullptr;
 }
 
@@ -374,7 +374,7 @@ blpy_block_syms_iternext (PyObject *self)
 
   if (sym == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_StopIteration	, _("Symbol is null."));
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_StopIteration)	, _("Symbol is null."));
       return NULL;
     }
 

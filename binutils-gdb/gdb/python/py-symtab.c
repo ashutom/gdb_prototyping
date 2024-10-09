@@ -69,7 +69,7 @@ static const registry<objfile>::key<symtab_object, stpy_deleter>
     symtab = symtab_object_to_symtab (symtab_obj);	 \
     if (symtab == NULL)					 \
       {							 \
-	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,		 \
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),		 \
 			 _("Symbol Table is invalid.")); \
 	return NULL;					 \
       }							 \
@@ -130,7 +130,7 @@ static const registry<objfile>::key<sal_object, salpy_deleter>
     sal = sal_object_to_symtab_and_line (sal_obj);			\
     if (sal == NULL)							\
       {									\
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,				\
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),				\
 			   _("Symbol Table and Line is invalid."));	\
 	  return NULL;							\
 	}								\

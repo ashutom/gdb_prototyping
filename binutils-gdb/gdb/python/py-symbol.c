@@ -44,7 +44,7 @@ struct symbol_object {
     symbol = symbol_object_to_symbol (symbol_obj);	\
     if (symbol == NULL)					\
       {							\
-	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,		\
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),		\
 			 _("Symbol is invalid."));	\
 	return NULL;					\
       }							\
@@ -273,14 +273,14 @@ sympy_value (PyObject *self, PyObject *args)
 
   if (frame_obj != NULL && !AMD_PyObject_TypeCheck (frame_obj, &frame_object_type))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError, "argument is not a frame");
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), "argument is not a frame");
       return NULL;
     }
 
   SYMPY_REQUIRE_VALID (self, symbol);
   if (symbol->aclass () == LOC_TYPEDEF)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError, "cannot get the value of a typedef");
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), "cannot get the value of a typedef");
       return NULL;
     }
 

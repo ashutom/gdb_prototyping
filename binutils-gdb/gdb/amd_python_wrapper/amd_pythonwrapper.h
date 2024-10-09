@@ -122,6 +122,25 @@ PyObject* AMD_PyErr_NewException(const char *name, PyObject *base, PyObject *dic
 void AMD_PyErr_SetInterrupt(void);
 void AMD_PyErr_Print(void);
 
+
+extern PyObject** AMD_PyExc_RuntimeError;
+extern PyObject** AMD_PyExc_ValueError;
+//extern PyObject** PyErr_Occurred;
+extern PyObject** AMD_PyExc_TypeError;
+extern PyObject** AMD_PyExc_KeyError;
+//extern PyObject** PyErr_SetObject;
+extern PyObject** AMD_PyExc_StopIteration;
+extern PyObject** AMD_PyErr_Format;
+extern PyObject** AMD_PyExc_AttributeError;
+extern PyObject** AMD_PyExc_SystemError;
+extern PyObject** AMD_PyExc_NotImplementedError;
+extern PyObject** AMD_PyExc_IndexError;
+extern PyObject** AMD_PyExc_NameError;
+extern PyObject** AMD_PyExc_KeyboardInterrupt;
+extern PyObject** AMD_PyExc_OverflowError;
+
+
+
 /* Releases a Py_buffer obtained from getbuffer ParseTuple's "s*". */
 void AMD_PyBuffer_Release(Py_buffer *view);
 /* Returns the sequence 'o' as a list on success, and NULL on failure.

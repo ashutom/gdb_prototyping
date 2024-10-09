@@ -138,14 +138,14 @@ gdbpy_execute_mi_command (PyObject *self, PyObject *args, PyObject *kw)
   gdb::unique_xmalloc_ptr<char> mi_command;
   std::vector<gdb::unique_xmalloc_ptr<char>> arg_strings;
 
-  Py_ssize_t n_args = AMD_PyTuple_Size (args);
+  Py_ssize_t n_args = PyTuple_Size (args);
   if (n_args < 0)
     return nullptr;
 
   for (Py_ssize_t i = 0; i < n_args; ++i)
     {
       /* Note this returns a borrowed reference.  */
-      PyObject *arg = AMD_PyTuple_GetItem (args, i);
+      PyObject *arg = PyTuple_GetItem (args, i);
       if (arg == nullptr)
 	return nullptr;
       gdb::unique_xmalloc_ptr<char> str = python_string_to_host_string (arg);
@@ -188,7 +188,7 @@ py_object_to_mi_key (PyObject *key_obj)
   /* The key must be a string.  */
   if (!PyUnicode_Check (key_obj))
     {
-      gdbpy_ref<> key_repr (AMD_PyObject_Repr (key_obj));
+      gdbpy_ref<> key_repr (PyObject_Repr (key_obj));
       gdb::unique_xmalloc_ptr<char> key_repr_string;
       if (key_repr != nullptr)
 	key_repr_string = python_string_to_target_string (key_repr.get ());
@@ -255,7 +255,7 @@ serialize_mi_result_1 (PyObject *result, const char *field_name)
       PyObject *key, *value;
       Py_ssize_t pos = 0;
       ui_out_emit_tuple tuple_emitter (uiout, field_name);
-      while (PyDict_Next (result, &pos, &key, &value))
+      while (AMD_PyDict_Next (result, &pos, &key, &value))
 	{
 	  gdb::unique_xmalloc_ptr<char> key_string
 	    (py_object_to_mi_key (key));
@@ -325,7 +325,7 @@ serialize_mi_results (PyObject *results)
 
   PyObject *key, *value;
   Py_ssize_t pos = 0;
-  while (PyDict_Next (results, &pos, &key, &value))
+  while (AMD_PyDict_Next (results, &pos, &key, &value))
     {
       gdb::unique_xmalloc_ptr<char> key_string
 	(py_object_to_mi_key (key));
@@ -350,7 +350,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
   const int name_len = strlen (name);
   if (name_len == 0)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError, _("MI notification name is empty."));
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("MI notification name is empty."));
       return nullptr;
     }
   for (int i = 0; i < name_len; i++)
@@ -358,7 +358,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
       if (!isalnum (name[i]) && name[i] != '-')
 	{
 	  PyErr_Format
-	    (PyExc_ValueError,
+	    ((*AMD_PyExc_ValueError),
 	     _("MI notification name contains invalid character: %c."),
 	     name[i]);
 	  return nullptr;
@@ -369,7 +369,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
   if (!(data == Py_None || PyDict_Check (data)))
     {
       PyErr_Format
-	(PyExc_ValueError,
+	((*AMD_PyExc_ValueError),
 	 _("MI notification data must be either None or a dictionary, not %s"),
 	 Py_TYPE (data)->tp_name);
       return nullptr;

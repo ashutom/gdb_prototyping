@@ -296,7 +296,7 @@ recpy_bt_insn_data (PyObject *self, void *closure)
   if (object == NULL)
     return NULL;
 
-  return AMD_PyMemoryView_FromObject (object);
+  return PyMemoryView_FromObject (object);
 }
 
 /* Implementation of RecordInstruction.decoded [str] for btrace.
@@ -320,7 +320,7 @@ recpy_bt_insn_decoded (PyObject *self, void *closure)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return AMD_PyBytes_FromString (strfile.string ().c_str ());
+  return PyBytes_FromString (strfile.string ().c_str ());
 }
 
 /* Implementation of RecordFunctionSegment.level [int] for btrace.
@@ -538,7 +538,7 @@ btpy_list_slice (PyObject *self, PyObject *value)
     }
 
   if (!PySlice_Check (value))
-    return PyErr_Format (PyExc_TypeError, _("Index must be int or slice."));
+    return PyErr_Format ((*AMD_PyExc_TypeError), _("Index must be int or slice."));
 
   if (0 != PySlice_GetIndicesEx (value, length, &start, &stop,
 				 &step, &slicelength))
@@ -595,7 +595,7 @@ btpy_list_index (PyObject *self, PyObject *value)
   const LONGEST index = btpy_list_position (self, value);
 
   if (index < 0)
-    return PyErr_Format (PyExc_ValueError, _("Not in list."));
+    return PyErr_Format ((*AMD_PyExc_ValueError), _("Not in list."));
 
   return gdb_py_object_from_longest (index).release ();
 }
@@ -926,7 +926,7 @@ recpy_bt_goto (PyObject *self, PyObject *args)
     return NULL;
 
   if (Py_TYPE (parse_obj) != &recpy_insn_type)
-    return PyErr_Format (PyExc_TypeError, _("Argument must be instruction."));
+    return PyErr_Format ((*AMD_PyExc_TypeError), _("Argument must be instruction."));
   obj = (const recpy_element_object *) parse_obj;
 
   try

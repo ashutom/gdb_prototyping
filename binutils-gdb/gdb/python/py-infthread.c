@@ -29,7 +29,7 @@ extern PyTypeObject thread_object_type
   do {								\
     if (!Thread->thread)					\
       {								\
-	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,			\
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),			\
 			 _("Thread no longer exists."));	\
 	return NULL;						\
       }								\
@@ -120,13 +120,13 @@ thpy_set_name (PyObject *self, PyObject *newvalue, void *ignore)
 
   if (! thread_obj->thread)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, _("Thread no longer exists."));
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), _("Thread no longer exists."));
       return -1;
     }
 
   if (newvalue == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete `name' attribute."));
       return -1;
     }
@@ -136,7 +136,7 @@ thpy_set_name (PyObject *self, PyObject *newvalue, void *ignore)
     }
   else if (! gdbpy_is_string (newvalue))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value of `name' must be a string."));
       return -1;
     }
@@ -335,7 +335,7 @@ thpy_thread_handle (PyObject *self, PyObject *args)
 
   if (hv.size () == 0)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, _("Thread handle not found."));
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), _("Thread handle not found."));
       return NULL;
     }
 

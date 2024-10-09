@@ -60,7 +60,7 @@ show_pyuw_debug (struct ui_file *file, int from_tty,
   do {							     \
     if ((pending_frame)->frame_info == nullptr)		     \
       {							     \
-	AMD_PyErr_SetString((PyObject *)PyExc_ValueError,		     \
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),		     \
 			 _("gdb.PendingFrame is invalid.")); \
 	return nullptr;					     \
       }							     \
@@ -310,7 +310,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
 
   if (pending_frame->frame_info == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       "UnwindInfo instance refers to a stale PendingFrame");
       return nullptr;
     }
@@ -338,7 +338,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
 	regnum = user_reg_value->regnum ();
       if (regnum >= gdbarch_num_cooked_regs (pending_frame->gdbarch))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError, "Bad register");
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), "Bad register");
 	  return NULL;
 	}
     }
@@ -353,7 +353,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
   ULONGEST reg_size = register_size (pending_frame->gdbarch, regnum);
   if (reg_size != value->type ()->length ())
     {
-      PyErr_Format (PyExc_ValueError,
+      PyErr_Format ((*AMD_PyExc_ValueError),
 		    "The value of the register returned by the Python "
 		    "sniffer has unexpected size: %s instead of %s.",
 		    pulongest (value->type ()->length ()),
@@ -497,7 +497,7 @@ pending_framepy_read_register (PyObject *self, PyObject *args, PyObject *kw)
       value *val = value_of_register
         (regnum, get_next_frame_sentinel_okay (pending_frame->frame_info));
       if (val == NULL)
-	PyErr_Format (PyExc_ValueError,
+	PyErr_Format ((*AMD_PyExc_ValueError),
 		      "Cannot read register %d from frame.",
 		      regnum);
       else
@@ -665,7 +665,7 @@ pending_framepy_block (PyObject *self, PyObject *args)
       || fn_block == nullptr
       || fn_block->function () == nullptr)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Cannot locate block for frame."));
       return nullptr;
     }
@@ -728,7 +728,7 @@ pending_framepy_create_unwind_info (PyObject *self, PyObject *args,
     = pyuw_object_attribute_to_pointer (pyo_frame_id, "sp", &sp);
   if (code == pyuw_get_attr_code::ATTR_MISSING)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("frame_id should have 'sp' attribute."));
       return nullptr;
     }

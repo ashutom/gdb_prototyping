@@ -94,7 +94,7 @@ extract_sym (PyObject *obj, gdb::unique_xmalloc_ptr<char> *name,
 
       if (*sym == NULL)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Unexpected value.  Expecting a "
 			     "gdb.Symbol or a Python string."));
 	  return EXT_LANG_BT_ERROR;
@@ -472,7 +472,7 @@ enumerate_args (PyObject *iter,
 	     exit.  */
 	  if (sym == NULL)
 	    {
-	      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			       _("No symbol or value provided."));
 	      return EXT_LANG_BT_ERROR;
 	    }
@@ -934,7 +934,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	    }
 	  else if (py_func != Py_None)
 	    {
-	      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			       _("FrameDecorator.function: expecting a " \
 				 "String, integer or None."));
 	      return EXT_LANG_BT_ERROR;

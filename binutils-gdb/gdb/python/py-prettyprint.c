@@ -417,9 +417,9 @@ print_children (PyObject *printer, const char *hint,
 	  break;
 	}
 
-      if (! PyTuple_Check (item.get ()) || AMD_PyTuple_Size (item.get ()) != 2)
+      if (! PyTuple_Check (item.get ()) || PyTuple_Size (item.get ()) != 2)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 			   _("Result of children iterator not a tuple"
 			     " of two elements."));
 	  gdbpy_print_stack ();
@@ -684,7 +684,7 @@ gdbpy_default_visualizer (PyObject *self, PyObject *args)
   value = value_object_to_value (val_obj);
   if (! value)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Argument must be a gdb.Value."));
       return NULL;
     }

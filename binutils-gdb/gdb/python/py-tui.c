@@ -438,7 +438,7 @@ gdbpy_register_tui_window (PyObject *self, PyObject *args, PyObject *kw)
 #define REQUIRE_WINDOW(Window)					\
     do {							\
       if (!(Window)->is_valid ())				\
-	return PyErr_Format (PyExc_RuntimeError,		\
+	return PyErr_Format ((*AMD_PyExc_RuntimeError),		\
 			     _("TUI window is invalid."));	\
     } while (0)
 
@@ -448,7 +448,7 @@ gdbpy_register_tui_window (PyObject *self, PyObject *args, PyObject *kw)
     do {							\
       if (!(Window)->is_valid ())				\
 	{							\
-	  PyErr_Format (PyExc_RuntimeError,			\
+	  PyErr_Format ((*AMD_PyExc_RuntimeError),			\
 			_("TUI window is invalid."));		\
 	  return -1;						\
 	}							\
@@ -541,7 +541,7 @@ gdbpy_tui_set_title (PyObject *self, PyObject *newvalue, void *closure)
 
   if (newvalue == nullptr)
     {
-      PyErr_Format (PyExc_TypeError, _("Cannot delete \"title\" attribute."));
+      PyErr_Format ((*AMD_PyExc_TypeError), _("Cannot delete \"title\" attribute."));
       return -1;
     }
 

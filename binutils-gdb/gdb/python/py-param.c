@@ -175,7 +175,7 @@ static PyObject *
 get_attr (PyObject *obj, PyObject *attr_name)
 {
   if (PyUnicode_Check (attr_name)
-      && ! AMD_PyUnicode_CompareWithASCIIString (attr_name, "value"))
+      && ! PyUnicode_CompareWithASCIIString (attr_name, "value"))
     {
       parmpy_object *self = (parmpy_object *) obj;
 
@@ -202,7 +202,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	  && (self->type == var_filename
 	      || value != Py_None))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("String required for filename."));
 
 	  return -1;
@@ -226,7 +226,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 
 	if (! gdbpy_is_string (value))
 	  {
-	    AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	    AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			     _("ENUM arguments must be a string."));
 	    return -1;
 	  }
@@ -240,7 +240,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	    break;
 	if (! self->enumeration[i])
 	  {
-	    AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	    AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			     _("The value must be member of an enumeration."));
 	    return -1;
 	  }
@@ -251,7 +251,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
     case var_boolean:
       if (! PyBool_Check (value))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("A boolean argument is required."));
 	  return -1;
 	}
@@ -264,7 +264,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
     case var_auto_boolean:
       if (! PyBool_Check (value) && value != Py_None)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("A boolean or None is required"));
 	  return -1;
 	}
@@ -325,14 +325,14 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	    if (PyErr_Occurred ())
 	      {
 		if (extra_literals == nullptr)
-		  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+		  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 				   _("The value must be integer."));
 		else if (count > 1)
-		  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+		  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 				   string_printf (_("integer or one of: %s"),
 						  buffer.c_str ()).c_str ());
 		else
-		  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+		  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 				   string_printf (_("integer or %s"),
 						  buffer.c_str ()).c_str ());
 		return -1;
@@ -366,7 +366,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	  }
 	if (allowed == TRIBOOL_FALSE)
 	  {
-	    AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	    AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			     _("Range exceeded."));
 	    return -1;
 	  }
@@ -379,7 +379,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
       }
 
     default:
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Unhandled type in parameter value."));
       return -1;
     }
@@ -392,11 +392,11 @@ static int
 set_attr (PyObject *obj, PyObject *attr_name, PyObject *val)
 {
   if (PyUnicode_Check (attr_name)
-      && ! AMD_PyUnicode_CompareWithASCIIString (attr_name, "value"))
+      && ! PyUnicode_CompareWithASCIIString (attr_name, "value"))
     {
       if (!val)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("Cannot delete a parameter's value."));
 	  return -1;
 	}
@@ -511,7 +511,7 @@ call_doc_function (PyObject *obj, PyObject *method, PyObject *arg)
     }
   else
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Parameter must return a string value."));
       return NULL;
     }
@@ -728,14 +728,14 @@ compute_enum_values (parmpy_object *self, PyObject *enum_values)
 
   if (! enum_values)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("An enumeration is required for PARAM_ENUM."));
       return 0;
     }
 
   if (! AMD_PySequence_Check (enum_values))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("The enumeration is not a sequence."));
       return 0;
     }
@@ -745,7 +745,7 @@ compute_enum_values (parmpy_object *self, PyObject *enum_values)
     return 0;
   if (size == 0)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("The enumeration is empty."));
       return 0;
     }
@@ -761,7 +761,7 @@ compute_enum_values (parmpy_object *self, PyObject *enum_values)
 	return 0;
       if (! gdbpy_is_string (item.get ()))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("The enumeration item not a string."));
 	  return 0;
 	}
@@ -820,7 +820,7 @@ parmpy_init (PyObject *self, PyObject *args, PyObject *kwds)
       && cmdtype != class_trace && cmdtype != class_obscure
       && cmdtype != class_maintenance)
     {
-      PyErr_Format (PyExc_RuntimeError, _("Invalid command class argument."));
+      PyErr_Format ((*AMD_PyExc_RuntimeError), _("Invalid command class argument."));
       return -1;
     }
 
@@ -832,14 +832,14 @@ parmpy_init (PyObject *self, PyObject *args, PyObject *kwds)
       && parmclass != param_zinteger && parmclass != param_zuinteger
       && parmclass != param_zuinteger_unlimited && parmclass != param_enum)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Invalid parameter class argument."));
       return -1;
     }
 
   if (enum_values && parmclass != param_enum)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Only PARAM_ENUM accepts a fourth argument."));
       return -1;
     }

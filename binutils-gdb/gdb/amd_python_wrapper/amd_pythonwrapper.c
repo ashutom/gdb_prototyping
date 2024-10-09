@@ -6,7 +6,23 @@
 
 static const int AMD_APIVER = 1013;
 
-/*#define GET_CORRECT_FUNCTION_POINTER(fun_name_in_lib,funtype)              \
+PyObject** AMD_PyExc_RuntimeError=nullptr;
+PyObject** AMD_PyExc_ValueError=nullptr;
+//PyObject** PyErr_Occurred=nullptr;
+PyObject** AMD_PyExc_TypeError=nullptr;
+PyObject** AMD_PyExc_KeyError=nullptr;
+//PyObject** PyErr_SetObject=nullptr;
+PyObject** AMD_PyExc_StopIteration=nullptr;
+PyObject** AMD_PyErr_Format=nullptr;
+PyObject** AMD_PyExc_AttributeError=nullptr;
+PyObject** AMD_PyExc_SystemError=nullptr;
+PyObject** AMD_PyExc_NotImplementedError=nullptr;
+PyObject** AMD_PyExc_IndexError=nullptr;
+PyObject** AMD_PyExc_NameError=nullptr;
+PyObject** AMD_PyExc_KeyboardInterrupt=nullptr;
+PyObject** AMD_PyExc_OverflowError=nullptr;
+
+/*#define GET_CORRECT_FUNCTION_POINTER(fun_name_in_lib,funtype)            \
    do{                                                                     \
          char funname[]="fun_name_in_lib";                                 \
          funtype fp =  NULL;                                               \
@@ -813,12 +829,6 @@ PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int
    py_compilestringexflags fp =  NULL;
    fp = (py_compilestringexflags) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (str,filename,start,flags,optimize); //execute
-}
-void AMD_Py_CompileStringExFlags(const wchar_t * str){
-   char funname[]="Py_CompileStringExFlags";
-   pysys_setpath fp =  NULL;
-   fp = (pysys_setpath) get_fun_pointer_from_handle((void*) fp,funname);
-   return (*fp) (str); //execute   
 }
 void AMD_Py_CompileStringExFlags(const wchar_t * str){
    char funname[]="Py_CompileStringExFlags";

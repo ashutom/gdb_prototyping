@@ -272,7 +272,7 @@ gdbpy_enter::finalize ()
 static void
 gdbpy_set_quit_flag (const struct extension_language_defn *extlang)
 {
-  AMD_PyErr_SetInterrupt ();
+  PyErr_SetInterrupt ();
 }
 
 /* Return true if the quit flag has been set, false otherwise.  */
@@ -284,7 +284,7 @@ gdbpy_check_quit_flag (const struct extension_language_defn *extlang)
     return false;
 
   gdbpy_gil gil;
-  return AMD_PyOS_InterruptOccurred ();
+  return PyOS_InterruptOccurred ();
 }
 
 /* Evaluate a Python command like AMD_PyRun_SimpleString, but takes a
@@ -299,11 +299,11 @@ eval_python_command (const char *command, int start_symbol,
 {
   PyObject *m, *d;
 
-  m = AMD_PyImport_AddModule ("__main__");
+  m = PyImport_AddModule ("__main__");
   if (m == NULL)
     return -1;
 
-  d = AMD_PyModule_GetDict (m);
+  d = PyModule_GetDict (m);
   if (d == NULL)
     return -1;
 
@@ -314,8 +314,8 @@ eval_python_command (const char *command, int start_symbol,
       if (file == nullptr)
 	return -1;
 
-      /* PyDict_GetItemWithError returns a borrowed reference.  */
-      PyObject *found = PyDict_GetItemWithError (d, file.get ());
+      /* AMD_PyDict_GetItemWithError returns a borrowed reference.  */
+      PyObject *found = AMD_PyDict_GetItemWithError (d, file.get ());
       if (found == nullptr)
 	{
 	  if (PyErr_Occurred ())
@@ -325,7 +325,7 @@ eval_python_command (const char *command, int start_symbol,
 	  if (filename_obj == nullptr)
 	    return -1;
 
-	  if (PyDict_SetItem (d, file.get (), filename_obj.get ()) < 0)
+	  if (AMD_PyDict_SetItem (d, file.get (), filename_obj.get ()) < 0)
 	    return -1;
 	  if (AMD_PyDict_SetItemString (d, "__cached__", Py_None) < 0)
 	    return -1;
@@ -335,7 +335,7 @@ eval_python_command (const char *command, int start_symbol,
     }
 
   /* Use this API because it is in Python 3.2.  */
-  gdbpy_ref<> code (AMD_Py_CompileStringExFlags (command,
+  gdbpy_ref<> code (Py_CompileStringExFlags (command,
 					     filename == nullptr
 					     ? "<string>"
 					     : filename,
@@ -345,7 +345,7 @@ eval_python_command (const char *command, int start_symbol,
   int result = -1;
   if (code != nullptr)
     {
-      gdbpy_ref<> eval_result (AMD_PyEval_EvalCode (code.get (), d, d));
+      gdbpy_ref<> eval_result (PyEval_EvalCode (code.get (), d, d));
       if (eval_result != nullptr)
 	result = 0;
     }
@@ -360,9 +360,9 @@ eval_python_command (const char *command, int start_symbol,
 
       /* CPython also just ignores errors here.  These should be
 	 expected to be exceedingly rare anyway.  */
-      if (PyDict_DelItemString (d, "__file__") < 0)
+      if (AMD_PyDict_DelItemString (d, "__file__") < 0)
 	AMD_PyErr_Clear ();
-      if (PyDict_DelItemString (d, "__cached__") < 0)
+      if (AMD_PyDict_DelItemString (d, "__cached__") < 0)
 	AMD_PyErr_Clear ();
 
       if (save_error.has_value ())
@@ -394,7 +394,7 @@ python_interactive_command (const char *arg, int from_tty)
     }
   else
     {
-      err = AMD_PyRun_InteractiveLoop (ui->instream, "<stdin>");
+      err = PyRun_InteractiveLoop (ui->instream, "<stdin>");
       dont_repeat ();
     }
 
@@ -568,7 +568,7 @@ gdbpy_parameter_value (const setting &var)
       }
     }
 
-  return PyErr_Format (PyExc_RuntimeError,
+  return PyErr_Format ((*AMD_PyExc_RuntimeError),
 		       _("Programmer error: unhandled type."));
 }
 
@@ -597,14 +597,14 @@ gdbpy_parameter (PyObject *self, PyObject *args)
     }
 
   if (cmd == CMD_LIST_AMBIGUOUS)
-    return PyErr_Format (PyExc_RuntimeError,
+    return PyErr_Format ((*AMD_PyExc_RuntimeError),
 			 _("Parameter `%s' is ambiguous."), arg);
   else if (!found)
-    return PyErr_Format (PyExc_RuntimeError,
+    return PyErr_Format ((*AMD_PyExc_RuntimeError),
 			 _("Could not find parameter `%s'."), arg);
 
   if (!cmd->var.has_value ())
-    return PyErr_Format (PyExc_RuntimeError,
+    return PyErr_Format ((*AMD_PyExc_RuntimeError),
 			 _("`%s' is not a parameter."), arg);
 
   return gdbpy_parameter_value (*cmd->var);
@@ -875,7 +875,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
   /* Check throttle bounds and exit if in excess.  */
   if (throttle != 0 && count > throttle)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Number of breakpoints exceeds throttled maximum."));
       return NULL;
     }
@@ -909,7 +909,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
       else
 	symbol_name = p.msymbol.minsym->linkage_name ();
 
-      gdbpy_ref<> argList (AMD_Py_BuildValue("(s)", symbol_name.c_str ()));
+      gdbpy_ref<> argList (Py_BuildValue("(s)", symbol_name.c_str ()));
       gdbpy_ref<> obj (AMD_PyObject_CallObject ((PyObject *)
 					    &breakpoint_object_type,
 					    argList.get ()));
@@ -1145,7 +1145,7 @@ gdbpy_post_event (PyObject *self, PyObject *args)
 
   if (!AMD_PyCallable_Check (func))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("Posted event is not callable"));
       return NULL;
     }
@@ -1225,7 +1225,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	     string, set  PROMPT.  Anything else, set an exception.  */
 	  if (result != Py_None && !PyUnicode_Check (result.get ()))
 	    {
-	      PyErr_Format (PyExc_RuntimeError,
+	      PyErr_Format ((*AMD_PyExc_RuntimeError),
 			    _("Return from prompt_hook must " \
 			      "be either a Python string, or None"));
 	      gdbpy_print_stack ();
@@ -1320,13 +1320,13 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
     return {};
   else if (!PyBytes_Check (result.get ()))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Return value from gdb.colorize should be a bytes object or None."));
       gdbpy_print_stack ();
       return {};
     }
 
-  return std::string (AMD_PyBytes_AsString (result.get ()));
+  return std::string (PyBytes_AsString (result.get ()));
 }
 
 /* This is the extension_language_ops.colorize_disasm "method".  */
@@ -1360,7 +1360,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
   if (!AMD_PyCallable_Check (hook.get ()))
     return {};
 
-  gdbpy_ref<> content_arg (AMD_PyBytes_FromString (content.c_str ()));
+  gdbpy_ref<> content_arg (PyBytes_FromString (content.c_str ()));
   if (content_arg == nullptr)
     {
       gdbpy_print_stack ();
@@ -1389,13 +1389,13 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
 
   if (!PyBytes_Check (result.get ()))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Return value from gdb.colorize_disasm should be a bytes object or None."));
       gdbpy_print_stack ();
       return {};
     }
 
-  return std::string (AMD_PyBytes_AsString (result.get ()));
+  return std::string (PyBytes_AsString (result.get ()));
 }
 
 
@@ -1447,7 +1447,7 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
 	 default, but it feels like there's too much scope of mistakes in
 	 this case, so better to require the user to provide both
 	 arguments.  */
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("The architecture and progspace arguments must both be supplied"));
       return nullptr;
     }
@@ -1457,7 +1457,7 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
 	 Just check that these objects are valid.  */
       if (!gdbpy_is_progspace (pspace_obj))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 			   _("The progspace argument is not a gdb.Progspace object"));
 	  return nullptr;
 	}
@@ -1465,14 +1465,14 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
       pspace = progspace_object_to_program_space (pspace_obj);
       if (pspace == nullptr)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 			   _("The progspace argument is not valid"));
 	  return nullptr;
 	}
 
       if (!gdbpy_is_architecture (arch_obj))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 			   _("The architecture argument is not a gdb.Architecture object"));
 	  return nullptr;
 	}
@@ -1601,8 +1601,8 @@ gdbpy_print_stack (void)
   /* Print "full" message and backtrace.  */
   else if (gdbpy_should_print_stack == python_excp_full)
     {
-      AMD_PyErr_Print ();
-      /* AMD_PyErr_Print doesn't necessarily end output with a newline.
+      PyErr_Print ();
+      /* PyErr_Print doesn't necessarily end output with a newline.
 	 This works because Python's stdout/stderr is fed through
 	 gdb_printf.  */
       try
@@ -1811,7 +1811,7 @@ gdbpy_handle_missing_debuginfo (const struct extension_language_defn *extlang,
 
   if (!gdbpy_is_string (pyo_execute_ret.get ()))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       "return value from _handle_missing_debuginfo should "
 		       "be None, a Bool, or a String");
       gdbpy_print_stack ();
@@ -2000,7 +2000,7 @@ show_python_ignore_environment (struct ui_file *file, int from_tty,
 
 /* Implement 'set python ignore-environment'.  This sets Python's internal
    flag no matter when the command is issued, however, if this is used
-   after AMD_Py_Initialize has been called then most of the environment will
+   after Py_Initialize has been called then most of the environment will
    already have been read.  */
 
 static void
@@ -2072,7 +2072,7 @@ python_write_bytecode ()
 
 /* Implement 'set python dont-write-bytecode'.  This sets Python's internal
    flag no matter when the command is issued, however, if this is used
-   after AMD_Py_Initialize has been called then many modules could already
+   after Py_Initialize has been called then many modules could already
    have been imported and their byte code written out.  */
 
 static void
@@ -2125,7 +2125,7 @@ finalize_python (const struct extension_language_defn *ignore)
   /* Call the gdbpy_finalize_* functions from every *.c file.  */
   gdbpy_initialize_file::finalize_all ();
 
-  AMD_Py_Finalize ();
+  Py_Finalize ();
 
   gdb_python_initialized = false;
   restore_active_ext_lang (previous_active);
@@ -2201,7 +2201,7 @@ do_start_initialization ()
     { nullptr, nullptr }
   };
 
-  if (AMD_PyImport_ExtendInittab (mods) < 0)
+  if (PyImport_ExtendInittab (mods) < 0)
     return false;
 
 #ifdef WITH_PYTHON_PATH
@@ -2210,16 +2210,16 @@ do_start_initialization ()
      NOTE: Python assumes the following layout:
      /foo/bin/python
      /foo/lib/pythonX.Y/...
-     This must be done before calling AMD_Py_Initialize.  */
+     This must be done before calling Py_Initialize.  */
   gdb::unique_xmalloc_ptr<char> progname
     (concat (ldirname (python_libdir.c_str ()).c_str (), SLASH_STRING, "bin",
 	      SLASH_STRING, "python", (char *) NULL));
   /* Python documentation indicates that the memory given
-     to AMD_Py_CompileStringExFlags cannot be freed.  However, it seems that
-     at least Python 3.7.4 AMD_Py_CompileStringExFlags takes a copy of the
+     to Py_SetProgramName cannot be freed.  However, it seems that
+     at least Python 3.7.4 Py_SetProgramName takes a copy of the
      given program_name.  Making progname_copy static and not release
      the memory avoids a leak report for Python versions that duplicate
-     program_name, and respect the requirement of AMD_Py_CompileStringExFlags
+     program_name, and respect the requirement of Py_SetProgramName
      for Python versions that do not duplicate program_name.  */
   static wchar_t *progname_copy;
 
@@ -2235,14 +2235,14 @@ do_start_initialization ()
     }
   setlocale (LC_ALL, oldloc.c_str ());
 
-  /* AMD_Py_CompileStringExFlags was deprecated in Python 3.11.  Use PyConfig
+  /* Py_SetProgramName was deprecated in Python 3.11.  Use PyConfig
      mechanisms for Python 3.10 and newer.  */
 #if PY_VERSION_HEX < 0x030a0000
-  /* Note that AMD_Py_CompileStringExFlags expects the string it is passed to
+  /* Note that Py_SetProgramName expects the string it is passed to
      remain alive for the duration of the program's execution, so
      it is not freed after this call.  */
-  AMD_Py_CompileStringExFlags (progname_copy);
-  AMD_Py_Initialize ();
+  Py_SetProgramName (progname_copy);
+  Py_Initialize ();
 #else
   PyConfig config;
 
@@ -2267,7 +2267,7 @@ init_done:
     return false;
 #endif
 #else
-  AMD_Py_Initialize ();
+  Py_Initialize ();
 #endif
 
 #if PY_VERSION_HEX < 0x03090000
@@ -2281,9 +2281,9 @@ init_done:
   if (gdb_module == NULL)
     return false;
 
-  if (AMD_PyModule_AddStringConstant (gdb_module, "VERSION", version) < 0
-      || AMD_PyModule_AddStringConstant (gdb_module, "HOST_CONFIG", host_name) < 0
-      || AMD_PyModule_AddStringConstant (gdb_module, "TARGET_CONFIG",
+  if (PyModule_AddStringConstant (gdb_module, "VERSION", version) < 0
+      || PyModule_AddStringConstant (gdb_module, "HOST_CONFIG", host_name) < 0
+      || PyModule_AddStringConstant (gdb_module, "TARGET_CONFIG",
 				     target_name) < 0)
     return false;
 
@@ -2293,19 +2293,19 @@ init_done:
       || AMD_PyModule_AddIntConstant (gdb_module, "STDLOG", 2) < 0)
     return false;
 
-  gdbpy_gdb_error = AMD_PyErr_NewException ("gdb.error", PyExc_RuntimeError, NULL);
+  gdbpy_gdb_error = PyErr_NewException ("gdb.error", (*AMD_PyExc_RuntimeError), NULL);
   if (gdbpy_gdb_error == NULL
       || gdb_pymodule_addobject (gdb_module, "error", gdbpy_gdb_error) < 0)
     return false;
 
-  gdbpy_gdb_memory_error = AMD_PyErr_NewException ("gdb.MemoryError",
+  gdbpy_gdb_memory_error = PyErr_NewException ("gdb.MemoryError",
 					       gdbpy_gdb_error, NULL);
   if (gdbpy_gdb_memory_error == NULL
       || gdb_pymodule_addobject (gdb_module, "MemoryError",
 				 gdbpy_gdb_memory_error) < 0)
     return false;
 
-  gdbpy_gdberror_exc = AMD_PyErr_NewException ("gdb.GdbError", NULL, NULL);
+  gdbpy_gdberror_exc = PyErr_NewException ("gdb.GdbError", NULL, NULL);
   if (gdbpy_gdberror_exc == NULL
       || gdb_pymodule_addobject (gdb_module, "GdbError",
 				 gdbpy_gdberror_exc) < 0)
@@ -2343,7 +2343,7 @@ init_done:
   gdb::observers::gdb_exiting.attach (gdbpy_gdb_exiting, "python");
 
   /* Release the GIL while gdb runs.  */
-  AMD_PyEval_SaveThread ();
+  PyEval_SaveThread ();
 
   /* Only set this when initialization has succeeded.  */
   gdb_python_initialized = 1;
@@ -2547,12 +2547,12 @@ do_initialize (const struct extension_language_defn *extlang)
   std::string gdb_pythondir = (std::string (gdb_datadir) + SLASH_STRING
 			       + "python");
 
-  sys_path = AMD_PySys_GetObject ("path");
+  sys_path = PySys_GetObject ("path");
 
-  /* AMD_PySys_SetPath was deprecated in Python 3.11.  Disable this
+  /* PySys_SetPath was deprecated in Python 3.11.  Disable this
      deprecated code for Python 3.10 and newer.  Also note that this
      ifdef eliminates potential initialization of sys.path via
-     AMD_PySys_SetPath.  My (kevinb's) understanding of PEP 587 suggests
+     PySys_SetPath.  My (kevinb's) understanding of PEP 587 suggests
      that it's not necessary due to module_search_paths being
      initialized to an empty list following any of the PyConfig
      initialization functions.  If it does turn out that some kind of
@@ -2562,14 +2562,14 @@ do_initialize (const struct extension_language_defn *extlang)
   /* If sys.path is not defined yet, define it first.  */
   if (!(sys_path && PyList_Check (sys_path)))
     {
-      AMD_PySys_SetPath (L"");
-      sys_path = AMD_PySys_GetObject ("path");
+      PySys_SetPath (L"");
+      sys_path = PySys_GetObject ("path");
     }
 #endif
   if (sys_path && PyList_Check (sys_path))
     {
       gdbpy_ref<> pythondir (AMD_PyUnicode_FromString (gdb_pythondir.c_str ()));
-      if (pythondir == NULL || AMD_PyList_Insert (sys_path, 0, pythondir.get ()))
+      if (pythondir == NULL || PyList_Insert (sys_path, 0, pythondir.get ()))
 	return false;
     }
   else
@@ -2577,7 +2577,7 @@ do_initialize (const struct extension_language_defn *extlang)
 
   /* Import the gdb module to finish the initialization, and
      add it to __main__ for convenience.  */
-  m = AMD_PyImport_AddModule ("__main__");
+  m = PyImport_AddModule ("__main__");
   if (m == NULL)
     return false;
 

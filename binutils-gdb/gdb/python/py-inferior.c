@@ -79,7 +79,7 @@ static const registry<inferior>::key<inferior_object, infpy_deleter>
   do {								\
     if (!Inferior->inferior)					\
       {								\
-	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,			\
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),			\
 			 _("Inferior no longer exists."));	\
 	return NULL;						\
       }								\
@@ -557,7 +557,7 @@ infpy_read_memory (PyObject *self, PyObject *args, PyObject *kw)
 
   if (length == 0)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("Argument 'count' should be greater than zero"));
       return NULL;
     }
@@ -679,7 +679,7 @@ infpy_search_memory (PyObject *self, PyObject *args, PyObject *kw)
 
   if (!length)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("Search range is empty."));
       return nullptr;
     }
@@ -687,7 +687,7 @@ infpy_search_memory (PyObject *self, PyObject *args, PyObject *kw)
   else if (length > CORE_ADDR_MAX
 	   || (start_addr + length - 1) < start_addr)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("The search range is too large."));
       return nullptr;
     }
@@ -765,7 +765,7 @@ infpy_thread_from_thread_handle (PyObject *self, PyObject *args, PyObject *kw)
     }
   else
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Argument 'handle' must be a thread handle object."));
 
       return NULL;
@@ -890,13 +890,13 @@ infpy_set_args (PyObject *self, PyObject *value, void *closure)
 
   if (!inf->inferior)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, _("Inferior no longer exists."));
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), _("Inferior no longer exists."));
       return -1;
     }
 
   if (value == nullptr)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete 'arguments' attribute."));
       return -1;
     }
@@ -933,7 +933,7 @@ infpy_set_args (PyObject *self, PyObject *value, void *closure)
     }
   else
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("string or sequence required for 'arguments'"));
       return -1;
     }

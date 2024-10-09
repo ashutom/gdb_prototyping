@@ -76,7 +76,7 @@ static const registry<objfile>::key<objfile_object, objfpy_deleter>
   do {								\
     if (!(obj)->objfile)					\
       {								\
-	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,			\
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),			\
 			 _("Objfile no longer exists."));	\
 	return NULL;						\
       }								\
@@ -267,14 +267,14 @@ objfpy_set_printers (PyObject *o, PyObject *value, void *ignore)
 
   if (! value)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete the pretty_printers attribute."));
       return -1;
     }
 
   if (! PyList_Check (value))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The pretty_printers attribute must be a list."));
       return -1;
     }
@@ -306,14 +306,14 @@ objfpy_set_frame_filters (PyObject *o, PyObject *filters, void *ignore)
 
   if (! filters)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete the frame filters attribute."));
       return -1;
     }
 
   if (! PyDict_Check (filters))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The frame_filters attribute must be a dictionary."));
       return -1;
     }
@@ -346,14 +346,14 @@ objfpy_set_frame_unwinders (PyObject *o, PyObject *unwinders, void *ignore)
 
   if (!unwinders)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete the frame unwinders attribute."));
       return -1;
     }
 
   if (!PyList_Check (unwinders))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The frame_unwinders attribute must be a list."));
       return -1;
     }
@@ -397,14 +397,14 @@ objfpy_set_type_printers (PyObject *o, PyObject *value, void *ignore)
 
   if (! value)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Cannot delete the type_printers attribute."));
       return -1;
     }
 
   if (! PyList_Check (value))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The type_printers attribute must be a list."));
       return -1;
     }
@@ -613,7 +613,7 @@ gdbpy_lookup_objfile (PyObject *self, PyObject *args, PyObject *kw)
 
   if (by_build_id && !objfpy_build_id_ok (name))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError, _("Not a valid build id."));
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), _("Not a valid build id."));
       return NULL;
     }
 
@@ -673,7 +673,7 @@ gdbpy_lookup_objfile (PyObject *self, PyObject *args, PyObject *kw)
   if (objfile != NULL)
     return objfile_to_objfile_object (objfile).release ();
 
-  AMD_PyErr_SetString((PyObject *)PyExc_ValueError, _("Objfile not found."));
+  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("Objfile not found."));
   return NULL;
 }
 

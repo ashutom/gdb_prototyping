@@ -122,7 +122,7 @@ typedef unsigned long long gdb_py_ulongest;
 typedef PY_LONG_LONG gdb_py_longest;
 typedef unsigned PY_LONG_LONG gdb_py_ulongest;
 #endif
-#define gdb_py_long_as_ulongest AMD_PyLong_AsUnsignedLongLong
+#define gdb_py_long_as_ulongest PyLong_AsUnsignedLongLong
 #define gdb_py_long_as_long_and_overflow PyLong_AsLongLongAndOverflow
 
 #else /* HAVE_LONG_LONG */
@@ -148,7 +148,7 @@ typedef long Py_hash_t;
 #endif
 
 /* A template variable holding the format character (as for
-   AMD_Py_BuildValue) for a given type.  */
+   Py_BuildValue) for a given type.  */
 template<typename T>
 struct gdbpy_method_format {};
 
@@ -177,7 +177,7 @@ struct gdbpy_method_format<unsigned>
 };
 
 /* A helper function to compute the AMD_PyObject_CallMethod /
-   AMD_Py_BuildValue format given the argument types.  */
+   Py_BuildValue format given the argument types.  */
 
 template<typename... Args>
 constexpr std::array<char, sizeof... (Args) + 1>
@@ -239,35 +239,35 @@ gdbpy_call_method (const gdbpy_ref<> &o, const char *method, Args... args)
 # define AMD_PyObject_CallMethod POISONED_PyObject_CallMethod
 #endif
 
-/* The 'name' parameter of AMD_PyErr_NewException was missing the 'const'
+/* The 'name' parameter of PyErr_NewException was missing the 'const'
    qualifier in Python <= 3.4.  Hence, we wrap it in a function to
    avoid errors when compiled with -Werror.  */
 
 static inline PyObject*
 gdb_PyErr_NewException (const char *name, PyObject *base, PyObject *dict)
 {
-  return AMD_PyErr_NewException (const_cast<char *> (name), base, dict);
+  return PyErr_NewException (const_cast<char *> (name), base, dict);
 }
 
-#define AMD_PyErr_NewException gdb_PyErr_NewException
+#define PyErr_NewException gdb_PyErr_NewException
 
-/* AMD_PySys_GetObject's 'name' parameter was missing the 'const'
+/* PySys_GetObject's 'name' parameter was missing the 'const'
    qualifier before Python 3.4.  Hence, we wrap it in a function to
    avoid errors when compiled with -Werror.  */
 
 static inline PyObject *
 gdb_PySys_GetObject (const char *name)
 {
-  return AMD_PySys_GetObject (const_cast<char *> (name));
+  return PySys_GetObject (const_cast<char *> (name));
 }
 
-#define AMD_PySys_GetObject gdb_PySys_GetObject
+#define PySys_GetObject gdb_PySys_GetObject
 
-/* AMD_PySys_SetPath was deprecated in Python 3.11.  Disable the deprecated
+/* PySys_SetPath was deprecated in Python 3.11.  Disable the deprecated
    code for Python 3.10 and newer.  */
 #if PY_VERSION_HEX < 0x030a0000
 
-/* AMD_PySys_SetPath's 'path' parameter was missing the 'const' qualifier
+/* PySys_SetPath's 'path' parameter was missing the 'const' qualifier
    before Python 3.6.  Hence, we wrap it in a function to avoid errors
    when compiled with -Werror.  */
 
@@ -276,10 +276,10 @@ gdb_PySys_GetObject (const char *name)
 static inline void
 gdb_PySys_SetPath (const GDB_PYSYS_SETPATH_CHAR *path)
 {
-  AMD_PySys_SetPath (const_cast<GDB_PYSYS_SETPATH_CHAR *> (path));
+  PySys_SetPath (const_cast<GDB_PYSYS_SETPATH_CHAR *> (path));
 }
 
-#define AMD_PySys_SetPath gdb_PySys_SetPath
+#define PySys_SetPath gdb_PySys_SetPath
 #endif
 
 /* Wrap PyGetSetDef to allow convenient construction with string
@@ -416,7 +416,7 @@ struct gdbpy_breakpoint_object
 #define BPPY_REQUIRE_VALID(Breakpoint)                                  \
     do {                                                                \
       if ((Breakpoint)->bp == NULL)                                     \
-	return PyErr_Format (PyExc_RuntimeError,                        \
+	return PyErr_Format ((*AMD_PyExc_RuntimeError),                        \
 			     _("Breakpoint %d is invalid."),            \
 			     (Breakpoint)->number);                     \
     } while (0)
@@ -427,7 +427,7 @@ struct gdbpy_breakpoint_object
     do {                                                                \
       if ((Breakpoint)->bp == NULL)                                     \
 	{                                                               \
-	  PyErr_Format (PyExc_RuntimeError, _("Breakpoint %d is invalid."), \
+	  PyErr_Format ((*AMD_PyExc_RuntimeError), _("Breakpoint %d is invalid."), \
 			(Breakpoint)->number);                          \
 	  return -1;                                                    \
 	}                                                               \
@@ -783,7 +783,7 @@ public:
   bool type_matches (PyObject *type) const
   {
     gdbpy_ref<> err_type = this->type ();
-    return AMD_PyErr_GivenExceptionMatches (err_type.get (), type);
+    return PyErr_GivenExceptionMatches (err_type.get (), type);
   }
 
   /* Return a new reference to the exception value object.  */
@@ -901,14 +901,14 @@ class gdbpy_allow_threads
 public:
 
   gdbpy_allow_threads ()
-    : m_save (AMD_PyEval_SaveThread ())
+    : m_save (PyEval_SaveThread ())
   {
     gdb_assert (m_save != nullptr);
   }
 
   ~gdbpy_allow_threads ()
   {
-    AMD_PyEval_RestoreThread (m_save);
+    PyEval_RestoreThread (m_save);
   }
 
   DISABLE_COPY_AND_ASSIGN (gdbpy_allow_threads);

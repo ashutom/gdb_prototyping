@@ -389,7 +389,7 @@ make_disasm_addr_part (struct gdbarch *gdbarch, CORE_ADDR address)
   do {									\
     if (!disasm_info_object_is_valid (Info))				\
       {									\
-	AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,				\
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),				\
 			 _("DisassembleInfo is no longer valid."));	\
 	return nullptr;							\
       }									\
@@ -414,14 +414,14 @@ disasmpy_info_make_text_part (PyObject *self, PyObject *args,
 
   if (style_num < 0 || style_num > ((int) dis_style_comment_start))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("Invalid disassembler style."));
       return nullptr;
     }
 
   if (strlen (string) == 0)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("String must not be empty."));
       return nullptr;
     }
@@ -645,7 +645,7 @@ disasmpy_set_enabled (PyObject *self, PyObject *args, PyObject *kw)
 
   if (!PyBool_Check (newstate))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value passed to `_set_enabled' must be a boolean."));
       return nullptr;
     }
@@ -886,7 +886,7 @@ gdbpy_disassembler::read_memory_func (bfd_vma memaddr, gdb_byte *buff,
   if (!AMD_PyObject_CheckBuffer (result_obj.get ())
       || AMD_PyObject_GetBuffer (result_obj.get(), &py_buff, PyBUF_CONTIG_RO) < 0)
     {
-      PyErr_Format (PyExc_TypeError,
+      PyErr_Format ((*AMD_PyExc_TypeError),
 		    _("Result from read_memory is not a buffer"));
       dis->store_exception (gdbpy_err_fetch ());
       return -1;
@@ -899,7 +899,7 @@ gdbpy_disassembler::read_memory_func (bfd_vma memaddr, gdb_byte *buff,
   /* Validate that the buffer is the correct length.  */
   if (py_buff.len != len)
     {
-      PyErr_Format (PyExc_ValueError,
+      PyErr_Format ((*AMD_PyExc_ValueError),
 		    _("Buffer returned from read_memory is sized %d instead of the expected %d"),
 		    py_buff.len, len);
       dis->store_exception (gdbpy_err_fetch ());
@@ -1009,7 +1009,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
 
   if (length <= 0)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("Length must be greater than 0."));
       return -1;
     }
@@ -1019,7 +1019,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
 
   if (string != nullptr && parts_list != nullptr)
     {
-      PyErr_Format (PyExc_ValueError,
+      PyErr_Format ((*AMD_PyExc_ValueError),
 		    _("Cannot use 'string' and 'parts' when creating %s."),
 		    Py_TYPE (self)->tp_name);
       return -1;
@@ -1029,7 +1029,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
     {
       if (strlen (string) == 0)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 			   _("String must not be empty."));
 	  return -1;
 	}
@@ -1045,7 +1045,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
     {
       if (!AMD_PySequence_Check (parts_list))
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 			   _("'parts' argument is not a sequence"));
 	  return -1;
 	}
@@ -1053,7 +1053,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
       Py_ssize_t parts_count = AMD_PySequence_Size (parts_list);
       if (parts_count <= 0)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 			   _("'parts' list must not be empty."));
 	  return -1;
 	}
@@ -1078,7 +1078,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
 		gdbarch = addr_part->gdbarch;
 	      else if (addr_part->gdbarch != gdbarch)
 		{
-		  AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+		  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 				   _("Inconsistent gdb.Architectures used "
 				     "in 'parts' sequence."));
 		  return -1;
@@ -1322,7 +1322,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
   if (!AMD_PyObject_IsInstance (result.get (),
 			    (PyObject *) &disasm_result_object_type))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_TypeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("Result is not a DisassemblerResult."));
       gdbpy_print_stack ();
       return std::optional<int> (-1);
@@ -1340,7 +1340,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
 			  gdbarch_max_insn_length (gdbarch) : INT_MAX);
   if (length <= 0)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 	 _("Invalid length attribute: length must be greater than 0."));
       gdbpy_print_stack ();
       return std::optional<int> (-1);
@@ -1348,7 +1348,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
   if (length > max_insn_length)
     {
       PyErr_Format
-	(PyExc_ValueError,
+	((*AMD_PyExc_ValueError),
 	 _("Invalid length attribute: length %d greater than architecture maximum of %d"),
 	 length, max_insn_length);
       gdbpy_print_stack ();
@@ -1409,7 +1409,7 @@ disasmpy_dealloc_result (PyObject *self)
 static int
 disasmpy_part_init (PyObject *self, PyObject *args, PyObject *kwargs)
 {
-  AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		   _("Cannot create instances of DisassemblerPart."));
   return -1;
 }

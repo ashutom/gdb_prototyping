@@ -30,7 +30,7 @@ py_get_event_thread (ptid_t ptid)
 	= current_inferior ()->find_thread (ptid);
       if (thread != nullptr)
 	return thread_to_thread_object (thread);
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError, "Could not find event thread");
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), "Could not find event thread");
       return NULL;
     }
   return gdbpy_ref<>::new_reference (Py_None);

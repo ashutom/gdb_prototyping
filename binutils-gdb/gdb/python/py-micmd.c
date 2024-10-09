@@ -202,7 +202,7 @@ mi_command_py::invoke (struct mi_parse *parse) const
       gdbpy_ref<> str (AMD_PyUnicode_Decode (parse->argv[i],
 					 strlen (parse->argv[i]),
 					 host_charset (), nullptr));
-      if (AMD_PyList_SetItem (argobj.get (), i, str.release ()) < 0)
+      if (PyList_SetItem (argobj.get (), i, str.release ()) < 0)
 	gdbpy_handle_exception ();
     }
 
@@ -301,7 +301,7 @@ micmdpy_install_command (micmdpy_object *obj)
     {
       /* There is already an MI command registered with that name, and it's not
 	 a Python one.  Forbid replacing a non-Python MI command.  */
-      AMD_PyErr_SetString((PyObject *)PyExc_RuntimeError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 		       _("unable to add command, name is already in use"));
       return -1;
     }
@@ -347,12 +347,12 @@ micmdpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
   const int name_len = strlen (name);
   if (name_len == 0)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError, _("MI command name is empty."));
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("MI command name is empty."));
       return -1;
     }
   else if ((name_len < 2) || (name[0] != '-') || !isalnum (name[1]))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_ValueError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
 		       _("MI command name does not start with '-'"
 			 " followed by at least one letter or digit."));
       return -1;
@@ -364,7 +364,7 @@ micmdpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 	  if (!isalnum (name[i]) && name[i] != '-')
 	    {
 	      PyErr_Format
-		(PyExc_ValueError,
+		((*AMD_PyExc_ValueError),
 		 _("MI command name contains invalid character: %c."),
 		 name[i]);
 	      return -1;
@@ -391,7 +391,7 @@ micmdpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
       if (strcmp (cmd->mi_command_name, name) != 0)
 	{
 	  PyErr_SetString
-	    (PyExc_ValueError,
+	    ((*AMD_PyExc_ValueError),
 	     _("can't reinitialize object with a different command name"));
 	  return -1;
 	}
