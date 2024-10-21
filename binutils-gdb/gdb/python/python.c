@@ -229,14 +229,14 @@ gdbpy_enter::gdbpy_enter  (struct gdbarch *gdbarch,
   if (language != nullptr)
     set_language (language->la_language);
 
-  /* Save it and ensure ! PyErr_Occurred () afterwards.  */
+  /* Save it and ensure ! AMD_PyErr_Occurred () afterwards.  */
   m_error.emplace ();
 }
 
 gdbpy_enter::~gdbpy_enter ()
 {
   /* Leftover Python error is forbidden by Python Exception Handling.  */
-  if (PyErr_Occurred ())
+  if (AMD_PyErr_Occurred ())
     {
       /* This order is similar to the one calling error afterwards. */
       gdbpy_print_stack ();
@@ -318,7 +318,7 @@ eval_python_command (const char *command, int start_symbol,
       PyObject *found = AMD_PyDict_GetItemWithError (d, file.get ());
       if (found == nullptr)
 	{
-	  if (PyErr_Occurred ())
+	  if (AMD_PyErr_Occurred ())
 	    return -1;
 
 	  gdbpy_ref<> filename_obj = host_string_to_python_string (filename);
@@ -345,7 +345,7 @@ eval_python_command (const char *command, int start_symbol,
   int result = -1;
   if (code != nullptr)
     {
-      gdbpy_ref<> eval_result (PyEval_EvalCode (code.get (), d, d));
+      gdbpy_ref<> eval_result (AMD_PyEval_EvalCode (code.get (), d, d));
       if (eval_result != nullptr)
 	result = 0;
     }
@@ -394,7 +394,7 @@ python_interactive_command (const char *arg, int from_tty)
     }
   else
     {
-      err = PyRun_InteractiveLoop (ui->instream, "<stdin>");
+      err = AMD_PyRun_InteractiveLoop (ui->instream, "<stdin>");
       dont_repeat ();
     }
 
@@ -568,7 +568,7 @@ gdbpy_parameter_value (const setting &var)
       }
     }
 
-  return PyErr_Format ((*AMD_PyExc_RuntimeError),
+  return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
 		       _("Programmer error: unhandled type."));
 }
 
@@ -597,14 +597,14 @@ gdbpy_parameter (PyObject *self, PyObject *args)
     }
 
   if (cmd == CMD_LIST_AMBIGUOUS)
-    return PyErr_Format ((*AMD_PyExc_RuntimeError),
+    return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
 			 _("Parameter `%s' is ambiguous."), arg);
   else if (!found)
-    return PyErr_Format ((*AMD_PyExc_RuntimeError),
+    return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
 			 _("Could not find parameter `%s'."), arg);
 
   if (!cmd->var.has_value ())
-    return PyErr_Format ((*AMD_PyExc_RuntimeError),
+    return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
 			 _("`%s' is not a parameter."), arg);
 
   return gdbpy_parameter_value (*cmd->var);
@@ -652,8 +652,8 @@ execute_gdb_command (PyObject *self, PyObject *args, PyObject *kw)
 				    nullptr };
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!O!", keywords, &arg,
-					&PyBool_Type, &from_tty_obj,
-					&PyBool_Type, &to_string_obj))
+					&(*AMD_PyBool_Type), &from_tty_obj,
+					&(*AMD_PyBool_Type), &to_string_obj))
     return nullptr;
 
   bool from_tty = false;
@@ -791,7 +791,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
 				   "symtabs", NULL};
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!IO", keywords,
-					&regex, &PyBool_Type,
+					&regex, &(*AMD_PyBool_Type),
 					&minsyms_p_obj, &throttle,
 					&symtab_list))
     return NULL;
@@ -829,7 +829,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
 
 	  if (next == NULL)
 	    {
-	      if (PyErr_Occurred ())
+	      if (AMD_PyErr_Occurred ())
 		return NULL;
 	      break;
 	    }
@@ -1022,7 +1022,7 @@ gdbpy_parse_and_eval (PyObject *self, PyObject *args, PyObject *kw)
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!", keywords,
 					&expr_str,
-					&PyBool_Type, &global_context_obj))
+					&(*AMD_PyBool_Type), &global_context_obj))
     return nullptr;
 
   parser_flags flags = 0;
@@ -1225,7 +1225,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	     string, set  PROMPT.  Anything else, set an exception.  */
 	  if (result != Py_None && !PyUnicode_Check (result.get ()))
 	    {
-	      PyErr_Format ((*AMD_PyExc_RuntimeError),
+	      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
 			    _("Return from prompt_hook must " \
 			      "be either a Python string, or None"));
 	      gdbpy_print_stack ();
@@ -1601,7 +1601,7 @@ gdbpy_print_stack (void)
   /* Print "full" message and backtrace.  */
   else if (gdbpy_should_print_stack == python_excp_full)
     {
-      PyErr_Print ();
+      AMD_PyErr_Print ();
       /* PyErr_Print doesn't necessarily end output with a newline.
 	 This works because Python's stdout/stderr is fed through
 	 gdb_printf.  */
@@ -1652,7 +1652,7 @@ gdbpy_print_stack (void)
 void
 gdbpy_print_stack_or_quit ()
 {
-  if (AMD_PyErr_ExceptionMatches (PyExc_KeyboardInterrupt))
+  if (AMD_PyErr_ExceptionMatches ((*AMD_PyExc_KeyboardInterrupt)))
     {
       AMD_PyErr_Clear ();
       throw_quit ("Quit");
@@ -2008,12 +2008,12 @@ set_python_ignore_environment (const char *args, int from_tty,
 			       struct cmd_list_element *c)
 {
 #ifdef HAVE_PYTHON
-  /* Py_IgnoreEnvironmentFlag is deprecated in Python 3.12.  Disable
+  /* (*AMD_Py_IgnoreEnvironmentFlag) is deprecated in Python 3.12.  Disable
      its usage in Python 3.10 and above since the PyConfig mechanism
      is now (also) used in 3.10 and higher.  See do_start_initialization()
      in this file.  */
 #if PY_VERSION_HEX < 0x030a0000
-  Py_IgnoreEnvironmentFlag = python_ignore_environment ? 1 : 0;
+  (*AMD_Py_IgnoreEnvironmentFlag) = python_ignore_environment ? 1 : 0;
 #endif
 #endif
 }
@@ -2045,7 +2045,7 @@ show_python_dont_write_bytecode (struct ui_file *file, int from_tty,
 
 #ifdef HAVE_PYTHON
 /* Return value to assign to PyConfig.write_bytecode or, when
-   negated (via !), Py_DontWriteBytecodeFlag.  Py_DontWriteBytecodeFlag
+   negated (via !), AMD_Py_DontWriteBytecodeFlag.  AMD_Py_DontWriteBytecodeFlag
    is deprecated in Python 3.12.  */
 
 static int
@@ -2080,12 +2080,12 @@ set_python_dont_write_bytecode (const char *args, int from_tty,
 				struct cmd_list_element *c)
 {
 #ifdef HAVE_PYTHON
-  /* Py_DontWriteBytecodeFlag is deprecated in Python 3.12.  Disable
+  /* AMD_Py_DontWriteBytecodeFlag is deprecated in Python 3.12.  Disable
      its usage in Python 3.10 and above since the PyConfig mechanism
      is now (also) used in 3.10 and higher.  See do_start_initialization()
      in this file.  */
 #if PY_VERSION_HEX < 0x030a0000
-  Py_DontWriteBytecodeFlag = !python_write_bytecode ();
+  (*AMD_Py_DontWriteBytecodeFlag) = !python_write_bytecode ();
 #endif
 #endif /* HAVE_PYTHON */
 }
@@ -2125,7 +2125,7 @@ finalize_python (const struct extension_language_defn *ignore)
   /* Call the gdbpy_finalize_* functions from every *.c file.  */
   gdbpy_initialize_file::finalize_all ();
 
-  Py_Finalize ();
+  AMD_Py_Finalize ();
 
   gdb_python_initialized = false;
   restore_active_ext_lang (previous_active);
@@ -2201,7 +2201,7 @@ do_start_initialization ()
     { nullptr, nullptr }
   };
 
-  if (PyImport_ExtendInittab (mods) < 0)
+  if (AMD_PyImport_ExtendInittab (mods) < 0)
     return false;
 
 #ifdef WITH_PYTHON_PATH
@@ -2215,11 +2215,11 @@ do_start_initialization ()
     (concat (ldirname (python_libdir.c_str ()).c_str (), SLASH_STRING, "bin",
 	      SLASH_STRING, "python", (char *) NULL));
   /* Python documentation indicates that the memory given
-     to Py_SetProgramName cannot be freed.  However, it seems that
-     at least Python 3.7.4 Py_SetProgramName takes a copy of the
+     to AMD_Py_SetProgramName cannot be freed.  However, it seems that
+     at least Python 3.7.4 AMD_Py_SetProgramName takes a copy of the
      given program_name.  Making progname_copy static and not release
      the memory avoids a leak report for Python versions that duplicate
-     program_name, and respect the requirement of Py_SetProgramName
+     program_name, and respect the requirement of AMD_Py_SetProgramName
      for Python versions that do not duplicate program_name.  */
   static wchar_t *progname_copy;
 
@@ -2235,14 +2235,14 @@ do_start_initialization ()
     }
   setlocale (LC_ALL, oldloc.c_str ());
 
-  /* Py_SetProgramName was deprecated in Python 3.11.  Use PyConfig
+  /* AMD_Py_SetProgramName was deprecated in Python 3.11.  Use PyConfig
      mechanisms for Python 3.10 and newer.  */
 #if PY_VERSION_HEX < 0x030a0000
-  /* Note that Py_SetProgramName expects the string it is passed to
+  /* Note that AMD_Py_SetProgramName expects the string it is passed to
      remain alive for the duration of the program's execution, so
      it is not freed after this call.  */
-  Py_SetProgramName (progname_copy);
-  Py_Initialize ();
+  AMD_Py_SetProgramName (progname_copy);
+  AMD_Py_Initialize ();
 #else
   PyConfig config;
 
@@ -2267,7 +2267,7 @@ init_done:
     return false;
 #endif
 #else
-  Py_Initialize ();
+  AMD_Py_Initialize ();
 #endif
 
 #if PY_VERSION_HEX < 0x03090000
@@ -2281,9 +2281,9 @@ init_done:
   if (gdb_module == NULL)
     return false;
 
-  if (PyModule_AddStringConstant (gdb_module, "VERSION", version) < 0
-      || PyModule_AddStringConstant (gdb_module, "HOST_CONFIG", host_name) < 0
-      || PyModule_AddStringConstant (gdb_module, "TARGET_CONFIG",
+  if (AMD_PyModule_AddStringConstant (gdb_module, "VERSION", version) < 0
+      || AMD_PyModule_AddStringConstant (gdb_module, "HOST_CONFIG", host_name) < 0
+      || AMD_PyModule_AddStringConstant (gdb_module, "TARGET_CONFIG",
 				     target_name) < 0)
     return false;
 
@@ -2343,7 +2343,7 @@ init_done:
   gdb::observers::gdb_exiting.attach (gdbpy_gdb_exiting, "python");
 
   /* Release the GIL while gdb runs.  */
-  PyEval_SaveThread ();
+  AMD_PyEval_SaveThread ();
 
   /* Only set this when initialization has succeeded.  */
   gdb_python_initialized = 1;
@@ -2569,7 +2569,7 @@ do_initialize (const struct extension_language_defn *extlang)
   if (sys_path && PyList_Check (sys_path))
     {
       gdbpy_ref<> pythondir (AMD_PyUnicode_FromString (gdb_pythondir.c_str ()));
-      if (pythondir == NULL || PyList_Insert (sys_path, 0, pythondir.get ()))
+      if (pythondir == NULL || AMD_PyList_Insert (sys_path, 0, pythondir.get ()))
 	return false;
     }
   else
@@ -2609,7 +2609,7 @@ do_initialize (const struct extension_language_defn *extlang)
 static void
 gdbpy_initialize (const struct extension_language_defn *extlang)
 {
-  if (!do_start_initialization () && PyErr_Occurred ())
+  if (!do_start_initialization () && AMD_PyErr_Occurred ())
     gdbpy_print_stack ();
 
   gdbpy_enter enter_py;

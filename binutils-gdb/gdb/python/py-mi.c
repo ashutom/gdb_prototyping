@@ -285,7 +285,7 @@ serialize_mi_result_1 (PyObject *result, const char *field_name)
 	  item.reset (AMD_PyIter_Next (result));
 	  if (item == nullptr)
 	    {
-	      if (PyErr_Occurred () != nullptr)
+	      if (AMD_PyErr_Occurred () != nullptr)
 		gdbpy_handle_exception ();
 	      break;
 	    }
@@ -299,7 +299,7 @@ serialize_mi_result_1 (PyObject *result, const char *field_name)
 	  int overflow = 0;
 	  gdb_py_longest val = gdb_py_long_as_long_and_overflow (result,
 								 &overflow);
-	  if (PyErr_Occurred () != nullptr)
+	  if (AMD_PyErr_Occurred () != nullptr)
 	    gdbpy_handle_exception ();
 	  if (overflow == 0)
 	    {
@@ -357,7 +357,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
     {
       if (!isalnum (name[i]) && name[i] != '-')
 	{
-	  PyErr_Format
+	  AMD_PyErr_Format
 	    ((*AMD_PyExc_ValueError),
 	     _("MI notification name contains invalid character: %c."),
 	     name[i]);
@@ -368,7 +368,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
   /* Validate additional data.  */
   if (!(data == Py_None || PyDict_Check (data)))
     {
-      PyErr_Format
+      AMD_PyErr_Format
 	((*AMD_PyExc_ValueError),
 	 _("MI notification data must be either None or a dictionary, not %s"),
 	 Py_TYPE (data)->tp_name);

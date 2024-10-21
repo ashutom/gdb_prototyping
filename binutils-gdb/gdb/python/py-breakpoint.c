@@ -53,7 +53,7 @@ struct gdbpy_breakpoint_location_object
 #define BPLOCPY_REQUIRE_VALID(Breakpoint, Location)                         \
     do {                                                                    \
       if ((Breakpoint)->bp != (Location)->bp_loc->owner)                    \
-	return PyErr_Format ((*AMD_PyExc_RuntimeError),                            \
+	return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),                            \
 			     _("Breakpoint location is invalid."));	    \
     } while (0)
 
@@ -63,7 +63,7 @@ struct gdbpy_breakpoint_location_object
     do {                                                                    \
       if ((Breakpoint)->bp != (Location)->bp_loc->owner)                    \
 	{                                                                   \
-	  PyErr_Format ((*AMD_PyExc_RuntimeError),                                 \
+	  AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),                                 \
 			_("Breakpoint location is invalid."));		    \
 	  return -1;                                                        \
 	}                                                                   \
@@ -513,7 +513,7 @@ bppy_set_hit_count (PyObject *self, PyObject *newvalue, void *closure)
 
       if (value != 0)
 	{
-	  AMD_PyErr_SetString((PyObject *)PyExc_AttributeError,
+	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_AttributeError),
 			   _("The value of `hit_count' must be zero."));
 	  return -1;
 	}

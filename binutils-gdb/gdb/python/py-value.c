@@ -210,7 +210,7 @@ valpy_init (PyObject *self, PyObject *args, PyObject *kwds)
     value = convert_buffer_and_type_to_value (val_obj, type, false);
   if (value == nullptr)
     {
-      gdb_assert (PyErr_Occurred ());
+      gdb_assert (AMD_PyErr_Occurred ());
       return -1;
     }
 
@@ -716,7 +716,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
       /* This matches the error message that Python 3.3 raises when
 	 passing positionals to functions expecting keyword-only
 	 arguments.  */
-      PyErr_Format ((*AMD_PyExc_TypeError),
+      AMD_PyErr_Format ((*AMD_PyExc_TypeError),
 		    "format_string() takes 0 positional arguments but %zu were given",
 		    positional_count);
       return NULL;
@@ -746,19 +746,19 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
 					kw,
 					"|O!O!O!O!O!O!O!O!O!O!O!O!O!IIIIs",
 					keywords,
-					&PyBool_Type, &raw_obj,
-					&PyBool_Type, &pretty_arrays_obj,
-					&PyBool_Type, &pretty_structs_obj,
-					&PyBool_Type, &array_indexes_obj,
-					&PyBool_Type, &symbols_obj,
-					&PyBool_Type, &unions_obj,
-					&PyBool_Type, &address_obj,
-					&PyBool_Type, &styling_obj,
-					&PyBool_Type, &nibbles_obj,
-					&PyBool_Type, &summary_obj,
-					&PyBool_Type, &deref_refs_obj,
-					&PyBool_Type, &actual_objects_obj,
-					&PyBool_Type, &static_members_obj,
+					&(*AMD_PyBool_Type), &raw_obj,
+					&(*AMD_PyBool_Type), &pretty_arrays_obj,
+					&(*AMD_PyBool_Type), &pretty_structs_obj,
+					&(*AMD_PyBool_Type), &array_indexes_obj,
+					&(*AMD_PyBool_Type), &symbols_obj,
+					&(*AMD_PyBool_Type), &unions_obj,
+					&(*AMD_PyBool_Type), &address_obj,
+					&(*AMD_PyBool_Type), &styling_obj,
+					&(*AMD_PyBool_Type), &nibbles_obj,
+					&(*AMD_PyBool_Type), &summary_obj,
+					&(*AMD_PyBool_Type), &deref_refs_obj,
+					&(*AMD_PyBool_Type), &actual_objects_obj,
+					&(*AMD_PyBool_Type), &static_members_obj,
 					&opts.print_max_chars,
 					&opts.print_max,
 					&opts.max_depth,
@@ -953,7 +953,7 @@ static Py_ssize_t
 valpy_length (PyObject *self)
 {
   /* We don't support getting the number of elements in a struct / class.  */
-  AMD_PyErr_SetString((PyObject *)PyExc_NotImplementedError,
+  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
 		   _("Invalid operation on gdb.Value."));
   return -1;
 }
@@ -1099,7 +1099,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 	    {
 	      if (!AMD_PyObject_HasAttrString (key, "bitpos"))
 		{
-		  AMD_PyErr_SetString((PyObject *)PyExc_AttributeError,
+		  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_AttributeError),
 				   _("gdb.Field object has no name and no "
 				     "'bitpos' attribute."));
 
@@ -1189,7 +1189,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 static int
 valpy_setitem (PyObject *self, PyObject *key, PyObject *value)
 {
-  PyErr_Format (PyExc_NotImplementedError,
+  AMD_PyErr_Format ((*AMD_PyExc_NotImplementedError),
 		_("Setting of struct elements is not currently supported."));
   return -1;
 }
@@ -1623,7 +1623,7 @@ valpy_power (PyObject *self, PyObject *other, PyObject *unused)
      about it.  */
   if (unused != Py_None)
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_NotImplementedError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
 		       "Invalid operation on gdb.Value.");
       return NULL;
     }
@@ -1814,7 +1814,7 @@ valpy_richcompare_throw (PyObject *self, PyObject *other, int op)
       break;
     default:
       /* Can't happen.  */
-      AMD_PyErr_SetString((PyObject *)PyExc_NotImplementedError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
 		       _("Invalid operation on gdb.Value."));
       result = -1;
       break;
@@ -1845,7 +1845,7 @@ valpy_richcompare (PyObject *self, PyObject *other, int op)
 	Py_RETURN_TRUE;
       default:
 	/* Can't happen.  */
-	AMD_PyErr_SetString((PyObject *)PyExc_NotImplementedError,
+	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
 			 _("Invalid operation on gdb.Value."));
 	return NULL;
     }
@@ -1997,11 +1997,11 @@ convert_value_from_python (PyObject *obj)
 	{
 	  LONGEST l = AMD_PyLong_AsLongLong (obj);
 
-	  if (PyErr_Occurred ())
+	  if (AMD_PyErr_Occurred ())
 	    {
 	      /* If the error was an overflow, we can try converting to
 		 ULONGEST instead.  */
-	      if (AMD_PyErr_ExceptionMatches (PyExc_OverflowError))
+	      if (AMD_PyErr_ExceptionMatches ((*AMD_PyExc_OverflowError)))
 		{
 		  gdbpy_err_fetch fetched_error;
 		  gdbpy_ref<> zero = gdb_py_object_from_longest (0);
@@ -2012,7 +2012,7 @@ convert_value_from_python (PyObject *obj)
 		      ULONGEST ul;
 
 		      ul = PyLong_AsUnsignedLongLong (obj);
-		      if (! PyErr_Occurred ())
+		      if (! AMD_PyErr_Occurred ())
 			value = value_from_ulongest (builtin_type_upylong, ul);
 		    }
 		  else
@@ -2029,7 +2029,7 @@ convert_value_from_python (PyObject *obj)
 	{
 	  double d = PyFloat_AsDouble (obj);
 
-	  if (! PyErr_Occurred ())
+	  if (! AMD_PyErr_Occurred ())
 	    value = value_from_host_double (builtin_type_pyfloat, d);
 	}
       else if (gdbpy_is_string (obj))
@@ -2051,7 +2051,7 @@ convert_value_from_python (PyObject *obj)
 	  value = ((value_object *) result)->value->copy ();
 	}
       else
-	PyErr_Format ((*AMD_PyExc_TypeError),
+	AMD_PyErr_Format ((*AMD_PyExc_TypeError),
 		      _("Could not convert Python object: %S."), obj);
     }
   catch (const gdb_exception &except)

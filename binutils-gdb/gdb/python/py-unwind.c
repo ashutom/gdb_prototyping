@@ -183,7 +183,7 @@ pyuw_object_attribute_to_pointer (PyObject *pyo, const char *attr_name,
   gdbpy_ref<> pyo_value (AMD_PyObject_GetAttrString (pyo, attr_name));
   if (pyo_value == nullptr)
     {
-      gdb_assert (PyErr_Occurred ());
+      gdb_assert (AMD_PyErr_Occurred ());
       return pyuw_get_attr_code::ATTR_ERROR;
     }
   if (pyo_value == Py_None)
@@ -191,7 +191,7 @@ pyuw_object_attribute_to_pointer (PyObject *pyo, const char *attr_name,
 
   if (get_addr_from_python (pyo_value.get (), addr) < 0)
     {
-      gdb_assert (PyErr_Occurred ());
+      gdb_assert (AMD_PyErr_Occurred ());
       return pyuw_get_attr_code::ATTR_ERROR;
     }
 
@@ -353,7 +353,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
   ULONGEST reg_size = register_size (pending_frame->gdbarch, regnum);
   if (reg_size != value->type ()->length ())
     {
-      PyErr_Format ((*AMD_PyExc_ValueError),
+      AMD_PyErr_Format ((*AMD_PyExc_ValueError),
 		    "The value of the register returned by the Python "
 		    "sniffer has unexpected size: %s instead of %s.",
 		    pulongest (value->type ()->length ()),
@@ -497,7 +497,7 @@ pending_framepy_read_register (PyObject *self, PyObject *args, PyObject *kw)
       value *val = value_of_register
         (regnum, get_next_frame_sentinel_okay (pending_frame->frame_info));
       if (val == NULL)
-	PyErr_Format ((*AMD_PyExc_ValueError),
+	AMD_PyErr_Format ((*AMD_PyExc_ValueError),
 		      "Cannot read register %d from frame.",
 		      regnum);
       else
@@ -853,7 +853,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
   if (gdb_python_module == NULL
       || ! AMD_PyObject_HasAttrString (gdb_python_module, "_execute_unwinders"))
     {
-      AMD_PyErr_SetString((PyObject *)PyExc_NameError,
+      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NameError),
 		       "Installation error: gdb._execute_unwinders function "
 		       "is missing");
       gdbpy_print_stack ();

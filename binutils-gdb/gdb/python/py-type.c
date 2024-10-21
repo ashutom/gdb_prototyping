@@ -983,7 +983,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (! demangled)
     {
-      PyErr_Format ((*AMD_PyExc_RuntimeError), _("No argument %d in template."),
+      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError), _("No argument %d in template."),
 		    argno);
       return NULL;
     }
@@ -1044,7 +1044,7 @@ typy_template_argument (PyObject *self, PyObject *args)
 
   if (argno >= TYPE_N_TEMPLATE_ARGUMENTS (type))
     {
-      PyErr_Format ((*AMD_PyExc_RuntimeError), _("No argument %d in template."),
+      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError), _("No argument %d in template."),
 		    argno);
       return NULL;
     }
@@ -1054,7 +1054,7 @@ typy_template_argument (PyObject *self, PyObject *args)
     return type_to_type_object (sym->type ());
   else if (sym->aclass () == LOC_OPTIMIZED_OUT)
     {
-      PyErr_Format ((*AMD_PyExc_RuntimeError),
+      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
 		    _("Template argument is optimized out"));
       return NULL;
     }
@@ -1295,7 +1295,7 @@ typy_getitem (PyObject *self, PyObject *key)
       if (t_field_name && (strcmp_iw (t_field_name, field.get ()) == 0))
 	return convert_field (type, i).release ();
     }
-  PyErr_SetObject ((*AMD_PyExc_KeyError), key);
+  AMD_PyErr_SetObject ((*AMD_PyExc_KeyError), key);
   return NULL;
 }
 

@@ -207,7 +207,7 @@ mi_command_py::invoke (struct mi_parse *parse) const
     }
 
   gdb_assert (this->m_pyobj != nullptr);
-  gdb_assert (PyErr_Occurred () == nullptr);
+  gdb_assert (AMD_PyErr_Occurred () == nullptr);
   gdbpy_ref<> results
     (AMD_PyObject_CallMethodObjArgs ((PyObject *) this->m_pyobj.get (), invoke_cst,
 				 argobj.get (), nullptr));
@@ -363,7 +363,7 @@ micmdpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 	{
 	  if (!isalnum (name[i]) && name[i] != '-')
 	    {
-	      PyErr_Format
+	      AMD_PyErr_Format
 		((*AMD_PyExc_ValueError),
 		 _("MI command name contains invalid character: %c."),
 		 name[i]);

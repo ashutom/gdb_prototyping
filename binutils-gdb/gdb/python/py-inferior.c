@@ -326,7 +326,7 @@ thread_to_thread_object (thread_info *thr)
     return gdbpy_ref<>::new_reference
       ((PyObject *) (thread_it->second.get ()));
 
-  AMD_PyErr_SetString((PyObject *)PyExc_SystemError,
+  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_SystemError),
 		   _("could not find gdb thread object"));
   return NULL;
 }

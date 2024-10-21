@@ -8,12 +8,10 @@ static const int AMD_APIVER = 1013;
 
 PyObject** AMD_PyExc_RuntimeError=nullptr;
 PyObject** AMD_PyExc_ValueError=nullptr;
-//PyObject** PyErr_Occurred=nullptr;
 PyObject** AMD_PyExc_TypeError=nullptr;
 PyObject** AMD_PyExc_KeyError=nullptr;
-//PyObject** PyErr_SetObject=nullptr;
 PyObject** AMD_PyExc_StopIteration=nullptr;
-PyObject** AMD_PyErr_Format=nullptr;
+//PyObject** AMD_PyErr_Format=nullptr;
 PyObject** AMD_PyExc_AttributeError=nullptr;
 PyObject** AMD_PyExc_SystemError=nullptr;
 PyObject** AMD_PyExc_NotImplementedError=nullptr;
@@ -21,6 +19,10 @@ PyObject** AMD_PyExc_IndexError=nullptr;
 PyObject** AMD_PyExc_NameError=nullptr;
 PyObject** AMD_PyExc_KeyboardInterrupt=nullptr;
 PyObject** AMD_PyExc_OverflowError=nullptr;
+PyTypeObject* AMD_PyBool_Type=nullptr;
+int* AMD_Py_DontWriteBytecodeFlag=nullptr;
+int* AMD_Py_IgnoreEnvironmentFlag=nullptr;
+
 
 /*#define GET_CORRECT_FUNCTION_POINTER(fun_name_in_lib,funtype)            \
    do{                                                                     \
@@ -171,7 +173,17 @@ int AMD_PyArg_UnpackTuple(PyObject * ob, const char * action, Py_ssize_t min, Py
    va_end (ap);
    return result;   
 }
+PyObject* AMD_PyErr_Format(PyObject *exception,const char *format,...){
+   char funname[]="PyErr_Format";
+   pyerr_format fp=NULL;
+   fp=(pyerr_format) get_fun_pointer_from_handle((void*) fp,funname);
 
+   va_list ap;
+   va_start (ap, format);
+   PyObject* result = (*fp)(exception,format,ap);
+   va_end (ap);
+   return result; 
+}
 inline int AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type){
     return ob->ob_type == type;
 }
@@ -812,17 +824,17 @@ void AMD_PyEval_RestoreThread(PyThreadState * th){
    fp = (pyeval_restorethread) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (th); //execute
 }
-int AMD_PyRun_InteractiveLoop(FILE *filep, const char *filename){
+int AMD_PyRun_InteractiveLoopFlags(FILE *filep, const char *filename, PyCompilerFlags *flags){
    char funname[]="PyRun_InteractiveLoopFlags";
    pyrun_interactiveloopflags fp =  NULL;
    fp = (pyrun_interactiveloopflags) get_fun_pointer_from_handle((void*) fp,funname);
-   return (*fp) (filep,filename, NULL); //execute
+   return (*fp) (filep,filename, flags); //execute
 }
-PyObject* AMD_PyRun_String(const char *  name, int v, PyObject * o1, PyObject * o2){
+PyObject* AMD_PyRun_StringFlags(const char *  name, int v, PyObject * o1, PyObject * o2,PyCompilerFlags * flags ){
    char funname[]="PyRun_StringFlags";
    pyrun_stringflags fp =  NULL;
    fp = (pyrun_stringflags) get_fun_pointer_from_handle((void*) fp,funname);
-   return (*fp) (name,v,o1,o2,NULL); //execute
+   return (*fp) (name,v,o1,o2,flags); //execute
 }
 PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int start, PyCompilerFlags *flags,int optimize){
    char funname[]="Py_CompileStringExFlags";
@@ -847,4 +859,28 @@ void AMD_Py_Finalize(void){
    pyerr_clear fp =  NULL;
    fp = (pyerr_clear) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (); //execute
+}
+PyObject * AMD_PyErr_Occurred(void){
+   char funname[]="PyErr_Occurred";
+   pydict_new fp =  NULL;
+   fp = (pydict_new) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (); //execute
+}
+void AMD_PyErr_SetObject(PyObject* ob1, PyObject* ob2){
+   char funname[]="PyErr_SetObject";
+   pyerr_setobject fp =  NULL;
+   fp = (pyerr_setobject) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob1,ob2); //execute
+}
+PyObject* AMD_PyObject_Call(PyObject *callable, PyObject *args, PyObject *kwargs){
+   char funname[]="PyObject_Call";
+   pyeval_evalcode fp =  NULL;
+   fp = (pyeval_evalcode) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (callable,args,kwargs); //execute
+}
+void AMD_Py_SetProgramName(const wchar_t * name){
+   char funname[]="Py_SetProgramName";
+   pysys_setpath fp =  NULL;
+   fp = (pysys_setpath) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (name); //execute
 }

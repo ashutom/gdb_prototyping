@@ -416,7 +416,7 @@ struct gdbpy_breakpoint_object
 #define BPPY_REQUIRE_VALID(Breakpoint)                                  \
     do {                                                                \
       if ((Breakpoint)->bp == NULL)                                     \
-	return PyErr_Format ((*AMD_PyExc_RuntimeError),                        \
+	return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),                        \
 			     _("Breakpoint %d is invalid."),            \
 			     (Breakpoint)->number);                     \
     } while (0)
@@ -427,7 +427,7 @@ struct gdbpy_breakpoint_object
     do {                                                                \
       if ((Breakpoint)->bp == NULL)                                     \
 	{                                                               \
-	  PyErr_Format ((*AMD_PyExc_RuntimeError), _("Breakpoint %d is invalid."), \
+	  AMD_PyErr_Format ((*AMD_PyExc_RuntimeError), _("Breakpoint %d is invalid."), \
 			(Breakpoint)->number);                          \
 	  return -1;                                                    \
 	}                                                               \
@@ -901,14 +901,14 @@ class gdbpy_allow_threads
 public:
 
   gdbpy_allow_threads ()
-    : m_save (PyEval_SaveThread ())
+    : m_save (AMD_PyEval_SaveThread ())
   {
     gdb_assert (m_save != nullptr);
   }
 
   ~gdbpy_allow_threads ()
   {
-    PyEval_RestoreThread (m_save);
+    AMD_PyEval_RestoreThread (m_save);
   }
 
   DISABLE_COPY_AND_ASSIGN (gdbpy_allow_threads);

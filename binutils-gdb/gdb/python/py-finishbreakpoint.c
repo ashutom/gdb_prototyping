@@ -220,7 +220,7 @@ bpfinishpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
       GDB_PY_SET_HANDLE_EXCEPTION (except);
     }
 
-  if (PyErr_Occurred ())
+  if (AMD_PyErr_Occurred ())
     return -1;
 
   if (inferior_ptid == null_ptid)

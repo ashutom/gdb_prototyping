@@ -158,7 +158,7 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
   if (count_obj)
     {
       count = AMD_PyLong_AsLong (count_obj);
-      if (PyErr_Occurred () || count < 0)
+      if (AMD_PyErr_Occurred () || count < 0)
 	{
 	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 			   _("Argument 'count' should be an non-negative "

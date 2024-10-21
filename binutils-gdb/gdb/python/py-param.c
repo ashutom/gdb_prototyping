@@ -322,7 +322,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 	  {
 	    val = AMD_PyLong_AsLongLong (value);
 
-	    if (PyErr_Occurred ())
+	    if (AMD_PyErr_Occurred ())
 	      {
 		if (extra_literals == nullptr)
 		  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
@@ -820,7 +820,7 @@ parmpy_init (PyObject *self, PyObject *args, PyObject *kwds)
       && cmdtype != class_trace && cmdtype != class_obscure
       && cmdtype != class_maintenance)
     {
-      PyErr_Format ((*AMD_PyExc_RuntimeError), _("Invalid command class argument."));
+      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError), _("Invalid command class argument."));
       return -1;
     }
 

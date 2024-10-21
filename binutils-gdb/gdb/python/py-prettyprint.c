@@ -211,7 +211,7 @@ pretty_print_one_value (PyObject *printer, struct value **out_value)
 		  && result != Py_None)
 		{
 		  *out_value = convert_value_from_python (result.get ());
-		  if (PyErr_Occurred ())
+		  if (AMD_PyErr_Occurred ())
 		    *out_value = NULL;
 		  result = NULL;
 		}
@@ -408,7 +408,7 @@ print_children (PyObject *printer, const char *hint,
       gdbpy_ref<> item (AMD_PyIter_Next (iter.get ()));
       if (item == NULL)
 	{
-	  if (PyErr_Occurred ())
+	  if (AMD_PyErr_Occurred ())
 	    print_stack_unless_memory_error (stream);
 	  /* Set a flag so we can know whether we printed all the
 	     available elements.  */
@@ -622,7 +622,7 @@ gdbpy_apply_val_pretty_printer (const struct extension_language_defn *extlang,
     print_children (printer.get (), hint.get (), stream, recurse, options,
 		    language, print_result == string_repr_none);
 
-  if (PyErr_Occurred ())
+  if (AMD_PyErr_Occurred ())
     print_stack_unless_memory_error (stream);
   return EXT_LANG_RC_OK;
 }

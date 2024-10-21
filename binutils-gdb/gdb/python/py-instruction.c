@@ -38,7 +38,7 @@ struct py_insn_obj {
 static PyObject *
 py_insn_getter (PyObject *self, void *closure)
 {
-  return PyErr_Format (PyExc_NotImplementedError, _("Not implemented."));
+  return AMD_PyErr_Format ((*AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Instruction members.  */

@@ -80,7 +80,7 @@ fnpy_call (struct gdbarch *gdbarch, const struct language_defn *language,
       if (callable == NULL)
 	error (_("No method named 'invoke' in object."));
 
-      result.reset (PyObject_Call (callable.get (), args.get (), NULL));
+      result.reset (AMD_PyObject_Call (callable.get (), args.get (), NULL));
     }
 
   if (result == NULL)

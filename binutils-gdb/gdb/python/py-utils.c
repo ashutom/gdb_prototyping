@@ -219,7 +219,7 @@ gdbpy_convert_exception (const struct gdb_exception &exception)
   PyObject *exc_class;
 
   if (exception.reason == RETURN_QUIT)
-    exc_class = PyExc_KeyboardInterrupt;
+    exc_class = (*AMD_PyExc_KeyboardInterrupt);
   else if (exception.reason == RETURN_FORCED_QUIT)
     quit_force (NULL, 0);
   else if (exception.error == MEMORY_ERROR)
@@ -227,7 +227,7 @@ gdbpy_convert_exception (const struct gdb_exception &exception)
   else
     exc_class = gdbpy_gdb_error;
 
-  PyErr_Format (exc_class, "%s", exception.what ());
+  AMD_PyErr_Format (exc_class, "%s", exception.what ());
 }
 
 /* Converts OBJ to a CORE_ADDR value.
@@ -259,7 +259,7 @@ get_addr_from_python (PyObject *obj, CORE_ADDR *addr)
 	return -1;
 
       val = gdb_py_long_as_ulongest (num.get ());
-      if (PyErr_Occurred ())
+      if (AMD_PyErr_Occurred ())
 	return -1;
 
       if (sizeof (val) > sizeof (CORE_ADDR) && ((CORE_ADDR) val) != val)
@@ -304,7 +304,7 @@ int
 gdb_py_int_as_long (PyObject *obj, long *result)
 {
   *result = AMD_PyLong_AsLong (obj);
-  return ! (*result == -1 && PyErr_Occurred ());
+  return ! (*result == -1 && AMD_PyErr_Occurred ());
 }
 
 
@@ -388,7 +388,7 @@ gdbpy_handle_exception ()
      for user errors.  However, a missing message for gdb.GdbError
      exceptions is arguably a bug, so we flag it as such.  */
 
-  if (fetched_error.type_matches (PyExc_KeyboardInterrupt))
+  if (fetched_error.type_matches ((*AMD_PyExc_KeyboardInterrupt)))
     throw_quit ("Quit");
   else if (! fetched_error.type_matches (gdbpy_gdberror_exc)
 	   || msg == NULL || *msg == '\0')

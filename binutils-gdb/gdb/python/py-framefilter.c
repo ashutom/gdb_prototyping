@@ -437,7 +437,7 @@ enumerate_args (PyObject *iter,
       loop block collect another item from the iterator, and, if it is
       not null emit a comma.  */
   gdbpy_ref<> item (AMD_PyIter_Next (iter));
-  if (item == NULL && PyErr_Occurred ())
+  if (item == NULL && AMD_PyErr_Occurred ())
     return EXT_LANG_BT_ERROR;
 
   while (item != NULL)
@@ -520,7 +520,7 @@ enumerate_args (PyObject *iter,
       item.reset (AMD_PyIter_Next (iter));
       if (item != NULL)
 	out->text (", ");
-      else if (PyErr_Occurred ())
+      else if (AMD_PyErr_Occurred ())
 	return EXT_LANG_BT_ERROR;
 
       annotate_arg_end ();
@@ -622,7 +622,7 @@ enumerate_locals (PyObject *iter,
       out->text ("\n");
     }
 
-  if (!PyErr_Occurred ())
+  if (!AMD_PyErr_Occurred ())
     return EXT_LANG_BT_OK;
 
   return EXT_LANG_BT_ERROR;
@@ -716,7 +716,7 @@ py_print_args (PyObject *filter,
 
 	  if (item != NULL)
 	    out->text ("...");
-	  else if (PyErr_Occurred ())
+	  else if (AMD_PyErr_Occurred ())
 	    return EXT_LANG_BT_ERROR;
 	}
     }
@@ -1002,7 +1002,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	  if (py_line != Py_None)
 	    {
 	      line = AMD_PyLong_AsLong (py_line.get ());
-	      if (PyErr_Occurred ())
+	      if (AMD_PyErr_Occurred ())
 		return EXT_LANG_BT_ERROR;
 
 	      out->text (":");
@@ -1068,7 +1068,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	      if (success == EXT_LANG_BT_ERROR)
 		return EXT_LANG_BT_ERROR;
 	    }
-	  if (item == NULL && PyErr_Occurred ())
+	  if (item == NULL && AMD_PyErr_Occurred ())
 	    return EXT_LANG_BT_ERROR;
 	}
     }
@@ -1208,7 +1208,7 @@ gdbpy_apply_frame_filter (const struct extension_language_defn *extlang,
 
       if (item == NULL)
 	{
-	  if (PyErr_Occurred ())
+	  if (AMD_PyErr_Occurred ())
 	    {
 	      gdbpy_print_stack_or_quit ();
 	      return EXT_LANG_BT_ERROR;

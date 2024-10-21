@@ -224,7 +224,7 @@ gdbpy_get_matching_xmethod_workers
       gdbpy_ref<> matcher (AMD_PyIter_Next (list_iter.get ()));
       if (matcher == NULL)
 	{
-	  if (PyErr_Occurred ())
+	  if (AMD_PyErr_Occurred ())
 	    {
 	      gdbpy_print_stack ();
 	      return EXT_LANG_RC_ERROR;
@@ -259,7 +259,7 @@ gdbpy_get_matching_xmethod_workers
 	      gdbpy_ref<> py_worker (AMD_PyIter_Next (iter.get ()));
 	      if (py_worker == NULL)
 		{
-		  if (PyErr_Occurred ())
+		  if (AMD_PyErr_Occurred ())
 		    {
 		      gdbpy_print_stack ();
 		      return EXT_LANG_RC_ERROR;
@@ -346,7 +346,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
 	  gdbpy_ref<> item (AMD_PyIter_Next (list_iter.get ()));
 	  if (item == NULL)
 	    {
-	      if (PyErr_Occurred ())
+	      if (AMD_PyErr_Occurred ())
 		{
 		  gdbpy_print_stack ();
 		  return EXT_LANG_RC_ERROR;

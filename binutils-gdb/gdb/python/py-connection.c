@@ -426,7 +426,7 @@ connpy_send_packet (PyObject *self, PyObject *args, PyObject *kw)
       /* If we encountered an error converting the reply to a Python
 	 object, then the result here can be nullptr.  In that case, Python
 	 should be aware that an error occurred.  */
-      gdb_assert ((result == nullptr) == (PyErr_Occurred () != nullptr));
+      gdb_assert ((result == nullptr) == (AMD_PyErr_Occurred () != nullptr));
       return result;
     }
   catch (const gdb_exception &except)

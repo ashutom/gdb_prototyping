@@ -541,7 +541,7 @@ frapy_read_var (PyObject *self, PyObject *args, PyObject *kw)
 
       if (!var)
 	{
-	  PyErr_Format ((*AMD_PyExc_ValueError),
+	  AMD_PyErr_Format ((*AMD_PyExc_ValueError),
 			_("Variable '%s' not found."), var_name.get ());
 
 	  return NULL;
@@ -549,7 +549,7 @@ frapy_read_var (PyObject *self, PyObject *args, PyObject *kw)
     }
   else
     {
-      PyErr_Format ((*AMD_PyExc_TypeError),
+      AMD_PyErr_Format ((*AMD_PyExc_TypeError),
 		    _("argument 1 must be gdb.Symbol or str, not %s"),
 		    Py_TYPE (sym_obj)->tp_name);
       return NULL;

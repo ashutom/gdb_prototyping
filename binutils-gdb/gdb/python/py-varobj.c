@@ -79,7 +79,7 @@ py_varobj_iter::next ()
   if (item == NULL)
     {
       /* Normal end of iteration.  */
-      if (!PyErr_Occurred ())
+      if (!AMD_PyErr_Occurred ())
 	return NULL;
 
       /* If we got a memory error, just use the text as the item.  */

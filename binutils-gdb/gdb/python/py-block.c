@@ -246,7 +246,7 @@ blpy_getitem (PyObject *self, PyObject *key)
       return symbol_to_symbol_object (sym);
     }
 
-  PyErr_SetObject ((*AMD_PyExc_KeyError), key);
+  AMD_PyErr_SetObject ((*AMD_PyExc_KeyError), key);
   return nullptr;
 }
 

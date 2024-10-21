@@ -9,6 +9,9 @@
                                                       AMD_lib_exception_failure_handeler();  \
                                                 }  \
 
+#define AMD_PyRun_String(str, s, g, l)  AMD_PyRun_StringFlags(str,s,g,l,NULL)
+#define AMD_PyRun_InteractiveLoop(f, p) AMD_PyRun_InteractiveLoopFlags(f, p, NULL)
+
 int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw, const char *format, 
                                        char **keywords, ...);
 PyObject* AMD_PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...);
@@ -121,16 +124,13 @@ int AMD_PyErr_GivenExceptionMatches(PyObject *, PyObject *);
 PyObject* AMD_PyErr_NewException(const char *name, PyObject *base, PyObject *dict);
 void AMD_PyErr_SetInterrupt(void);
 void AMD_PyErr_Print(void);
-
+PyObject * AMD_PyErr_Format(PyObject *exception,const char *format,...);
 
 extern PyObject** AMD_PyExc_RuntimeError;
 extern PyObject** AMD_PyExc_ValueError;
-//extern PyObject** PyErr_Occurred;
 extern PyObject** AMD_PyExc_TypeError;
 extern PyObject** AMD_PyExc_KeyError;
-//extern PyObject** PyErr_SetObject;
 extern PyObject** AMD_PyExc_StopIteration;
-extern PyObject** AMD_PyErr_Format;
 extern PyObject** AMD_PyExc_AttributeError;
 extern PyObject** AMD_PyExc_SystemError;
 extern PyObject** AMD_PyExc_NotImplementedError;
@@ -138,8 +138,15 @@ extern PyObject** AMD_PyExc_IndexError;
 extern PyObject** AMD_PyExc_NameError;
 extern PyObject** AMD_PyExc_KeyboardInterrupt;
 extern PyObject** AMD_PyExc_OverflowError;
+extern PyTypeObject* AMD_PyBool_Type;
+extern int* AMD_Py_DontWriteBytecodeFlag;
+extern int* AMD_Py_IgnoreEnvironmentFlag;
 
 
+void AMD_Py_SetProgramName(const wchar_t *);
+PyObject* AMD_PyErr_Occurred(void);
+void AMD_PyErr_SetObject(PyObject* ob1, PyObject* ob2);
+PyObject* AMD_PyObject_Call(PyObject *callable, PyObject *args, PyObject *kwargs);
 
 /* Releases a Py_buffer obtained from getbuffer ParseTuple's "s*". */
 void AMD_PyBuffer_Release(Py_buffer *view);
@@ -203,8 +210,8 @@ void AMD_PyEval_RestoreThread(PyThreadState *);
 int AMD_PyImport_ExtendInittab(struct _inittab *newtab);
 PyObject* AMD_PyEval_EvalCode(PyObject *, PyObject *, PyObject *);
 
-int AMD_PyRun_InteractiveLoop(FILE *fp, const char *filename);
-PyObject* AMD_PyRun_String(const char *, int, PyObject *, PyObject *);
+int AMD_PyRun_InteractiveLoopFlags(FILE *fp, const char *filename,PyCompilerFlags *flags);
+PyObject* AMD_PyRun_StringFlags(const char *, int, PyObject *, PyObject *, PyCompilerFlags *);
 PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int start, PyCompilerFlags *flags,int optimize);
 void AMD_Py_CompileStringExFlags(const wchar_t *);
 
@@ -212,12 +219,6 @@ void AMD_Py_CompileStringExFlags(const wchar_t *);
 void AMD_Py_Initialize(void);
 void AMD_Py_Finalize(void);
 
-/*TODO :
-
- `Py_IgnoreEnvironmentFlag'
- `Py_DontWriteBytecodeFlag'
-
-//TODO ENDS */
 
 
 /*Internal functions which need to be supported here because of the tempalated approach*/

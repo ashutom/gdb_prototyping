@@ -417,7 +417,7 @@ gdbpy_parse_register_id (struct gdbarch *gdbarch, PyObject *pyo_reg_id,
   else
     AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), _("Invalid type for register"));
 
-  gdb_assert (PyErr_Occurred ());
+  gdb_assert (AMD_PyErr_Occurred ());
   return false;
 }
 
