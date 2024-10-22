@@ -284,7 +284,7 @@ gdbpy_check_quit_flag (const struct extension_language_defn *extlang)
     return false;
 
   gdbpy_gil gil;
-  return PyOS_InterruptOccurred ();
+  return AMD_PyOS_InterruptOccurred ();
 }
 
 /* Evaluate a Python command like AMD_PyRun_SimpleString, but takes a
@@ -299,11 +299,11 @@ eval_python_command (const char *command, int start_symbol,
 {
   PyObject *m, *d;
 
-  m = PyImport_AddModule ("__main__");
+  m = AMD_PyImport_AddModule ("__main__");
   if (m == NULL)
     return -1;
 
-  d = PyModule_GetDict (m);
+  d = AMD_PyModule_GetDict (m);
   if (d == NULL)
     return -1;
 
@@ -335,7 +335,7 @@ eval_python_command (const char *command, int start_symbol,
     }
 
   /* Use this API because it is in Python 3.2.  */
-  gdbpy_ref<> code (Py_CompileStringExFlags (command,
+  gdbpy_ref<> code (AMD_Py_CompileStringExFlags (command,
 					     filename == nullptr
 					     ? "<string>"
 					     : filename,
@@ -2577,7 +2577,7 @@ do_initialize (const struct extension_language_defn *extlang)
 
   /* Import the gdb module to finish the initialization, and
      add it to __main__ for convenience.  */
-  m = PyImport_AddModule ("__main__");
+  m = AMD_PyImport_AddModule ("__main__");
   if (m == NULL)
     return false;
 
