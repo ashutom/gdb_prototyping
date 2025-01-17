@@ -202,7 +202,7 @@ mi_command_py::invoke (struct mi_parse *parse) const
       gdbpy_ref<> str (AMD_PyUnicode_Decode (parse->argv[i],
 					 strlen (parse->argv[i]),
 					 host_charset (), nullptr));
-      if (PyList_SetItem (argobj.get (), i, str.release ()) < 0)
+      if (AMD_PyList_SetItem (argobj.get (), i, str.release ()) < 0)
 	gdbpy_handle_exception ();
     }
 
@@ -390,7 +390,7 @@ micmdpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 	 an excessive restriction.  */
       if (strcmp (cmd->mi_command_name, name) != 0)
 	{
-	  PyErr_SetString
+	  AMD_PyErr_SetString
 	    ((*AMD_PyExc_ValueError),
 	     _("can't reinitialize object with a different command name"));
 	  return -1;

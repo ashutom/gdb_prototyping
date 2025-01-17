@@ -109,7 +109,8 @@ class GdbRemoveReadlineFinder:\n\
 \n\
 sys.meta_path.append(GdbRemoveReadlineFinder())\n\
 ") == 0)
-    PyOS_ReadlineFunctionPointer = gdbpy_readline_wrapper;
+    /*PyOS_ReadlineFunctionPointer = gdbpy_readline_wrapper;*/
+    AMD_Assign_AMD_PyOS_Readlinefp(gdbpy_readline_wrapper);
 
   return 0;
 }

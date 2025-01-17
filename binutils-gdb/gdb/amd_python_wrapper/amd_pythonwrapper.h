@@ -12,6 +12,10 @@
 #define AMD_PyRun_String(str, s, g, l)  AMD_PyRun_StringFlags(str,s,g,l,NULL)
 #define AMD_PyRun_InteractiveLoop(f, p) AMD_PyRun_InteractiveLoopFlags(f, p, NULL)
 
+
+typedef char* (*AMD_PyOS_Readlinefp) (FILE *, FILE *, const char *);
+void AMD_Assign_AMD_PyOS_Readlinefp(AMD_PyOS_Readlinefp FP);
+
 int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw, const char *format, 
                                        char **keywords, ...);
 PyObject* AMD_PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...);
@@ -184,7 +188,7 @@ int AMD_PyBuffer_FillInfo(Py_buffer *view, PyObject *o, void *buf,
 
 long AMD_PyLong_AsLong(PyObject *ob);
 long long AMD_PyLong_AsLongLong(PyObject *ob);
-long AMD_PyLong_AsLongAndOverflow(PyObject *ob);
+long AMD_PyLong_AsLongAndOverflow(PyObject *ob, int* nump);
 PyObject* AMD_PyLong_FromLong(long);
 PyObject* AMD_PyLong_FromLongLong(long long);
 PyObject* AMD_PyLong_FromUnsignedLongLong(unsigned long long);

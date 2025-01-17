@@ -52,7 +52,7 @@ gdbpy_buffer_to_membuf (gdb::unique_xmalloc_ptr<gdb_byte> buffer,
   membuf_obj->addr = address;
   membuf_obj->length = length;
 
-  return PyMemoryView_FromObject ((PyObject *) membuf_obj.get ());
+  return AMD_PyMemoryView_FromObject ((PyObject *) membuf_obj.get ());
 }
 
 /* Destructor for gdb.Membuf objects.  */
@@ -84,7 +84,7 @@ get_buffer (PyObject *self, Py_buffer *buf, int flags)
   membuf_object *membuf_obj = (membuf_object *) self;
   int ret;
 
-  ret = PyBuffer_FillInfo (buf, self, membuf_obj->buffer,
+  ret = AMD_PyBuffer_FillInfo (buf, self, membuf_obj->buffer,
 			   membuf_obj->length, 0,
 			   PyBUF_CONTIG);
 

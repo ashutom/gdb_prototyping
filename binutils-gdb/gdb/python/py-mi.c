@@ -138,14 +138,14 @@ gdbpy_execute_mi_command (PyObject *self, PyObject *args, PyObject *kw)
   gdb::unique_xmalloc_ptr<char> mi_command;
   std::vector<gdb::unique_xmalloc_ptr<char>> arg_strings;
 
-  Py_ssize_t n_args = PyTuple_Size (args);
+  Py_ssize_t n_args = AMD_PyTuple_Size (args);
   if (n_args < 0)
     return nullptr;
 
   for (Py_ssize_t i = 0; i < n_args; ++i)
     {
       /* Note this returns a borrowed reference.  */
-      PyObject *arg = PyTuple_GetItem (args, i);
+      PyObject *arg = AMD_PyTuple_GetItem (args, i);
       if (arg == nullptr)
 	return nullptr;
       gdb::unique_xmalloc_ptr<char> str = python_string_to_host_string (arg);
@@ -188,7 +188,7 @@ py_object_to_mi_key (PyObject *key_obj)
   /* The key must be a string.  */
   if (!PyUnicode_Check (key_obj))
     {
-      gdbpy_ref<> key_repr (PyObject_Repr (key_obj));
+      gdbpy_ref<> key_repr (AMD_PyObject_Repr (key_obj));
       gdb::unique_xmalloc_ptr<char> key_repr_string;
       if (key_repr != nullptr)
 	key_repr_string = python_string_to_target_string (key_repr.get ());

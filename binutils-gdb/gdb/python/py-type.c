@@ -1308,7 +1308,7 @@ typy_get (PyObject *self, PyObject *args)
 {
   PyObject *key, *defval = Py_None, *result;
 
-  if (!PyArg_UnpackTuple (args, "get", 1, 2, &key, &defval))
+  if (!AMD_PyArg_UnpackTuple (args, "get", 1, 2, &key, &defval))
     return NULL;
 
   result = typy_getitem (self, key);

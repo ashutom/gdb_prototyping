@@ -397,7 +397,7 @@ ltpy_iternext (PyObject *self)
   if (symtab->linetable () == nullptr
       || iter_obj->current_index >= symtab->linetable ()->nitems)
     {
-      PyErr_SetNone ((*AMD_PyExc_StopIteration));
+      AMD_PyErr_SetNone ((*AMD_PyExc_StopIteration));
       return NULL;
     }
 
@@ -413,7 +413,7 @@ ltpy_iternext (PyObject *self)
       /* Exit if the internal value is the last item in the line table.  */
       if (iter_obj->current_index >= symtab->linetable ()->nitems)
 	{
-	  PyErr_SetNone ((*AMD_PyExc_StopIteration));
+	  AMD_PyErr_SetNone ((*AMD_PyExc_StopIteration));
 	  return NULL;
 	}
       item = &(symtab->linetable ()->item[iter_obj->current_index]);

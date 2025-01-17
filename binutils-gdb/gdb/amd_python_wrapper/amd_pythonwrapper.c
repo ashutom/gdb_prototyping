@@ -24,6 +24,7 @@ int* AMD_Py_DontWriteBytecodeFlag=nullptr;
 int* AMD_Py_IgnoreEnvironmentFlag=nullptr;
 
 
+
 /*#define GET_CORRECT_FUNCTION_POINTER(fun_name_in_lib,funtype)            \
    do{                                                                     \
          char funname[]="fun_name_in_lib";                                 \
@@ -78,6 +79,18 @@ static void* get_fun_pointer_from_handle(void* funp, char* funname){
    return funp;
 }
 
+void AMD_Assign_AMD_PyOS_Readlinefp(AMD_PyOS_Readlinefp FP){
+   AMD_get_lib_handle();
+   AMD_PyOS_Readlinefp* fp=nullptr;
+   char symbolname[]="PyOS_ReadlineFunctionPointer";
+   fp = (AMD_PyOS_Readlinefp*) dlsym(PY_LIB_HANDLE, symbolname);
+   if(!fp){
+        fprintf(stderr, "%s , %s, %s \n", dlerror(), "Fatal!!  Symbol not found for : ", symbolname);
+        AMD_close_lib_handle();  
+        exit(EXIT_FAILURE);        
+   }
+   *fp=FP;
+}
 
 int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw,
                                        const char *format, char **keywords, ...){    
@@ -235,12 +248,11 @@ long long AMD_PyLong_AsLongLong(PyObject *ob){
    return (*fp) (ob); //execute
 
 }
-long AMD_PyLong_AsLongAndOverflow(PyObject *ob){
+long AMD_PyLong_AsLongAndOverflow(PyObject *ob, int* nump){
    char funname[]="PyLong_AsLongAndOverflow";
-   py_convert_pyobj_to_long_overflow fp =  NULL;
-   fp = (py_convert_pyobj_to_long_overflow) get_fun_pointer_from_handle((void*) fp,funname);
-   return (*fp) (ob); //execute
-
+   py_long_as_long_and_overflow fp =  NULL;
+   fp = (py_long_as_long_and_overflow) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob,nump); //execute
 }
 PyObject* AMD_PyList_New(int size){
    char funname[]="PyList_New";

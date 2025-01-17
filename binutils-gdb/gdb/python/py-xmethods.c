@@ -153,7 +153,7 @@ gdbpy_get_matching_xmethod_workers
 
       gdbpy_ref<> objfile_matchers (objfpy_get_xmethods (py_objfile.get (),
 							 NULL));
-      gdbpy_ref<> temp (PySequence_Concat (py_xmethod_matcher_list.get (),
+      gdbpy_ref<> temp (AMD_PySequence_Concat (py_xmethod_matcher_list.get (),
 					   objfile_matchers.get ()));
       if (temp == NULL)
 	{
@@ -172,7 +172,7 @@ gdbpy_get_matching_xmethod_workers
       gdbpy_ref<> pspace_matchers (pspy_get_xmethods (py_progspace.get (),
 						      NULL));
 
-      gdbpy_ref<> temp (PySequence_Concat (py_xmethod_matcher_list.get (),
+      gdbpy_ref<> temp (AMD_PySequence_Concat (py_xmethod_matcher_list.get (),
 					   pspace_matchers.get ()));
       if (temp == NULL)
 	{
@@ -196,7 +196,7 @@ gdbpy_get_matching_xmethod_workers
 							matchers_attr_str));
       if (gdb_matchers != NULL)
 	{
-	  gdbpy_ref<> temp (PySequence_Concat (py_xmethod_matcher_list.get (),
+	  gdbpy_ref<> temp (AMD_PySequence_Concat (py_xmethod_matcher_list.get (),
 					       gdb_matchers.get ()));
 	  if (temp == NULL)
 	    {

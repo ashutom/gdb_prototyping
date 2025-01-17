@@ -8,6 +8,7 @@ typedef int  (*va_arg_pyfunc) (PyObject *args, PyObject *kw, const char *format,
 typedef PyObject* (*pyobj_callmethod) (PyObject *obj, const char *name, const char *format, ...);
 typedef PyObject* (*pyobj_callmethodobjargs) (PyObject *obj, PyObject *name, ...);
 typedef PyObject* (*pyobj_callfunctionobjargs) (PyObject *callable,...);
+typedef PyObject* (*pyerr_format) (PyObject *exception,const char *format,...);
 typedef PyObject* (*py_buildval) (const char *, ...);
 typedef int (*pyarg_unpacktuple) (PyObject * ob, const char * action, Py_ssize_t min, Py_ssize_t max, ...);
 typedef PyObject* (*py_new_func) (PyTypeObject* objptr);
@@ -17,6 +18,7 @@ typedef PyObject* (*py_convert_str_to_pyobj) (const char* str);
 typedef long (*py_convert_pyobj_to_long) (PyObject *);
 typedef long long (*py_convert_pyobj_to_long_long) (PyObject *);
 typedef long (*py_convert_pyobj_to_long_overflow) (PyObject *);
+typedef long (*py_long_as_long_and_overflow) (PyObject *, int*);
 typedef PyObject* (*pylist_new) (Py_ssize_t size);
 typedef PyObject* (*pydict_new) (void);
 typedef PyObject* (*pytype_genericnew) (PyTypeObject *, PyObject *, PyObject *);
@@ -75,7 +77,7 @@ typedef void (*pyeval_restorethread) (PyThreadState *);
 typedef int  (*pyrun_interactiveloopflags) (FILE *fp, const char *filename, PyCompilerFlags *flags);
 typedef PyObject* (*pyrun_stringflags) (const char *, int, PyObject *, PyObject *, PyCompilerFlags *);
 typedef PyObject* (*py_compilestringexflags) (const char *str, const char *filename, int start, PyCompilerFlags *flags,int optimize);
-
+typedef void (*pyerr_setobject) (PyObject* ob1, PyObject* ob2);
 
 
 

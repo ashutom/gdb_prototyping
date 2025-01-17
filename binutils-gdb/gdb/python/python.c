@@ -1326,7 +1326,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
       return {};
     }
 
-  return std::string (PyBytes_AsString (result.get ()));
+  return std::string (AMD_PyBytes_AsString (result.get ()));
 }
 
 /* This is the extension_language_ops.colorize_disasm "method".  */
@@ -1360,7 +1360,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
   if (!AMD_PyCallable_Check (hook.get ()))
     return {};
 
-  gdbpy_ref<> content_arg (PyBytes_FromString (content.c_str ()));
+  gdbpy_ref<> content_arg (AMD_PyBytes_FromString (content.c_str ()));
   if (content_arg == nullptr)
     {
       gdbpy_print_stack ();
@@ -1395,7 +1395,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
       return {};
     }
 
-  return std::string (PyBytes_AsString (result.get ()));
+  return std::string (AMD_PyBytes_AsString (result.get ()));
 }
 
 
@@ -2293,19 +2293,19 @@ init_done:
       || AMD_PyModule_AddIntConstant (gdb_module, "STDLOG", 2) < 0)
     return false;
 
-  gdbpy_gdb_error = PyErr_NewException ("gdb.error", (*AMD_PyExc_RuntimeError), NULL);
+  gdbpy_gdb_error = AMD_PyErr_NewException ("gdb.error", (*AMD_PyExc_RuntimeError), NULL);
   if (gdbpy_gdb_error == NULL
       || gdb_pymodule_addobject (gdb_module, "error", gdbpy_gdb_error) < 0)
     return false;
 
-  gdbpy_gdb_memory_error = PyErr_NewException ("gdb.MemoryError",
+  gdbpy_gdb_memory_error = AMD_PyErr_NewException ("gdb.MemoryError",
 					       gdbpy_gdb_error, NULL);
   if (gdbpy_gdb_memory_error == NULL
       || gdb_pymodule_addobject (gdb_module, "MemoryError",
 				 gdbpy_gdb_memory_error) < 0)
     return false;
 
-  gdbpy_gdberror_exc = PyErr_NewException ("gdb.GdbError", NULL, NULL);
+  gdbpy_gdberror_exc = AMD_PyErr_NewException ("gdb.GdbError", NULL, NULL);
   if (gdbpy_gdberror_exc == NULL
       || gdb_pymodule_addobject (gdb_module, "GdbError",
 				 gdbpy_gdberror_exc) < 0)
@@ -2547,7 +2547,7 @@ do_initialize (const struct extension_language_defn *extlang)
   std::string gdb_pythondir = (std::string (gdb_datadir) + SLASH_STRING
 			       + "python");
 
-  sys_path = PySys_GetObject ("path");
+  sys_path = AMD_PySys_GetObject ("path");
 
   /* PySys_SetPath was deprecated in Python 3.11.  Disable this
      deprecated code for Python 3.10 and newer.  Also note that this
@@ -2562,8 +2562,8 @@ do_initialize (const struct extension_language_defn *extlang)
   /* If sys.path is not defined yet, define it first.  */
   if (!(sys_path && PyList_Check (sys_path)))
     {
-      PySys_SetPath (L"");
-      sys_path = PySys_GetObject ("path");
+      AMD_PySys_SetPath (L"");
+      sys_path = AMD_PySys_GetObject ("path");
     }
 #endif
   if (sys_path && PyList_Check (sys_path))

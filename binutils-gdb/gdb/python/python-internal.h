@@ -122,8 +122,8 @@ typedef unsigned long long gdb_py_ulongest;
 typedef PY_LONG_LONG gdb_py_longest;
 typedef unsigned PY_LONG_LONG gdb_py_ulongest;
 #endif
-#define gdb_py_long_as_ulongest PyLong_AsUnsignedLongLong
-#define gdb_py_long_as_long_and_overflow PyLong_AsLongLongAndOverflow
+#define gdb_py_long_as_ulongest AMD_PyLong_AsUnsignedLongLong
+#define gdb_py_long_as_long_and_overflow AMD_PyLong_AsLongAndOverflow
 
 #else /* HAVE_LONG_LONG */
 
@@ -246,7 +246,7 @@ gdbpy_call_method (const gdbpy_ref<> &o, const char *method, Args... args)
 static inline PyObject*
 gdb_PyErr_NewException (const char *name, PyObject *base, PyObject *dict)
 {
-  return PyErr_NewException (const_cast<char *> (name), base, dict);
+  return AMD_PyErr_NewException (const_cast<char *> (name), base, dict);
 }
 
 #define PyErr_NewException gdb_PyErr_NewException
@@ -258,7 +258,7 @@ gdb_PyErr_NewException (const char *name, PyObject *base, PyObject *dict)
 static inline PyObject *
 gdb_PySys_GetObject (const char *name)
 {
-  return PySys_GetObject (const_cast<char *> (name));
+  return AMD_PySys_GetObject (const_cast<char *> (name));
 }
 
 #define PySys_GetObject gdb_PySys_GetObject
@@ -276,7 +276,7 @@ gdb_PySys_GetObject (const char *name)
 static inline void
 gdb_PySys_SetPath (const GDB_PYSYS_SETPATH_CHAR *path)
 {
-  PySys_SetPath (const_cast<GDB_PYSYS_SETPATH_CHAR *> (path));
+  AMD_PySys_SetPath (const_cast<GDB_PYSYS_SETPATH_CHAR *> (path));
 }
 
 #define PySys_SetPath gdb_PySys_SetPath
@@ -783,7 +783,7 @@ public:
   bool type_matches (PyObject *type) const
   {
     gdbpy_ref<> err_type = this->type ();
-    return PyErr_GivenExceptionMatches (err_type.get (), type);
+    return AMD_PyErr_GivenExceptionMatches (err_type.get (), type);
   }
 
   /* Return a new reference to the exception value object.  */

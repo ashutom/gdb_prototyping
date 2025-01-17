@@ -1231,7 +1231,7 @@ valpy_call (PyObject *self, PyObject *args, PyObject *keywords)
       return NULL;
     }
 
-  args_count = PyTuple_Size (args);
+  args_count = AMD_PyTuple_Size (args);
   if (args_count > 0)
     {
       int i;
@@ -1239,7 +1239,7 @@ valpy_call (PyObject *self, PyObject *args, PyObject *keywords)
       vargs = XALLOCAVEC (struct value *, args_count);
       for (i = 0; i < args_count; i++)
 	{
-	  PyObject *item = PyTuple_GetItem (args, i);
+	  PyObject *item = AMD_PyTuple_GetItem (args, i);
 
 	  if (item == NULL)
 	    return NULL;
@@ -1933,7 +1933,7 @@ valpy_float (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return PyFloat_FromDouble (d);
+  return AMD_PyFloat_FromDouble (d);
 }
 
 /* Returns an object for a value, without releasing it from the
@@ -2007,11 +2007,11 @@ convert_value_from_python (PyObject *obj)
 		  gdbpy_ref<> zero = gdb_py_object_from_longest (0);
 
 		  /* Check whether obj is positive.  */
-		  if (PyObject_RichCompareBool (obj, zero.get (), Py_GT) > 0)
+		  if (AMD_PyObject_RichCompareBool (obj, zero.get (), Py_GT) > 0)
 		    {
 		      ULONGEST ul;
 
-		      ul = PyLong_AsUnsignedLongLong (obj);
+		      ul = AMD_PyLong_AsUnsignedLongLong (obj);
 		      if (! AMD_PyErr_Occurred ())
 			value = value_from_ulongest (builtin_type_upylong, ul);
 		    }
@@ -2027,7 +2027,7 @@ convert_value_from_python (PyObject *obj)
 	}
       else if (PyFloat_Check (obj))
 	{
-	  double d = PyFloat_AsDouble (obj);
+	  double d = AMD_PyFloat_AsDouble (obj);
 
 	  if (! AMD_PyErr_Occurred ())
 	    value = value_from_host_double (builtin_type_pyfloat, d);

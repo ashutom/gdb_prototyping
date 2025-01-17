@@ -417,7 +417,7 @@ print_children (PyObject *printer, const char *hint,
 	  break;
 	}
 
-      if (! PyTuple_Check (item.get ()) || PyTuple_Size (item.get ()) != 2)
+      if (! PyTuple_Check (item.get ()) || AMD_PyTuple_Size (item.get ()) != 2)
 	{
 	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 			   _("Result of children iterator not a tuple"
