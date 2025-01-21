@@ -70,8 +70,8 @@ python_xmethod_worker::~python_xmethod_worker ()
   /* We don't do much here, but we still need the GIL.  */
   gdbpy_enter enter_py;
 
-  Py_DECREF (m_py_worker);
-  Py_DECREF (m_this_type);
+  AMD_Py_DECREF (m_py_worker);
+  AMD_Py_DECREF (m_this_type);
 }
 
 /* Invoke the "match" method of the MATCHER and return a new reference
@@ -94,7 +94,7 @@ invoke_match_method (PyObject *matcher, PyObject *py_obj_type,
   if (enabled == 0)
     {
       /* Return 'None' if the matcher is not enabled.  */
-      Py_RETURN_NONE;
+      AMD_Py_RETURN_NONE;
     }
 
   gdbpy_ref<> match_method (AMD_PyObject_GetAttrString (matcher,
@@ -241,7 +241,7 @@ gdbpy_get_matching_xmethod_workers
 	  gdbpy_print_stack ();
 	  return EXT_LANG_RC_ERROR;
 	}
-      if (match_result == Py_None)
+      if (match_result == AMD_Py_None)
 	; /* This means there was no match.  */
       else if (AMD_PySequence_Check (match_result.get ()))
 	{
@@ -315,7 +315,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
       return EXT_LANG_RC_ERROR;
     }
 
-  if (py_argtype_list == Py_None)
+  if (py_argtype_list == AMD_Py_None)
     arg_count = 0;
   else if (AMD_PySequence_Check (py_argtype_list.get ()))
     {
@@ -569,7 +569,7 @@ python_xmethod_worker::invoke (struct value *obj,
       error (_("Error while executing Python code."));
     }
 
-  if (py_result != Py_None)
+  if (py_result != AMD_Py_None)
     {
       res = convert_value_from_python (py_result.get ());
       if (res == NULL)

@@ -82,17 +82,17 @@ search_pp_list (PyObject *list, PyObject *value)
 							 NULL));
       if (printer == NULL)
 	return NULL;
-      else if (printer != Py_None)
+      else if (printer != AMD_Py_None)
 	return printer;
     }
 
-  return gdbpy_ref<>::new_reference (Py_None);
+  return gdbpy_ref<>::new_reference (AMD_Py_None);
 }
 
 /* Subroutine of find_pretty_printer to simplify it.
    Look for a pretty-printer to print VALUE in all objfiles.
    The result is NULL if there's an error and the search should be terminated.
-   The result is Py_None, suitably inc-ref'd, if no pretty-printer was found.
+   The result is AMD_Py_None, suitably inc-ref'd, if no pretty-printer was found.
    Otherwise the result is the pretty-printer function, suitably inc-ref'd.  */
 
 static PyObject *
@@ -115,17 +115,17 @@ find_pretty_printer_from_objfiles (PyObject *value)
       if (function == NULL)
 	return NULL;
 
-      if (function != Py_None)
+      if (function != AMD_Py_None)
 	return function.release ();
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Subroutine of find_pretty_printer to simplify it.
    Look for a pretty-printer to print VALUE in the current program space.
    The result is NULL if there's an error and the search should be terminated.
-   The result is Py_None, suitably inc-ref'd, if no pretty-printer was found.
+   The result is AMD_Py_None, suitably inc-ref'd, if no pretty-printer was found.
    Otherwise the result is the pretty-printer function, suitably inc-ref'd.  */
 
 static gdbpy_ref<>
@@ -142,7 +142,7 @@ find_pretty_printer_from_progspace (PyObject *value)
 /* Subroutine of find_pretty_printer to simplify it.
    Look for a pretty-printer to print VALUE in the gdb module.
    The result is NULL if there's an error and the search should be terminated.
-   The result is Py_None, suitably inc-ref'd, if no pretty-printer was found.
+   The result is AMD_Py_None, suitably inc-ref'd, if no pretty-printer was found.
    Otherwise the result is the pretty-printer function, suitably inc-ref'd.  */
 
 static gdbpy_ref<>
@@ -151,11 +151,11 @@ find_pretty_printer_from_gdb (PyObject *value)
   /* Fetch the global pretty printer list.  */
   if (gdb_python_module == NULL
       || ! AMD_PyObject_HasAttrString (gdb_python_module, "pretty_printers"))
-    return gdbpy_ref<>::new_reference (Py_None);
+    return gdbpy_ref<>::new_reference (AMD_Py_None);
   gdbpy_ref<> pp_list (AMD_PyObject_GetAttrString (gdb_python_module,
 					       "pretty_printers"));
   if (pp_list == NULL || ! PyList_Check (pp_list.get ()))
-    return gdbpy_ref<>::new_reference (Py_None);
+    return gdbpy_ref<>::new_reference (AMD_Py_None);
 
   return search_pp_list (pp_list.get (), value);
 }
@@ -170,12 +170,12 @@ find_pretty_printer (PyObject *value)
   /* Look at the pretty-printer list for each objfile
      in the current program-space.  */
   gdbpy_ref<> function (find_pretty_printer_from_objfiles (value));
-  if (function == NULL || function != Py_None)
+  if (function == NULL || function != AMD_Py_None)
     return function;
 
   /* Look at the pretty-printer list for the current program-space.  */
   function = find_pretty_printer_from_progspace (value);
-  if (function == NULL || function != Py_None)
+  if (function == NULL || function != AMD_Py_None)
     return function;
 
   /* Look at the pretty-printer list in the gdb module.  */
@@ -199,7 +199,7 @@ pretty_print_one_value (PyObject *printer, struct value **out_value)
   try
     {
       if (!AMD_PyObject_HasAttr (printer, gdbpy_to_string_cst))
-	result = gdbpy_ref<>::new_reference (Py_None);
+	result = gdbpy_ref<>::new_reference (AMD_Py_None);
       else
 	{
 	  result.reset (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_to_string_cst,
@@ -208,7 +208,7 @@ pretty_print_one_value (PyObject *printer, struct value **out_value)
 	    {
 	      if (! gdbpy_is_string (result.get ())
 		  && ! gdbpy_is_lazy_string (result.get ())
-		  && result != Py_None)
+		  && result != AMD_Py_None)
 		{
 		  *out_value = convert_value_from_python (result.get ());
 		  if (AMD_PyErr_Occurred ())
@@ -291,7 +291,7 @@ print_string_repr (PyObject *printer, const char *hint,
   gdbpy_ref<> py_str = pretty_print_one_value (printer, &replacement);
   if (py_str != NULL)
     {
-      if (py_str == Py_None)
+      if (py_str == AMD_Py_None)
 	result = string_repr_none;
       else if (gdbpy_is_lazy_string (py_str.get ()))
 	{
@@ -425,7 +425,7 @@ print_children (PyObject *printer, const char *hint,
 	  gdbpy_print_stack ();
 	  continue;
 	}
-      if (! PyArg_ParseTuple (item.get (), "sO", &name, &py_v))
+      if (! AMD_PyArg_ParseTuple (item.get (), "sO", &name, &py_v))
 	{
 	  /* The user won't necessarily get a stack trace here, so provide
 	     more context.  */
@@ -606,7 +606,7 @@ gdbpy_apply_val_pretty_printer (const struct extension_language_defn *extlang,
       return EXT_LANG_RC_ERROR;
     }
 
-  if (printer == Py_None)
+  if (printer == AMD_Py_None)
     return EXT_LANG_RC_NOP;
 
   scoped_restore set_options = make_scoped_restore (&gdbpy_current_print_options,
@@ -679,7 +679,7 @@ gdbpy_default_visualizer (PyObject *self, PyObject *args)
   PyObject *val_obj;
   struct value *value;
 
-  if (! PyArg_ParseTuple (args, "O", &val_obj))
+  if (! AMD_PyArg_ParseTuple (args, "O", &val_obj))
     return NULL;
   value = value_object_to_value (val_obj);
   if (! value)

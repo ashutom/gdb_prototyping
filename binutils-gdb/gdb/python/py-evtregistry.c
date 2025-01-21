@@ -34,7 +34,7 @@ evregpy_connect (PyObject *self, PyObject *function)
   PyObject *func;
   PyObject *callback_list = (((eventregistry_object *) self)->callbacks);
 
-  if (!PyArg_ParseTuple (function, "O", &func))
+  if (!AMD_PyArg_ParseTuple (function, "O", &func))
     return NULL;
 
   if (!AMD_PyCallable_Check (func))
@@ -46,7 +46,7 @@ evregpy_connect (PyObject *self, PyObject *function)
   if (AMD_PyList_Append (callback_list, func) < 0)
     return NULL;
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of EventRegistry.disconnect () -> NULL.
@@ -59,17 +59,17 @@ evregpy_disconnect (PyObject *self, PyObject *function)
   int index;
   PyObject *callback_list = (((eventregistry_object *) self)->callbacks);
 
-  if (!PyArg_ParseTuple (function, "O", &func))
+  if (!AMD_PyArg_ParseTuple (function, "O", &func))
     return NULL;
 
   index = AMD_PySequence_Index (callback_list, func);
   if (index < 0)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   if (AMD_PySequence_DelItem (callback_list, index) < 0)
     return NULL;
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Create a new event registry.  This function uses AMD_PyObject_New

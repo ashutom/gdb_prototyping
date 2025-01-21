@@ -79,7 +79,7 @@ static PyObject *
 cmdpy_dont_repeat (PyObject *self, PyObject *args)
 {
   dont_repeat ();
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 
@@ -191,7 +191,7 @@ cmdpy_completer_helper (struct cmd_list_element *command,
   if (word == NULL)
     {
       /* "brkchars" phase.  */
-      wordobj = gdbpy_ref<>::new_reference (Py_None);
+      wordobj = gdbpy_ref<>::new_reference (AMD_Py_None);
     }
   else
     {
@@ -668,7 +668,7 @@ gdbpy_string_to_argv (PyObject *self, PyObject *args)
 {
   const char *input;
 
-  if (!PyArg_ParseTuple (args, "s", &input))
+  if (!AMD_PyArg_ParseTuple (args, "s", &input))
     return NULL;
 
   gdbpy_ref<> py_argv (AMD_PyList_New (0));

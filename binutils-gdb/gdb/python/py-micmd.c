@@ -214,7 +214,7 @@ mi_command_py::invoke (struct mi_parse *parse) const
   if (results == nullptr)
     gdbpy_handle_exception ();
 
-  if (results != Py_None)
+  if (results != AMD_Py_None)
     {
       /* At the top-level, the results must be a dictionary.  */
       if (!PyDict_Check (results.get ()))
@@ -499,8 +499,8 @@ micmdpy_get_installed (PyObject *self, void *closure)
   struct micmdpy_object *micmd_obj = (struct micmdpy_object *) self;
 
   if (micmd_obj->mi_command == nullptr)
-    Py_RETURN_FALSE;
-  Py_RETURN_TRUE;
+    AMD_Py_RETURN_FALSE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Set the gdb.MICommand.installed property.  The property can be set to

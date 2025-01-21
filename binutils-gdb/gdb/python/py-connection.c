@@ -79,7 +79,7 @@ gdbpy_ref<>
 target_to_connection_object (process_stratum_target *target)
 {
   if (target == nullptr)
-    return gdbpy_ref<>::new_reference (Py_None);
+    return gdbpy_ref<>::new_reference (AMD_Py_None);
 
   gdbpy_ref <connection_object> conn_obj;
   auto conn_obj_iter = all_connection_objects.find (target);
@@ -124,7 +124,7 @@ gdbpy_connections (PyObject *self, PyObject *args)
       gdbpy_ref<> conn = target_to_connection_object (target);
       if (conn == nullptr)
 	return nullptr;
-      gdb_assert (conn.get () != Py_None);
+      gdb_assert (conn.get () != AMD_Py_None);
 
       if (AMD_PyList_Append (list.get (), conn.get ()) < 0)
 	return nullptr;
@@ -221,9 +221,9 @@ connpy_is_valid (PyObject *self, PyObject *args)
   connection_object *conn = (connection_object *) self;
 
   if (conn->target == nullptr)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Return the id number of this connection.  */
@@ -279,7 +279,7 @@ connpy_get_connection_details (PyObject *self, void *closure)
   if (details != nullptr)
     return host_string_to_python_string (details).release ();
   else
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 }
 
 /* Python specific initialization for this file.  */
@@ -334,8 +334,8 @@ struct py_send_packet_callbacks : public send_remote_packet_callbacks
     else
       {
 	/* We didn't get back any result data; set the result to None.  */
-	Py_INCREF (Py_None);
-	m_result.reset (Py_None);
+	Py_INCREF (AMD_Py_None);
+	m_result.reset (AMD_Py_None);
       }
   }
 

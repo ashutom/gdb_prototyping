@@ -21,6 +21,7 @@
 #define PYTHON_PY_REF_H
 
 #include "gdbsupport/gdb_ref_ptr.h"
+#include "amd_pythonwrapper.h"
 
 /* A policy class for gdb::ref_ptr for Python reference counting.  */
 template<typename T>
@@ -33,7 +34,7 @@ struct gdbpy_ref_policy
 
   static void decref (T *ptr)
   {
-    Py_DECREF (ptr);
+    AMD_Py_DECREF(ptr);
   }
 };
 

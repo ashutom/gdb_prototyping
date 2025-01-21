@@ -119,9 +119,9 @@ frapy_is_valid (PyObject *self, PyObject *args)
     }
 
   if (frame == NULL)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Implementation of gdb.Frame.name (self) -> String.
@@ -153,8 +153,8 @@ frapy_name (PyObject *self, PyObject *args)
     }
   else
     {
-      result = Py_None;
-      Py_INCREF (Py_None);
+      result = AMD_Py_None;
+      Py_INCREF (AMD_Py_None);
     }
 
   return result;
@@ -353,7 +353,7 @@ frapy_function (PyObject *self, PyObject *args)
   if (sym)
     return symbol_to_symbol_object (sym);
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Convert a frame_info struct to a Python Frame object.
@@ -419,8 +419,8 @@ frapy_older (PyObject *self, PyObject *args)
     prev_obj = frame_info_to_frame_object (prev);
   else
     {
-      Py_INCREF (Py_None);
-      prev_obj = Py_None;
+      Py_INCREF (AMD_Py_None);
+      prev_obj = AMD_Py_None;
     }
 
   return prev_obj;
@@ -451,8 +451,8 @@ frapy_newer (PyObject *self, PyObject *args)
     next_obj = frame_info_to_frame_object (next);
   else
     {
-      Py_INCREF (Py_None);
-      next_obj = Py_None;
+      Py_INCREF (AMD_Py_None);
+      next_obj = AMD_Py_None;
     }
 
   return next_obj;
@@ -590,7 +590,7 @@ frapy_select (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* The stack frame level for this frame.  */
@@ -611,7 +611,7 @@ frapy_level (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* The language for this frame.  */
@@ -634,7 +634,7 @@ frapy_language (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* The static link for this frame.  */
@@ -656,7 +656,7 @@ frapy_static_link (PyObject *self, PyObject *args)
     }
 
   if (link == nullptr)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return frame_info_to_frame_object (link);
 }
@@ -710,7 +710,7 @@ gdbpy_frame_stop_reason_string (PyObject *self, PyObject *args)
   int reason;
   const char *str;
 
-  if (!PyArg_ParseTuple (args, "i", &reason))
+  if (!AMD_PyArg_ParseTuple (args, "i", &reason))
     return NULL;
 
   if (reason < UNWIND_FIRST || reason > UNWIND_LAST)
@@ -736,8 +736,8 @@ frapy_richcompare (PyObject *self, PyObject *other, int op)
   if (!AMD_PyObject_TypeCheck (other, &frame_object_type)
       || (op != Py_EQ && op != Py_NE))
     {
-      Py_INCREF (Py_NotImplemented);
-      return Py_NotImplemented;
+      Py_INCREF (*AMD_Py_NotImplemented);
+      return *AMD_Py_NotImplemented;
     }
 
   frame_object *self_frame = (frame_object *) self;
@@ -750,8 +750,8 @@ frapy_richcompare (PyObject *self, PyObject *other, int op)
     result = Py_NE;
 
   if (op == result)
-    Py_RETURN_TRUE;
-  Py_RETURN_FALSE;
+    AMD_Py_RETURN_TRUE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Sets up the Frame API in the gdb module.  */

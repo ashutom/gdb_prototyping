@@ -11,6 +11,7 @@ typedef PyObject* (*pyobj_callfunctionobjargs) (PyObject *callable,...);
 typedef PyObject* (*pyerr_format) (PyObject *exception,const char *format,...);
 typedef PyObject* (*py_buildval) (const char *, ...);
 typedef int (*pyarg_unpacktuple) (PyObject * ob, const char * action, Py_ssize_t min, Py_ssize_t max, ...);
+typedef int (*pyarg_parsetuple) (PyObject *, const char *, ...);
 typedef PyObject* (*py_new_func) (PyTypeObject* objptr);
 typedef int  (*pytypeissubtype) (PyTypeObject *, PyTypeObject *);
 typedef void (*pyerror_setstring) (PyObject *exception, const char *string  );
@@ -78,8 +79,8 @@ typedef int  (*pyrun_interactiveloopflags) (FILE *fp, const char *filename, PyCo
 typedef PyObject* (*pyrun_stringflags) (const char *, int, PyObject *, PyObject *, PyCompilerFlags *);
 typedef PyObject* (*py_compilestringexflags) (const char *str, const char *filename, int start, PyCompilerFlags *flags,int optimize);
 typedef void (*pyerr_setobject) (PyObject* ob1, PyObject* ob2);
-
-
+typedef int (*pyslice_getindicesex) (PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
+                                     Py_ssize_t *step, Py_ssize_t *slicelength);
 
 
 #endif //_AMD_FUNCTION_POINTER_LIST_H_

@@ -94,7 +94,7 @@ objfpy_get_filename (PyObject *self, void *closure)
   if (obj->objfile)
     return (host_string_to_python_string (objfile_name (obj->objfile))
 	    .release ());
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* An Objfile method which returns the objfile's file name, as specified
@@ -112,7 +112,7 @@ objfpy_get_username (PyObject *self, void *closure)
       return host_string_to_python_string (username).release ();
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Get the 'is_file' attribute.  */
@@ -124,7 +124,7 @@ objfpy_get_is_file (PyObject *o, void *ignore)
 
   if (self->objfile != nullptr)
     return AMD_PyBool_FromLong ((self->objfile->flags & OBJF_NOT_FILENAME) == 0);
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* If SELF is a separate debug-info file, return the "backlink" field.
@@ -142,7 +142,7 @@ objfpy_get_owner (PyObject *self, void *closure)
   owner = objfile->separate_debug_objfile_backlink;
   if (owner != NULL)
     return objfile_to_objfile_object (owner).release ();
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* An Objfile method which returns the objfile's build id, or None.  */
@@ -172,7 +172,7 @@ objfpy_get_build_id (PyObject *self, void *closure)
       return host_string_to_python_string (hex_form.c_str ()).release ();
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* An Objfile method which returns the objfile's progspace, or None.  */
@@ -185,7 +185,7 @@ objfpy_get_progspace (PyObject *self, void *closure)
   if (obj->objfile)
     return pspace_to_pspace_object (obj->objfile->pspace ()).release ();
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 static void
@@ -426,9 +426,9 @@ objfpy_is_valid (PyObject *self, PyObject *args)
   objfile_object *obj = (objfile_object *) self;
 
   if (! obj->objfile)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Implementation of gdb.Objfile.add_separate_debug_file (self, string). */
@@ -456,7 +456,7 @@ objfpy_add_separate_debug_file (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of
@@ -482,7 +482,7 @@ objfpy_lookup_global_symbol (PyObject *self, PyObject *args, PyObject *kw)
       struct symbol *sym = lookup_global_symbol_from_objfile
 	(obj->objfile, GLOBAL_BLOCK, symbol_name, flags).symbol;
       if (sym == nullptr)
-	Py_RETURN_NONE;
+	AMD_Py_RETURN_NONE;
 
       return symbol_to_symbol_object (sym);
     }
@@ -491,7 +491,7 @@ objfpy_lookup_global_symbol (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of
@@ -517,7 +517,7 @@ objfpy_lookup_static_symbol (PyObject *self, PyObject *args, PyObject *kw)
       struct symbol *sym = lookup_global_symbol_from_objfile
 	(obj->objfile, STATIC_BLOCK, symbol_name, flags).symbol;
       if (sym == nullptr)
-	Py_RETURN_NONE;
+	AMD_Py_RETURN_NONE;
 
       return symbol_to_symbol_object (sym);
     }
@@ -526,7 +526,7 @@ objfpy_lookup_static_symbol (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implement repr() for gdb.Objfile.  */

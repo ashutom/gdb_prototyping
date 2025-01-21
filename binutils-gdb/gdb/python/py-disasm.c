@@ -336,9 +336,9 @@ disasmpy_info_is_valid (PyObject *self, PyObject *args)
   disasm_info_object *disasm_obj = (disasm_info_object *) self;
 
   if (disasm_info_object_is_valid (disasm_obj))
-    Py_RETURN_TRUE;
+    AMD_Py_RETURN_TRUE;
 
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Set the Python exception to be a gdb.MemoryError object, with ADDRESS
@@ -643,7 +643,7 @@ disasmpy_set_enabled (PyObject *self, PyObject *args, PyObject *kw)
 					&newstate))
     return nullptr;
 
-  if (!PyBool_Check (newstate))
+  if (!AMD_PyBool_Check (newstate))
     {
       AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
 		       _("The value passed to `_set_enabled' must be a boolean."));
@@ -651,7 +651,7 @@ disasmpy_set_enabled (PyObject *self, PyObject *args, PyObject *kw)
     }
 
   python_print_insn_enabled = AMD_PyObject_IsTrue (newstate);
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implement DisassembleInfo.read_memory(LENGTH, OFFSET).  Read LENGTH
@@ -1014,7 +1014,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
       return -1;
     }
 
-  if (parts_list == Py_None)
+  if (parts_list == AMD_Py_None)
     parts_list = nullptr;
 
   if (string != nullptr && parts_list != nullptr)
@@ -1310,7 +1310,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
 	}
 
     }
-  else if (result == Py_None)
+  else if (result == AMD_Py_None)
     {
       /* A return value of None indicates that the Python code could not,
 	 or doesn't want to, disassemble this instruction.  Just return an

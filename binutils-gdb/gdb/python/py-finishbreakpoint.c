@@ -52,7 +52,7 @@ struct finish_breakpoint_object
   PyObject *function_value;
 
   /* When stopped at this FinishBreakpoint, gdb.Value object returned by
-     the function; Py_None if the value is not computable; NULL if GDB is
+     the function; AMD_Py_None if the value is not computable; NULL if GDB is
      not stopped at a FinishBreakpoint.  */
   PyObject *return_value;
 
@@ -74,7 +74,7 @@ bpfinishpy_get_returnvalue (PyObject *self, void *closure)
       (struct finish_breakpoint_object *) self;
 
   if (!self_finishbp->return_value)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   Py_INCREF (self_finishbp->return_value);
   return self_finishbp->return_value;
@@ -129,8 +129,8 @@ bpfinishpy_pre_stop_hook (struct gdbpy_breakpoint_object *bp_obj)
 	}
       else
 	{
-	  Py_INCREF (Py_None);
-	  self_finishbp->return_value = Py_None;
+	  Py_INCREF (AMD_Py_None);
+	  self_finishbp->return_value = AMD_Py_None;
 	}
     }
   catch (const gdb_exception &except)

@@ -93,8 +93,8 @@ sympy_get_type (PyObject *self, void *closure)
 
   if (symbol->type () == NULL)
     {
-      Py_INCREF (Py_None);
-      return Py_None;
+      Py_INCREF (AMD_Py_None);
+      return AMD_Py_None;
     }
 
   return type_to_type_object (symbol->type ());
@@ -108,7 +108,7 @@ sympy_get_symtab (PyObject *self, void *closure)
   SYMPY_REQUIRE_VALID (self, symbol);
 
   if (!symbol->is_objfile_owned ())
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return symtab_to_symtab_object (symbol->symtab ());
 }
@@ -226,8 +226,8 @@ sympy_needs_frame (PyObject *self, void *closure)
     }
 
   if (result)
-    Py_RETURN_TRUE;
-  Py_RETURN_FALSE;
+    AMD_Py_RETURN_TRUE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Implementation of gdb.Symbol.line -> int.
@@ -253,9 +253,9 @@ sympy_is_valid (PyObject *self, PyObject *args)
 
   symbol = symbol_object_to_symbol (self);
   if (symbol == NULL)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Implementation of gdb.Symbol.value (self[, frame]) -> gdb.Value.  Returns
@@ -268,7 +268,7 @@ sympy_value (PyObject *self, PyObject *args)
   frame_info_ptr frame_info = NULL;
   PyObject *frame_obj = NULL;
 
-  if (!PyArg_ParseTuple (args, "|O", &frame_obj))
+  if (!AMD_PyArg_ParseTuple (args, "|O", &frame_obj))
     return NULL;
 
   if (frame_obj != NULL && !AMD_PyObject_TypeCheck (frame_obj, &frame_object_type))
@@ -451,8 +451,8 @@ gdbpy_lookup_symbol (PyObject *self, PyObject *args, PyObject *kw)
     }
   else
     {
-      sym_obj = Py_None;
-      Py_INCREF (Py_None);
+      sym_obj = AMD_Py_None;
+      Py_INCREF (AMD_Py_None);
     }
   PyTuple_SET_ITEM (ret_tuple.get (), 0, sym_obj);
 
@@ -496,8 +496,8 @@ gdbpy_lookup_global_symbol (PyObject *self, PyObject *args, PyObject *kw)
     }
   else
     {
-      sym_obj = Py_None;
-      Py_INCREF (Py_None);
+      sym_obj = AMD_Py_None;
+      Py_INCREF (AMD_Py_None);
     }
 
   return sym_obj;
@@ -564,8 +564,8 @@ gdbpy_lookup_static_symbol (PyObject *self, PyObject *args, PyObject *kw)
     }
   else
     {
-      sym_obj = Py_None;
-      Py_INCREF (Py_None);
+      sym_obj = AMD_Py_None;
+      Py_INCREF (AMD_Py_None);
     }
 
   return sym_obj;

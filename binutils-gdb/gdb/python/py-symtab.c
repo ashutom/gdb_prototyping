@@ -105,8 +105,8 @@ struct salpy_deleter
 	sal_object *next = obj->next;
 
 	gdbpy_ref<> tmp (obj->symtab);
-	obj->symtab = Py_None;
-	Py_INCREF (Py_None);
+	obj->symtab = AMD_Py_None;
+	Py_INCREF (AMD_Py_None);
 
 	obj->next = NULL;
 	obj->prev = NULL;
@@ -190,7 +190,7 @@ stpy_get_producer (PyObject *self, void *closure)
       return host_string_to_python_string (producer).release ();
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -216,9 +216,9 @@ stpy_is_valid (PyObject *self, PyObject *args)
 
   symtab = symtab_object_to_symtab (self);
   if (symtab == NULL)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Return the GLOBAL_BLOCK of the underlying symtab.  */
@@ -277,7 +277,7 @@ salpy_str (PyObject *self)
   SALPY_REQUIRE_VALID (self, sal);
 
   sal_obj = (sal_object *) self;
-  if (sal_obj->symtab == Py_None)
+  if (sal_obj->symtab == AMD_Py_None)
     filename = "<unknown>";
   else
     {
@@ -329,7 +329,7 @@ salpy_get_last (PyObject *self, void *closure)
   if (sal->end > 0)
     return gdb_py_object_from_ulongest (sal->end - 1).release ();
   else
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -365,9 +365,9 @@ salpy_is_valid (PyObject *self, PyObject *args)
 
   sal = sal_object_to_symtab_and_line (self);
   if (sal == NULL)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 static void
@@ -377,7 +377,7 @@ salpy_dealloc (PyObject *self)
 
   if (self_sal->prev)
     self_sal->prev->next = self_sal->next;
-  else if (self_sal->symtab != Py_None)
+  else if (self_sal->symtab != AMD_Py_None)
     salpy_objfile_data_key.set
       (symtab_object_to_symtab (self_sal->symtab)->compunit ()->objfile (),
        self_sal->next);
@@ -385,7 +385,7 @@ salpy_dealloc (PyObject *self)
   if (self_sal->next)
     self_sal->next->prev = self_sal->prev;
 
-  Py_DECREF (self_sal->symtab);
+  AMD_Py_DECREF (self_sal->symtab);
   xfree (self_sal->sal);
   Py_TYPE (self)->tp_free (self);
 }
@@ -410,8 +410,8 @@ set_sal (sal_object *sal_obj, struct symtab_and_line sal)
     }
   else
     {
-      symtab_obj = Py_None;
-      Py_INCREF (Py_None);
+      symtab_obj = AMD_Py_None;
+      Py_INCREF (AMD_Py_None);
     }
 
   sal_obj->sal = ((struct symtab_and_line *)
@@ -422,7 +422,7 @@ set_sal (sal_object *sal_obj, struct symtab_and_line sal)
 
   /* If the SAL does not have a symtab, we do not add it to the
      objfile cleanup observer linked list.  */
-  if (sal_obj->symtab != Py_None)
+  if (sal_obj->symtab != AMD_Py_None)
     {
       symtab *symtab = symtab_object_to_symtab (sal_obj->symtab);
 

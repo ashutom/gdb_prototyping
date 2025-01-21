@@ -64,7 +64,7 @@ thpy_dealloc (PyObject *self)
 
   gdb_assert (thr_obj->inf_obj != nullptr);
 
-  Py_DECREF (thr_obj->inf_obj);
+  AMD_Py_DECREF (thr_obj->inf_obj);
   Py_XDECREF (thr_obj->dict);
 
   Py_TYPE (self)->tp_free (self);
@@ -79,7 +79,7 @@ thpy_get_name (PyObject *self, void *ignore)
 
   const char *name = thread_name (thread_obj->thread);
   if (name == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return AMD_PyUnicode_FromString (name);
 }
@@ -107,7 +107,7 @@ thpy_get_details (PyObject *self, void *ignore)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
   if (extra_info == nullptr)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return AMD_PyUnicode_FromString (extra_info);
 }
@@ -130,7 +130,7 @@ thpy_set_name (PyObject *self, PyObject *newvalue, void *ignore)
 		       _("Cannot delete `name' attribute."));
       return -1;
     }
-  else if (newvalue == Py_None)
+  else if (newvalue == AMD_Py_None)
     {
       /* Nothing.  */
     }
@@ -248,7 +248,7 @@ thpy_switch (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of InferiorThread.is_stopped () -> Boolean.
@@ -262,9 +262,9 @@ thpy_is_stopped (PyObject *self, PyObject *args)
   THPY_REQUIRE_VALID (thread_obj);
 
   if (thread_obj->thread->state == THREAD_STOPPED)
-    Py_RETURN_TRUE;
+    AMD_Py_RETURN_TRUE;
 
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Implementation of InferiorThread.is_running () -> Boolean.
@@ -278,9 +278,9 @@ thpy_is_running (PyObject *self, PyObject *args)
   THPY_REQUIRE_VALID (thread_obj);
 
   if (thread_obj->thread->state == THREAD_RUNNING)
-    Py_RETURN_TRUE;
+    AMD_Py_RETURN_TRUE;
 
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Implementation of InferiorThread.is_exited () -> Boolean.
@@ -294,9 +294,9 @@ thpy_is_exited (PyObject *self, PyObject *args)
   THPY_REQUIRE_VALID (thread_obj);
 
   if (thread_obj->thread->state == THREAD_EXITED)
-    Py_RETURN_TRUE;
+    AMD_Py_RETURN_TRUE;
 
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Implementation of gdb.InfThread.is_valid (self) -> Boolean.
@@ -309,9 +309,9 @@ thpy_is_valid (PyObject *self, PyObject *args)
   thread_object *thread_obj = (thread_object *) self;
 
   if (! thread_obj->thread)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Implementation of gdb.InferiorThread.handle (self) -> handle. */
@@ -406,7 +406,7 @@ gdbpy_selected_thread (PyObject *self, PyObject *args)
   if (inferior_ptid != null_ptid)
     return thread_to_thread_object (inferior_thread ()).release ();
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION

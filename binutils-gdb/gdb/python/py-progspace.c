@@ -113,7 +113,7 @@ pspy_get_filename (PyObject *self, void *closure)
 	return (host_string_to_python_string (objfile_name (objfile))
 		.release ());
     }
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implement the gdb.Progspace.symbol_file attribute.  Retun the
@@ -133,7 +133,7 @@ pspy_get_symbol_file (PyObject *self, void *closure)
   if (objfile != nullptr)
     return objfile_to_objfile_object (objfile).release ();
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implement the gdb.Progspace.executable_filename attribute.  Retun a
@@ -152,7 +152,7 @@ pspy_get_exec_file (PyObject *self, void *closure)
   if (filename != nullptr)
     return host_string_to_python_string (filename).release ();
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 static void
@@ -457,14 +457,14 @@ pspy_solib_name (PyObject *o, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  if (!PyArg_ParseTuple (args, "O", &pc_obj))
+  if (!AMD_PyArg_ParseTuple (args, "O", &pc_obj))
     return NULL;
   if (get_addr_from_python (pc_obj, &pc) < 0)
     return nullptr;
 
   const char *soname = solib_name_from_address (self->pspace, pc);
   if (soname == nullptr)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
   return host_string_to_python_string (soname).release ();
 }
 
@@ -480,14 +480,14 @@ pspy_objfile_for_address (PyObject *o, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  if (!PyArg_ParseTuple (args, "O", &addr_obj))
+  if (!AMD_PyArg_ParseTuple (args, "O", &addr_obj))
     return nullptr;
   if (get_addr_from_python (addr_obj, &addr) < 0)
     return nullptr;
 
   struct objfile *objf = self->pspace->objfile_for_address (addr);
   if (objf == nullptr)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return objfile_to_objfile_object (objf).release ();
 }
@@ -505,7 +505,7 @@ pspy_block_for_pc (PyObject *o, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  if (!PyArg_ParseTuple (args, "O", &pc_obj))
+  if (!AMD_PyArg_ParseTuple (args, "O", &pc_obj))
     return NULL;
   if (get_addr_from_python (pc_obj, &pc) < 0)
     return nullptr;
@@ -526,12 +526,12 @@ pspy_block_for_pc (PyObject *o, PyObject *args)
     }
 
   if (cust == NULL || cust->objfile () == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   if (block)
     return block_to_block_object (block, cust->objfile ());
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of the find_pc_line function.
@@ -547,7 +547,7 @@ pspy_find_pc_line (PyObject *o, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  if (!PyArg_ParseTuple (args, "O", &pc_obj))
+  if (!AMD_PyArg_ParseTuple (args, "O", &pc_obj))
     return NULL;
   if (get_addr_from_python (pc_obj, &pc) < 0)
     return nullptr;
@@ -579,9 +579,9 @@ pspy_is_valid (PyObject *o, PyObject *args)
   pspace_object *self = (pspace_object *) o;
 
   if (self->pspace == NULL)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 

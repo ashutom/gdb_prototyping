@@ -164,7 +164,7 @@ convert_field (struct type *type, int field)
       else
 	{
 	  if (type->field (field).loc_kind () == FIELD_LOC_KIND_DWARF_BLOCK)
-	    arg = gdbpy_ref<>::new_reference (Py_None);
+	    arg = gdbpy_ref<>::new_reference (AMD_Py_None);
 	  else
 	    arg = gdb_py_object_from_longest (type->field (field).loc_bitpos ());
 	  attrstring = "bitpos";
@@ -190,7 +190,7 @@ convert_field (struct type *type, int field)
 	}
     }
   if (arg == NULL)
-    arg = gdbpy_ref<>::new_reference (Py_None);
+    arg = gdbpy_ref<>::new_reference (AMD_Py_None);
 
   if (AMD_PyObject_SetAttrString (result.get (), "name", arg.get ()) < 0)
     return NULL;
@@ -202,7 +202,7 @@ convert_field (struct type *type, int field)
   if (type->code () == TYPE_CODE_STRUCT)
     arg.reset (AMD_PyBool_FromLong (field < TYPE_N_BASECLASSES (type)));
   else
-    arg = gdbpy_ref<>::new_reference (Py_False);
+    arg = gdbpy_ref<>::new_reference (*AMD_Py_False);
   if (AMD_PyObject_SetAttrString (result.get (), "is_base_class", arg.get ()) < 0)
     return NULL;
 
@@ -214,7 +214,7 @@ convert_field (struct type *type, int field)
 
   /* A field can have a NULL type in some situations.  */
   if (type->field (field).type () == NULL)
-    arg = gdbpy_ref<>::new_reference (Py_None);
+    arg = gdbpy_ref<>::new_reference (AMD_Py_None);
   else
     arg.reset (type_to_type_object (type->field (field).type ()));
   if (arg == NULL)
@@ -236,7 +236,7 @@ field_name (struct type *type, int field)
   if (type->field (field).name ())
     result.reset (AMD_PyUnicode_FromString (type->field (field).name ()));
   else
-    result = gdbpy_ref<>::new_reference (Py_None);
+    result = gdbpy_ref<>::new_reference (AMD_Py_None);
 
   return result;
 }
@@ -337,7 +337,7 @@ typy_fields (PyObject *self, PyObject *args)
   if (r == NULL)
     return NULL;
 
-  return Py_BuildValue ("[O]", r.get ());
+  return AMD_Py_BuildValue ("[O]", r.get ());
 }
 
 /* Return a sequence of all field names.  Each field is a gdb.Field object.  */
@@ -365,7 +365,7 @@ typy_get_name (PyObject *self, void *closure)
   struct type *type = ((type_object *) self)->type;
 
   if (type->name () == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
   /* Ada type names are encoded, but it is better for users to see the
      decoded form.  */
   if (ADA_TYPE_P (type))
@@ -390,7 +390,7 @@ typy_get_tag (PyObject *self, void *closure)
     tagname = type->name ();
 
   if (tagname == nullptr)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
   return AMD_PyUnicode_FromString (tagname);
 }
 
@@ -402,7 +402,7 @@ typy_get_objfile (PyObject *self, void *closure)
   struct objfile *objfile = type->objfile_owner ();
 
   if (objfile == nullptr)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
   return objfile_to_objfile_object (objfile).release ();
 }
 
@@ -413,10 +413,12 @@ typy_is_scalar (PyObject *self, void *closure)
 {
   struct type *type = ((type_object *) self)->type;
 
-  if (is_scalar_type (type))
-    Py_RETURN_TRUE;
-  else
-    Py_RETURN_FALSE;
+  if (is_scalar_type (type)){
+      AMD_Py_RETURN_TRUE;
+    }
+    else{
+      AMD_Py_RETURN_FALSE;
+    }
 }
 
 /* Return true if this type is signed.  Raises a ValueError if this type
@@ -434,10 +436,12 @@ typy_is_signed (PyObject *self, void *closure)
       return nullptr;
     }
 
-  if (type->is_unsigned ())
-    Py_RETURN_FALSE;
-  else
-    Py_RETURN_TRUE;
+  if (type->is_unsigned ()){
+      AMD_Py_RETURN_FALSE;
+    }
+    else{
+      AMD_Py_RETURN_TRUE;
+    }
 }
 
 /* Return true if this type is array-like.  */
@@ -458,10 +462,12 @@ typy_is_array_like (PyObject *self, void *closure)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  if (result)
-    Py_RETURN_TRUE;
-  else
-    Py_RETURN_FALSE;
+  if (result){
+    AMD_Py_RETURN_TRUE;
+  }
+  else{
+    AMD_Py_RETURN_FALSE;
+  }
 }
 
 /* Return true if this type is string-like.  */
@@ -482,10 +488,12 @@ typy_is_string_like (PyObject *self, void *closure)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  if (result)
-    Py_RETURN_TRUE;
-  else
-    Py_RETURN_FALSE;
+  if (result){
+    AMD_Py_RETURN_TRUE;
+  }
+  else{
+    AMD_Py_RETURN_FALSE;
+  }
 }
 
 /* Return the type, stripped of typedefs. */
@@ -555,7 +563,7 @@ typy_array_1 (PyObject *self, PyObject *args, int is_vector)
   struct type *array = NULL;
   struct type *type = ((type_object *) self)->type;
 
-  if (! PyArg_ParseTuple (args, "l|O", &n1, &n2_obj))
+  if (! AMD_PyArg_ParseTuple (args, "l|O", &n1, &n2_obj))
     return NULL;
 
   if (n2_obj)
@@ -793,7 +801,7 @@ typy_get_sizeof (PyObject *self, void *closure)
   /* Ignore exceptions.  */
 
   if (size_varies)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
   return gdb_py_object_from_longest (type->length ()).release ();
 }
 
@@ -835,8 +843,8 @@ typy_get_dynamic (PyObject *self, void *closure)
     }
 
   if (result)
-    Py_RETURN_TRUE;
-  Py_RETURN_FALSE;
+    AMD_Py_RETURN_TRUE;
+  AMD_Py_RETURN_FALSE;
 }
 
 static struct type *
@@ -1004,7 +1012,7 @@ typy_template_argument (PyObject *self, PyObject *args)
   PyObject *block_obj = NULL;
   struct symbol *sym;
 
-  if (! PyArg_ParseTuple (args, "i|O", &argno, &block_obj))
+  if (! AMD_PyArg_ParseTuple (args, "i|O", &argno, &block_obj))
     return NULL;
 
   if (argno < 0)
@@ -1134,8 +1142,8 @@ typy_richcompare (PyObject *self, PyObject *other, int op)
      for equality or inequality.  */
   if (type2 == NULL || (op != Py_EQ && op != Py_NE))
     {
-      Py_INCREF (Py_NotImplemented);
-      return Py_NotImplemented;
+      Py_INCREF (*AMD_Py_NotImplemented);
+      return *AMD_Py_NotImplemented;
     }
 
   if (type1 == type2)
@@ -1155,8 +1163,8 @@ typy_richcompare (PyObject *self, PyObject *other, int op)
     }
 
   if (op == (result ? Py_EQ : Py_NE))
-    Py_RETURN_TRUE;
-  Py_RETURN_FALSE;
+    AMD_Py_RETURN_TRUE;
+  AMD_Py_RETURN_FALSE;
 }
 
 
@@ -1306,7 +1314,7 @@ typy_getitem (PyObject *self, PyObject *key)
 static PyObject *
 typy_get (PyObject *self, PyObject *args)
 {
-  PyObject *key, *defval = Py_None, *result;
+  PyObject *key, *defval = AMD_Py_None, *result;
 
   if (!AMD_PyArg_UnpackTuple (args, "get", 1, 2, &key, &defval))
     return NULL;
@@ -1335,7 +1343,7 @@ typy_has_key (PyObject *self, PyObject *args)
   const char *field;
   int i;
 
-  if (!PyArg_ParseTuple (args, "s", &field))
+  if (!AMD_PyArg_ParseTuple (args, "s", &field))
     return NULL;
 
   /* We want just fields of this type, not of base types, so instead of
@@ -1351,9 +1359,9 @@ typy_has_key (PyObject *self, PyObject *args)
       const char *t_field_name = type->field (i).name ();
 
       if (t_field_name && (strcmp_iw (t_field_name, field) == 0))
-	Py_RETURN_TRUE;
+	AMD_Py_RETURN_TRUE;
     }
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Make an iterator object to iterate over keys, values, or items.  */
@@ -1447,7 +1455,7 @@ typy_iterator_dealloc (PyObject *obj)
 {
   typy_iterator_object *iter_obj = (typy_iterator_object *) obj;
 
-  Py_DECREF (iter_obj->source);
+  AMD_Py_DECREF (iter_obj->source);
   Py_TYPE (obj)->tp_free (obj);
 }
 

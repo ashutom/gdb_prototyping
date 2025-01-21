@@ -195,7 +195,7 @@ gdbpy_err_fetch::to_string () const
      gdb.GdbError ("message").  */
 
   gdbpy_ref<> value = this->value ();
-  if (value.get () != nullptr && value.get () != Py_None)
+  if (value.get () != nullptr && value.get () != AMD_Py_None)
     return gdbpy_obj_to_string (value.get ());
   else
     return gdbpy_obj_to_string (this->type ().get ());
@@ -293,8 +293,8 @@ gdbpy_ref<>
 gdb_py_object_from_ulongest (ULONGEST l)
 {
   if (sizeof (l) > sizeof (unsigned long))
-    return gdbpy_ref<> (PyLong_FromUnsignedLongLong (l));
-  return gdbpy_ref<> (PyLong_FromUnsignedLong (l));
+    return gdbpy_ref<> (AMD_PyLong_FromUnsignedLongLong (l));
+  return gdbpy_ref<> (AMD_PyLong_FromUnsignedLongLong (l));
 }
 
 /* Like AMD_PyLong_AsLong, but returns 0 on failure, 1 on success, and puts
@@ -338,7 +338,7 @@ gdb_pymodule_addobject (PyObject *module, const char *name, PyObject *object)
   Py_INCREF (object);
   result = AMD_PyModule_AddObject (module, name, object);
   if (result < 0)
-    Py_DECREF (object);
+    AMD_Py_DECREF (object);
   return result;
 }
 

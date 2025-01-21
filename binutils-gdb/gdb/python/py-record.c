@@ -418,8 +418,8 @@ recpy_element_richcompare (PyObject *self, PyObject *other, int op)
 
   if (Py_TYPE (self) != Py_TYPE (other))
     {
-      Py_INCREF (Py_NotImplemented);
-      return Py_NotImplemented;
+      Py_INCREF (*AMD_Py_NotImplemented);
+      return *AMD_Py_NotImplemented;
     }
 
   switch (op)
@@ -427,25 +427,28 @@ recpy_element_richcompare (PyObject *self, PyObject *other, int op)
     case Py_EQ:
       if (obj1->thread == obj2->thread
 	  && obj1->method == obj2->method
-	  && obj1->number == obj2->number)
-	Py_RETURN_TRUE;
-      else
-	Py_RETURN_FALSE;
+	  && obj1->number == obj2->number){
+      AMD_Py_RETURN_TRUE;
+    }
+    else{
+      AMD_Py_RETURN_FALSE;
+    }
 
     case Py_NE:
       if (obj1->thread != obj2->thread
 	  || obj1->method != obj2->method
-	  || obj1->number != obj2->number)
-	Py_RETURN_TRUE;
-      else
-	Py_RETURN_FALSE;
-
+	  || obj1->number != obj2->number){
+      AMD_Py_RETURN_TRUE;
+    }
+    else{
+      AMD_Py_RETURN_FALSE;
+    }
     default:
       break;
   }
 
-  Py_INCREF (Py_NotImplemented);
-  return Py_NotImplemented;
+  Py_INCREF (*AMD_Py_NotImplemented);
+  return *AMD_Py_NotImplemented;
 }
 
 /* Create a new gdb.RecordGap object.  */
@@ -668,7 +671,7 @@ gdbpy_start_recording (PyObject *self, PyObject *args)
   const char *method = NULL;
   const char *format = NULL;
 
-  if (!PyArg_ParseTuple (args, "|ss", &method, &format))
+  if (!AMD_PyArg_ParseTuple (args, "|ss", &method, &format))
     return NULL;
 
   try
@@ -690,7 +693,7 @@ gdbpy_current_recording (PyObject *self, PyObject *args)
   recpy_record_object *ret = NULL;
 
   if (find_record_target () == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   ret = AMD_PyObject_New<recpy_record_object>(&recpy_record_type);
   ret->thread = inferior_thread ();
@@ -713,7 +716,7 @@ gdbpy_stop_recording (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 GDBPY_INITIALIZE_FILE (gdbpy_initialize_record);

@@ -6,6 +6,7 @@
 
 static const int AMD_APIVER = 1013;
 
+//static bool GLOBAL_INIT=false;
 PyObject** AMD_PyExc_RuntimeError=nullptr;
 PyObject** AMD_PyExc_ValueError=nullptr;
 PyObject** AMD_PyExc_TypeError=nullptr;
@@ -20,9 +21,18 @@ PyObject** AMD_PyExc_NameError=nullptr;
 PyObject** AMD_PyExc_KeyboardInterrupt=nullptr;
 PyObject** AMD_PyExc_OverflowError=nullptr;
 PyTypeObject* AMD_PyBool_Type=nullptr;
+PyTypeObject* AMD_PySlice_Type=nullptr;
+PyTypeObject* AMD_PyEllipsis_Type=nullptr;
+PyTypeObject* AMD_PyFloat_Type=nullptr;
 int* AMD_Py_DontWriteBytecodeFlag=nullptr;
 int* AMD_Py_IgnoreEnvironmentFlag=nullptr;
+PyObject*  AMD_Py_None=nullptr;
+PyObject** AMD_Py_False=nullptr;
+PyObject** AMD_Py_True=nullptr;
+PyObject** AMD_Py_NotImplemented=nullptr;
 
+//PyAPI_DATA(PyObject) _Py_NoneStruct; /* Don't use this directly */
+//#define AMD_Py_None (&_Py_NoneStruct)
 
 
 /*#define GET_CORRECT_FUNCTION_POINTER(fun_name_in_lib,funtype)            \
@@ -164,7 +174,7 @@ PyObject*  AMD_PyObject_CallFunctionObjArgs(PyObject *callable,...){
     va_end (ap);
     return result;
 }
-PyObject* AMD_Py_BuildValue(const char * str, ...){
+PyObject* AMD_Py_BuildValue_SizeT(const char * str, ...){
    char funname[]="_Py_BuildValue_SizeT";
    py_buildval fp=NULL;
    fp=(py_buildval) get_fun_pointer_from_handle((void*) fp,funname);
@@ -197,6 +207,18 @@ PyObject* AMD_PyErr_Format(PyObject *exception,const char *format,...){
    va_end (ap);
    return result; 
 }
+
+int AMD_PyArg_ParseTuple(PyObject * obj, const char * cstr, ...){
+   char funname[]="_PyArg_ParseTuple_SizeT";
+   pyarg_parsetuple fp =  NULL;
+   fp = (pyarg_parsetuple) get_fun_pointer_from_handle((void*) fp,funname);      
+   va_list ap;
+   va_start (ap, cstr);
+   int result = (*fp)(obj,cstr,ap);
+   va_end (ap);
+   return result;
+}
+
 inline int AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type){
     return ob->ob_type == type;
 }
@@ -662,6 +684,18 @@ Py_ssize_t AMD_PyObject_Size(PyObject *ob){
    fp = (pysequence_size) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (ob); //execute
 }
+Py_ssize_t AMD_PyLong_AsSsize_t(PyObject* ob){
+   char funname[]="PyLong_AsSsize_t";
+   pysequence_size fp =  NULL;
+   fp = (pysequence_size) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob); //execute       
+}
+Py_ssize_t AMD_PyObject_Length(PyObject *ob){
+   char funname[]="PyObject_Length";
+   pysequence_size fp =  NULL;
+   fp = (pysequence_size) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob); //execute
+}
 int AMD_PyObject_RichCompareBool(PyObject * ob, PyObject * ob2, int v){
    char funname[]="PyObject_RichCompareBool";
    pyobj_richcomparebool fp =  NULL;
@@ -895,4 +929,39 @@ void AMD_Py_SetProgramName(const wchar_t * name){
    pysys_setpath fp =  NULL;
    fp = (pysys_setpath) get_fun_pointer_from_handle((void*) fp,funname);
    return (*fp) (name); //execute
+}
+
+int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
+                                     Py_ssize_t *step, Py_ssize_t *slicelength){
+   char funname[]="PySlice_GetIndicesEx";
+   pyslice_getindicesex fp =  NULL;
+   fp = (pyslice_getindicesex) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (r,length,start,stop,step,slicelength); //execute
+}
+
+PyObject* AMD_Py_NewRef(PyObject* ob){
+   char funname[]="Py_NewRef";
+   pylist_astuple fp =  NULL;
+   fp = (pylist_astuple) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob); //execute   
+}
+
+void _AMD_Py_DECREF(PyObject* ob){
+   char funname[]="Py_DecRef";
+   pyerr_setnone fp =  NULL;
+   fp = (pyerr_setnone) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob); //execute   
+}
+
+int  AMD_PyIter_Check(PyObject* ob){
+   char funname[]="PyIter_Check";
+   pyobj_istrue fp =  NULL;
+   fp = (pyobj_istrue) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob); //execute    
+}
+void  _Py_Dealloc(PyObject* ob){
+   char funname[]="_Py_Dealloc";
+   pyerr_setnone fp =  NULL;
+   fp = (pyerr_setnone) get_fun_pointer_from_handle((void*) fp,funname);
+   return (*fp) (ob); //execute    
 }

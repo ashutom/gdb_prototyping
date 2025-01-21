@@ -276,7 +276,7 @@ serialize_mi_result_1 (PyObject *result, const char *field_name)
 	  serialize_mi_result_1 (item.get (), nullptr);
 	}
     }
-  else if (PyIter_Check (result))
+  else if (AMD_PyIter_Check (result))
     {
       gdbpy_ref<> item;
       ui_out_emit_list list_emitter (uiout, field_name);
@@ -340,7 +340,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
 {
   static const char *keywords[] = { "name", "data", nullptr };
   char *name = nullptr;
-  PyObject *data = Py_None;
+  PyObject *data = AMD_Py_None;
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kwargs, "s|O", keywords,
 					&name, &data))
@@ -366,7 +366,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
     }
 
   /* Validate additional data.  */
-  if (!(data == Py_None || PyDict_Check (data)))
+  if (!(data == AMD_Py_None || PyDict_Check (data)))
     {
       AMD_PyErr_Format
 	((*AMD_PyExc_ValueError),
@@ -386,7 +386,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
       target_terminal::ours_for_output ();
 
       gdb_printf (mi->event_channel, "%s", name);
-      if (data != Py_None)
+      if (data != AMD_Py_None)
 	{
 	  ui_out *mi_uiout = mi->interp_ui_out ();
 	  ui_out_redirect_pop redir (mi_uiout, mi->event_channel);
@@ -398,5 +398,5 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
       gdb_flush (mi->event_channel);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }

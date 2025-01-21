@@ -200,14 +200,14 @@ set_parameter_value (parmpy_object *self, PyObject *value)
     case var_filename:
       if (! gdbpy_is_string (value)
 	  && (self->type == var_filename
-	      || value != Py_None))
+	      || value != AMD_Py_None))
 	{
 	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("String required for filename."));
 
 	  return -1;
 	}
-      if (value == Py_None)
+      if (value == AMD_Py_None)
 	self->value.stringval->clear ();
       else
 	{
@@ -249,7 +249,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
       }
 
     case var_boolean:
-      if (! PyBool_Check (value))
+      if (! AMD_PyBool_Check (value))
 	{
 	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("A boolean argument is required."));
@@ -262,14 +262,14 @@ set_parameter_value (parmpy_object *self, PyObject *value)
       break;
 
     case var_auto_boolean:
-      if (! PyBool_Check (value) && value != Py_None)
+      if (! AMD_PyBool_Check (value) && value != AMD_Py_None)
 	{
 	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			   _("A boolean or None is required"));
 	  return -1;
 	}
 
-      if (value == Py_None)
+      if (value == AMD_Py_None)
 	self->value.autoboolval = AUTO_BOOLEAN_AUTO;
       else
 	{
@@ -309,7 +309,7 @@ set_parameter_value (parmpy_object *self, PyObject *value)
 		  buffer += ", ";
 		buffer = buffer + "'" + l->literal + "'";
 		if (allowed == TRIBOOL_UNKNOWN
-		    && ((value == Py_None && !strcmp ("unlimited", l->literal))
+		    && ((value == AMD_Py_None && !strcmp ("unlimited", l->literal))
 			|| (s != nullptr && !strcmp (s, l->literal))))
 		  {
 		    val = l->use;
@@ -809,7 +809,7 @@ parmpy_init (PyObject *self, PyObject *args, PyObject *kwds)
   const literal_def *extra_literals;
   enum var_types type;
 
-  if (! PyArg_ParseTuple (args, "sii|O", &name, &cmdtype, &parmclass,
+  if (! AMD_PyArg_ParseTuple (args, "sii|O", &name, &cmdtype, &parmclass,
 			  &enum_values))
     return -1;
 
@@ -884,7 +884,7 @@ parmpy_init (PyObject *self, PyObject *args, PyObject *kwds)
     }
   catch (const gdb_exception &except)
     {
-      Py_DECREF (self);
+      AMD_Py_DECREF (self);
       GDB_PY_SET_HANDLE_EXCEPTION (except);
     }
 

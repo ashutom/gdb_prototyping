@@ -12,6 +12,40 @@
 #define AMD_PyRun_String(str, s, g, l)  AMD_PyRun_StringFlags(str,s,g,l,NULL)
 #define AMD_PyRun_InteractiveLoop(f, p) AMD_PyRun_InteractiveLoopFlags(f, p, NULL)
 
+#define AMD_PySlice_Check(op) AMD_Py_IS_TYPE(op, AMD_PySlice_Type)
+
+extern PyObject** AMD_PyExc_RuntimeError;
+extern PyObject** AMD_PyExc_ValueError;
+extern PyObject** AMD_PyExc_TypeError;
+extern PyObject** AMD_PyExc_KeyError;
+extern PyObject** AMD_PyExc_StopIteration;
+extern PyObject** AMD_PyExc_AttributeError;
+extern PyObject** AMD_PyExc_SystemError;
+extern PyObject** AMD_PyExc_NotImplementedError;
+extern PyObject** AMD_PyExc_IndexError;
+extern PyObject** AMD_PyExc_NameError;
+extern PyObject** AMD_PyExc_KeyboardInterrupt;
+extern PyObject** AMD_PyExc_OverflowError;
+extern PyTypeObject* AMD_PyBool_Type;
+extern PyTypeObject* AMD_PySlice_Type;
+extern PyTypeObject* AMD_PyEllipsis_Type;
+extern PyTypeObject* AMD_PyFloat_Type;
+extern int* AMD_Py_DontWriteBytecodeFlag;
+extern int* AMD_Py_IgnoreEnvironmentFlag;
+extern PyObject*  AMD_Py_None;
+extern PyObject** AMD_Py_False;
+extern PyObject** AMD_Py_True;
+extern PyObject** AMD_Py_NotImplemented;
+
+
+#define AMD_Py_DECREF(ob)  _AMD_Py_DECREF((PyObject*) ob);
+#define AMD_Py_RETURN_FALSE return _AMD_Py_RETURN_FALSE_();
+#define AMD_Py_RETURN_TRUE return _AMD_Py_RETURN_TRUE_();
+#define AMD_Py_RETURN_NONE return _AMD_Py_RETURN_NONE_();
+#define AMD_PyBool_Check(x) AMD_Py_IS_TYPE(x,AMD_PyBool_Type)
+#define AMD_Py_BuildValue   AMD_Py_BuildValue_SizeT
+#define AMD_PyFloat_Check(op) AMD_PyObject_TypeCheck(op,AMD_PyFloat_Type)
+
 
 typedef char* (*AMD_PyOS_Readlinefp) (FILE *, FILE *, const char *);
 void AMD_Assign_AMD_PyOS_Readlinefp(AMD_PyOS_Readlinefp FP);
@@ -21,8 +55,9 @@ int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw, const char 
 PyObject* AMD_PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...);
 PyObject* AMD_PyObject_CallMethodObjArgs(PyObject *obj, PyObject *name, ...);
 PyObject* AMD_PyObject_CallFunctionObjArgs(PyObject *callable,...);
-PyObject* AMD_Py_BuildValue(const char *, ...);
-//PyObject* _Py_BuildValue_SizeT(const char *, ...);
+//PyObject* AMD_Py_BuildValue(const char *, ...);
+PyObject* AMD_Py_BuildValue_SizeT(const char *, ...);
+int AMD_PyArg_ParseTuple(PyObject *, const char *, ...);
 PyObject* AMD_PyObject_CallObject(PyObject *callable, PyObject *args);
 PyObject* AMD_PyObject_GetAttr(PyObject * ob, PyObject * at);
 PyObject* AMD_PyObject_GenericGetAttr(PyObject * a, PyObject * b);
@@ -75,6 +110,7 @@ PyObject* AMD_PyList_GetItem(PyObject *, Py_ssize_t);
 PyObject* AMD_PyDict_New();
 PyObject* AMD_PyType_GenericNew(PyTypeObject *,PyObject *, PyObject *);
 void AMD_PyErr_Clear(void);
+void _Py_Dealloc(PyObject *);
 
 int AMD_PyDict_SetItemString(PyObject *dp, const char *key, PyObject *item);
 int AMD_PyDict_SetItem(PyObject *mp, PyObject *key, PyObject *item);
@@ -129,23 +165,6 @@ PyObject* AMD_PyErr_NewException(const char *name, PyObject *base, PyObject *dic
 void AMD_PyErr_SetInterrupt(void);
 void AMD_PyErr_Print(void);
 PyObject * AMD_PyErr_Format(PyObject *exception,const char *format,...);
-
-extern PyObject** AMD_PyExc_RuntimeError;
-extern PyObject** AMD_PyExc_ValueError;
-extern PyObject** AMD_PyExc_TypeError;
-extern PyObject** AMD_PyExc_KeyError;
-extern PyObject** AMD_PyExc_StopIteration;
-extern PyObject** AMD_PyExc_AttributeError;
-extern PyObject** AMD_PyExc_SystemError;
-extern PyObject** AMD_PyExc_NotImplementedError;
-extern PyObject** AMD_PyExc_IndexError;
-extern PyObject** AMD_PyExc_NameError;
-extern PyObject** AMD_PyExc_KeyboardInterrupt;
-extern PyObject** AMD_PyExc_OverflowError;
-extern PyTypeObject* AMD_PyBool_Type;
-extern int* AMD_Py_DontWriteBytecodeFlag;
-extern int* AMD_Py_IgnoreEnvironmentFlag;
-
 
 void AMD_Py_SetProgramName(const wchar_t *);
 PyObject* AMD_PyErr_Occurred(void);
@@ -220,9 +239,27 @@ PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int
 void AMD_Py_CompileStringExFlags(const wchar_t *);
 
 
+int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
+                                     Py_ssize_t *step, Py_ssize_t *slicelength);
+
 void AMD_Py_Initialize(void);
 void AMD_Py_Finalize(void);
 
+PyObject* AMD_Py_NewRef(PyObject* ob);
+inline PyObject* _AMD_Py_RETURN_FALSE_() {
+    return AMD_Py_NewRef(*AMD_Py_False);
+}
+inline PyObject* _AMD_Py_RETURN_TRUE_(){
+    return AMD_Py_NewRef(*AMD_Py_True);
+}
+inline PyObject* _AMD_Py_RETURN_NONE_(){
+    return AMD_Py_NewRef(AMD_Py_None);
+}
+
+void _AMD_Py_DECREF(PyObject* ob);
+int  AMD_PyIter_Check(PyObject *);
+Py_ssize_t AMD_PyLong_AsSsize_t(PyObject *);
+Py_ssize_t AMD_PyObject_Length(PyObject *o);
 
 
 /*Internal functions which need to be supported here because of the tempalated approach*/

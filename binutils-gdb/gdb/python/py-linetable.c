@@ -124,7 +124,7 @@ build_line_table_tuple_from_pcs (int line, const std::vector<CORE_ADDR> &pcs)
   int i;
 
   if (pcs.size () < 1)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   gdbpy_ref<> tuple (AMD_PyTuple_New (pcs.size ()));
 
@@ -159,7 +159,7 @@ ltpy_get_pcs_for_line (PyObject *self, PyObject *args)
 
   LTPY_REQUIRE_VALID (self, symtab);
 
-  if (! PyArg_ParseTuple (args, GDB_PY_LL_ARG, &py_line))
+  if (! AMD_PyArg_ParseTuple (args, GDB_PY_LL_ARG, &py_line))
     return NULL;
 
   try
@@ -187,7 +187,7 @@ ltpy_has_line (PyObject *self, PyObject *args)
 
   LTPY_REQUIRE_VALID (self, symtab);
 
-  if (! PyArg_ParseTuple (args, GDB_PY_LL_ARG, &py_line))
+  if (! AMD_PyArg_ParseTuple (args, GDB_PY_LL_ARG, &py_line))
     return NULL;
 
   if (symtab->linetable () == NULL)
@@ -201,10 +201,10 @@ ltpy_has_line (PyObject *self, PyObject *args)
     {
       const linetable_entry *item = &(symtab->linetable ()->item[index]);
       if (item->line == py_line)
-	  Py_RETURN_TRUE;
+	  AMD_Py_RETURN_TRUE;
     }
 
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Implementation of gdb.LineTable.source_lines (self) -> List.
@@ -244,7 +244,7 @@ ltpy_get_all_source_lines (PyObject *self, PyObject *args)
 	  if (line == NULL)
 	    return NULL;
 
-	  if (AMD_PyDict_SetItem (source_dict.get (), line.get (), Py_None) == -1)
+	  if (AMD_PyDict_SetItem (source_dict.get (), line.get (), AMD_Py_None) == -1)
 	    return NULL;
 	}
     }
@@ -263,9 +263,9 @@ ltpy_is_valid (PyObject *self, PyObject *args)
   symtab = symtab_object_to_symtab (get_symtab (self));
 
   if (symtab == NULL)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Deconstructor for the line table object.  Decrement the reference
@@ -276,7 +276,7 @@ ltpy_dealloc (PyObject *self)
 {
   linetable_object *obj = (linetable_object *) self;
 
-  Py_DECREF (obj->symtab);
+  AMD_Py_DECREF (obj->symtab);
   Py_TYPE (self)->tp_free (self);
 }
 
@@ -364,7 +364,7 @@ ltpy_iterator_dealloc (PyObject *obj)
 {
   ltpy_iterator_object *iter_obj = (ltpy_iterator_object *) obj;
 
-  Py_DECREF (iter_obj->source);
+  AMD_Py_DECREF (iter_obj->source);
   Py_TYPE (obj)->tp_free (obj);
 }
 
@@ -439,9 +439,9 @@ ltpy_iter_is_valid (PyObject *self, PyObject *args)
   symtab = symtab_object_to_symtab (get_symtab (iter_obj->source));
 
   if (symtab == NULL)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 GDBPY_INITIALIZE_FILE (gdbpy_initialize_linetable);

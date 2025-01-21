@@ -272,7 +272,7 @@ gdbpy_enter::finalize ()
 static void
 gdbpy_set_quit_flag (const struct extension_language_defn *extlang)
 {
-  PyErr_SetInterrupt ();
+  AMD_PyErr_SetInterrupt ();
 }
 
 /* Return true if the quit flag has been set, false otherwise.  */
@@ -327,7 +327,7 @@ eval_python_command (const char *command, int start_symbol,
 
 	  if (AMD_PyDict_SetItem (d, file.get (), filename_obj.get ()) < 0)
 	    return -1;
-	  if (AMD_PyDict_SetItemString (d, "__cached__", Py_None) < 0)
+	  if (AMD_PyDict_SetItemString (d, "__cached__", AMD_Py_None) < 0)
 	    return -1;
 
 	  file_set = true;
@@ -508,10 +508,11 @@ gdbpy_parameter_value (const setting &var)
 
     case var_boolean:
       {
-	if (var.get<bool> ())
-	  Py_RETURN_TRUE;
-	else
-	  Py_RETURN_FALSE;
+        if (var.get<bool> ()){
+          AMD_Py_RETURN_TRUE;
+        }else{
+          AMD_Py_RETURN_FALSE;
+        }
       }
 
     case var_auto_boolean:
@@ -519,11 +520,11 @@ gdbpy_parameter_value (const setting &var)
 	enum auto_boolean ab = var.get<enum auto_boolean> ();
 
 	if (ab == AUTO_BOOLEAN_TRUE)
-	  Py_RETURN_TRUE;
+	  {AMD_Py_RETURN_TRUE;}
 	else if (ab == AUTO_BOOLEAN_FALSE)
-	  Py_RETURN_FALSE;
+	  {AMD_Py_RETURN_FALSE;}
 	else
-	  Py_RETURN_NONE;
+	  {AMD_Py_RETURN_NONE;}
       }
 
     case var_uinteger:
@@ -549,7 +550,7 @@ gdbpy_parameter_value (const setting &var)
 			&& *l->val == -1)
 		      value = -1;
 		    else
-		      Py_RETURN_NONE;
+		      AMD_Py_RETURN_NONE;
 		  }
 		else if (l->val.has_value ())
 		  value = *l->val;
@@ -582,7 +583,7 @@ gdbpy_parameter (PyObject *self, PyObject *args)
   const char *arg;
   int found = -1;
 
-  if (! PyArg_ParseTuple (args, "s", &arg))
+  if (! AMD_PyArg_ParseTuple (args, "s", &arg))
     return NULL;
 
   std::string newarg = std::string ("show ") + arg;
@@ -761,7 +762,7 @@ execute_gdb_command (PyObject *self, PyObject *args, PyObject *kw)
 
   if (to_string)
     return AMD_PyUnicode_FromString (to_string_res.c_str ());
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of Python rbreak command.  Take a REGEX and
@@ -841,7 +842,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
 	    return NULL;
 
 	  /* Is the object file still valid?  */
-	  if (obj_name == Py_None)
+	  if (obj_name == AMD_Py_None)
 	    continue;
 
 	  gdb::unique_xmalloc_ptr<char> filename =
@@ -909,7 +910,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
       else
 	symbol_name = p.msymbol.minsym->linkage_name ();
 
-      gdbpy_ref<> argList (Py_BuildValue("(s)", symbol_name.c_str ()));
+      gdbpy_ref<> argList (AMD_Py_BuildValue("(s)", symbol_name.c_str ()));
       gdbpy_ref<> obj (AMD_PyObject_CallObject ((PyObject *)
 					    &breakpoint_object_type,
 					    argList.get ()));
@@ -936,7 +937,7 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
   gdbpy_ref<> unparsed;
   location_spec_up locspec;
 
-  if (! PyArg_ParseTuple (args, "|s", &arg))
+  if (! AMD_PyArg_ParseTuple (args, "|s", &arg))
     return NULL;
 
   /* Treat a string consisting of just whitespace the same as
@@ -990,7 +991,7 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
 	}
     }
   else
-    result = gdbpy_ref<>::new_reference (Py_None);
+    result = gdbpy_ref<>::new_reference (AMD_Py_None);
 
   gdbpy_ref<> return_result (AMD_PyTuple_New (2));
   if (return_result == NULL)
@@ -1003,7 +1004,7 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
 	return NULL;
     }
   else
-    unparsed = gdbpy_ref<>::new_reference (Py_None);
+    unparsed = gdbpy_ref<>::new_reference (AMD_Py_None);
 
   AMD_PyTuple_SetItem (return_result.get (), 0, unparsed.release ());
   AMD_PyTuple_SetItem (return_result.get (), 1, result.release ());
@@ -1065,7 +1066,7 @@ static PyObject *
 gdbpy_invalidate_cached_frames (PyObject *self, PyObject *args)
 {
   reinit_frame_cache ();
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Read a file as Python code.
@@ -1140,7 +1141,7 @@ gdbpy_post_event (PyObject *self, PyObject *args)
 {
   PyObject *func;
 
-  if (!PyArg_ParseTuple (args, "O", &func))
+  if (!AMD_PyArg_ParseTuple (args, "O", &func))
     return NULL;
 
   if (!AMD_PyCallable_Check (func))
@@ -1154,7 +1155,7 @@ gdbpy_post_event (PyObject *self, PyObject *args)
   gdbpy_event event (std::move (func_ref));
   run_on_main_thread (event);
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Interrupt the current operation on the main thread.  */
@@ -1171,7 +1172,7 @@ gdbpy_interrupt (PyObject *self, PyObject *args)
     set_quit_flag ();
   }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 
@@ -1223,7 +1224,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	  /* Return type should be None, or a String.  If it is None,
 	     fall through, we will not set a prompt.  If it is a
 	     string, set  PROMPT.  Anything else, set an exception.  */
-	  if (result != Py_None && !PyUnicode_Check (result.get ()))
+	  if (result != AMD_Py_None && !PyUnicode_Check (result.get ()))
 	    {
 	      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
 			    _("Return from prompt_hook must " \
@@ -1232,7 +1233,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	      return EXT_LANG_RC_ERROR;
 	    }
 
-	  if (result != Py_None)
+	  if (result != AMD_Py_None)
 	    {
 	      gdb::unique_xmalloc_ptr<char>
 		prompt (python_string_to_host_string (result.get ()));
@@ -1316,7 +1317,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
       return {};
     }
 
-  if (result == Py_None)
+  if (result == AMD_Py_None)
     return {};
   else if (!PyBytes_Check (result.get ()))
     {
@@ -1384,7 +1385,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
       return {};
     }
 
-  if (result == Py_None)
+  if (result == AMD_Py_None)
     return {};
 
   if (!PyBytes_Check (result.get ()))
@@ -1428,9 +1429,9 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
      None with nullptr, this means that in the following code we only have
      to handle the nullptr case.  These are only borrowed references, so
      no decref is required here.  */
-  if (pspace_obj == Py_None)
+  if (pspace_obj == AMD_Py_None)
     pspace_obj = nullptr;
-  if (arch_obj == Py_None)
+  if (arch_obj == AMD_Py_None)
     arch_obj = nullptr;
 
   if (pspace_obj == nullptr && arch_obj == nullptr)
@@ -1541,7 +1542,7 @@ gdbpy_write (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* A python function to flush a gdb stream.  The optional keyword
@@ -1574,7 +1575,7 @@ gdbpy_flush (PyObject *self, PyObject *args, PyObject *kw)
       gdb_flush (gdb_stdout);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Return non-zero if print-stack is not "none".  */
@@ -1747,7 +1748,7 @@ static PyObject *
 gdbpy_get_current_objfile (PyObject *unused1, PyObject *unused2)
 {
   if (! gdbpy_current_objfile)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return objfile_to_objfile_object (gdbpy_current_objfile).release ();
 }
@@ -1800,10 +1801,10 @@ gdbpy_handle_missing_debuginfo (const struct extension_language_defn *extlang,
     }
 
   /* Parse the result, and convert it back to the C++ object.  */
-  if (pyo_execute_ret == Py_None)
+  if (pyo_execute_ret == AMD_Py_None)
     return {};
 
-  if (PyBool_Check (pyo_execute_ret.get ()))
+  if (AMD_PyBool_Check (pyo_execute_ret.get ()))
     {
       bool try_again = AMD_PyObject_IsTrue (pyo_execute_ret.get ());
       return ext_lang_missing_debuginfo_result (try_again);
@@ -1923,7 +1924,7 @@ gdbpy_apply_type_printers (const struct extension_language_defn *extlang,
       return EXT_LANG_RC_ERROR;
     }
 
-  if (result_obj == Py_None)
+  if (result_obj == AMD_Py_None)
     return EXT_LANG_RC_NOP;
 
   result = python_string_to_host_string (result_obj.get ());
@@ -1953,7 +1954,7 @@ gdbpy_free_type_printers (const struct extension_language_defn *extlang,
     return;
 
   gdbpy_enter enter_py;
-  Py_DECREF (printers);
+  AMD_Py_DECREF (printers);
 }
 
 #else /* HAVE_PYTHON */

@@ -428,7 +428,7 @@ gdbpy_register_tui_window (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 
@@ -462,8 +462,8 @@ gdbpy_tui_is_valid (PyObject *self, PyObject *args)
   gdbpy_tui_window *win = (gdbpy_tui_window *) self;
 
   if (win->is_valid ())
-    Py_RETURN_TRUE;
-  Py_RETURN_FALSE;
+    AMD_Py_RETURN_TRUE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Python function that erases the TUI window.  */
@@ -476,7 +476,7 @@ gdbpy_tui_erase (PyObject *self, PyObject *args)
 
   win->window->erase ();
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Python function that writes some text to a TUI window.  */
@@ -497,7 +497,7 @@ gdbpy_tui_write (PyObject *self, PyObject *args, PyObject *kw)
 
   win->window->output (text, full_window);
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Return the width of the TUI window.  */

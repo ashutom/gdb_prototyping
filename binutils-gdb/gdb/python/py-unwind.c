@@ -186,7 +186,7 @@ pyuw_object_attribute_to_pointer (PyObject *pyo, const char *attr_name,
       gdb_assert (AMD_PyErr_Occurred ());
       return pyuw_get_attr_code::ATTR_ERROR;
     }
-  if (pyo_value == Py_None)
+  if (pyo_value == AMD_Py_None)
     return pyuw_get_attr_code::ATTR_MISSING;
 
   if (get_addr_from_python (pyo_value.get (), addr) < 0)
@@ -373,7 +373,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
 	     here and True otherwise, but again that might require changes in
 	     user code.  So, handle this with minimal impact for the user, while
 	     improving robustness: silently ignore the register/value pair.  */
-	  Py_RETURN_NONE;
+	  AMD_Py_RETURN_NONE;
 	}
     }
   catch (const gdb_exception &except)
@@ -395,7 +395,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
   if (!found)
     unwind_info->saved_regs->emplace_back (regnum, std::move (new_value));
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* UnwindInfo cleanup.  */
@@ -520,9 +520,9 @@ pending_framepy_is_valid (PyObject *self, PyObject *args)
   pending_frame_object *pending_frame = (pending_frame_object *) self;
 
   if (pending_frame->frame_info == nullptr)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Implement PendingFrame.name().  Return a string that is the name of the
@@ -553,7 +553,7 @@ pending_framepy_name (PyObject *self, PyObject *args)
     return AMD_PyUnicode_Decode (name.get (), strlen (name.get ()),
 			     host_charset (), nullptr);
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implement gdb.PendingFrame.pc().  Returns an integer containing the
@@ -604,7 +604,7 @@ pending_framepy_language (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implement PendingFrame.find_sal().  Return the PendingFrame's symtab and
@@ -702,7 +702,7 @@ pending_framepy_function (PyObject *self, PyObject *args)
   if (sym != nullptr)
     return symbol_to_symbol_object (sym);
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of
@@ -878,7 +878,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
       gdbpy_print_stack_or_quit ();
       return 0;
     }
-  if (pyo_execute_ret == Py_None)
+  if (pyo_execute_ret == AMD_Py_None)
     return 0;
 
   /* Verify the return value of _execute_unwinders is a tuple of size 2.  */

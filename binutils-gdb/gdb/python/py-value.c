@@ -192,7 +192,7 @@ valpy_init (PyObject *self, PyObject *args, PyObject *kwds)
     return -1;
 
   struct type *type = nullptr;
-  if (type_obj != nullptr && type_obj != Py_None)
+  if (type_obj != nullptr && type_obj != AMD_Py_None)
     {
       type = type_object_to_type (type_obj);
       if (type == nullptr)
@@ -421,8 +421,8 @@ valpy_get_address (PyObject *self, void *closure)
 	}
       catch (const gdb_exception &except)
 	{
-	  val_obj->address = Py_None;
-	  Py_INCREF (Py_None);
+	  val_obj->address = AMD_Py_None;
+	  Py_INCREF (AMD_Py_None);
 	}
     }
 
@@ -708,7 +708,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
      Python 3.3 and later have a way to specify it (both in C and Python
      itself), but we could be compiled with older versions, so we just
      check that the args tuple is empty.  */
-  Py_ssize_t positional_count = PyObject_Length (args);
+  Py_ssize_t positional_count = AMD_PyObject_Length (args);
   if (positional_count < 0)
     return NULL;
   else if (positional_count > 0)
@@ -735,7 +735,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
   PyObject *symbols_obj = NULL;
   PyObject *unions_obj = NULL;
   PyObject *address_obj = NULL;
-  PyObject *styling_obj = Py_False;
+  PyObject *styling_obj = *AMD_Py_False;
   PyObject *nibbles_obj = NULL;
   PyObject *deref_refs_obj = NULL;
   PyObject *actual_objects_obj = NULL;
@@ -838,7 +838,7 @@ valpy_do_cast (PyObject *self, PyObject *args, enum exp_opcode op)
   PyObject *type_obj, *result = NULL;
   struct type *type;
 
-  if (! PyArg_ParseTuple (args, "O", &type_obj))
+  if (! AMD_PyArg_ParseTuple (args, "O", &type_obj))
     return NULL;
 
   type = type_object_to_type (type_obj);
@@ -935,7 +935,7 @@ valpy_assign (PyObject *self_obj, PyObject *args)
 {
   PyObject *val_obj;
 
-  if (! PyArg_ParseTuple (args, "O", &val_obj))
+  if (! AMD_PyArg_ParseTuple (args, "O", &val_obj))
     return nullptr;
 
   struct value *val = convert_value_from_python (val_obj);
@@ -946,7 +946,7 @@ valpy_assign (PyObject *self_obj, PyObject *args)
   if (!valpy_assign_core (self, val))
     return nullptr;
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 static Py_ssize_t
@@ -1089,7 +1089,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 	  if (name_obj == NULL)
 	    return NULL;
 
-	  if (name_obj != Py_None)
+	  if (name_obj != AMD_Py_None)
 	    {
 	      field = python_string_to_host_string (name_obj.get ());
 	      if (field == NULL)
@@ -1316,9 +1316,9 @@ valpy_get_is_optimized_out (PyObject *self, void *closure)
     }
 
   if (opt)
-    Py_RETURN_TRUE;
+    AMD_Py_RETURN_TRUE;
 
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Implements gdb.Value.is_lazy.  */
@@ -1338,9 +1338,9 @@ valpy_get_is_lazy (PyObject *self, void *closure)
     }
 
   if (opt)
-    Py_RETURN_TRUE;
+    AMD_Py_RETURN_TRUE;
 
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Get gdb.Value.bytes attribute.  */
@@ -1411,7 +1411,7 @@ valpy_fetch_lazy (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Calculate and return the address of the PyObject as the value of
@@ -1621,7 +1621,7 @@ valpy_power (PyObject *self, PyObject *other, PyObject *unused)
   /* We don't support the ternary form of pow.  I don't know how to express
      that, so let's just throw NotImplementedError to at least do something
      about it.  */
-  if (unused != Py_None)
+  if (unused != AMD_Py_None)
     {
       AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
 		       "Invalid operation on gdb.Value.");
@@ -1831,18 +1831,18 @@ valpy_richcompare (PyObject *self, PyObject *other, int op)
 {
   int result = 0;
 
-  if (other == Py_None)
+  if (other == AMD_Py_None)
     /* Comparing with None is special.  From what I can tell, in Python
        None is smaller than anything else.  */
     switch (op) {
       case Py_LT:
       case Py_LE:
       case Py_EQ:
-	Py_RETURN_FALSE;
+	AMD_Py_RETURN_FALSE;
       case Py_NE:
       case Py_GT:
       case Py_GE:
-	Py_RETURN_TRUE;
+	AMD_Py_RETURN_TRUE;
       default:
 	/* Can't happen.  */
 	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
@@ -1864,9 +1864,9 @@ valpy_richcompare (PyObject *self, PyObject *other, int op)
     return NULL;
 
   if (result == 1)
-    Py_RETURN_TRUE;
+    AMD_Py_RETURN_TRUE;
 
-  Py_RETURN_FALSE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Implements conversion to long.  */
@@ -1987,7 +1987,7 @@ convert_value_from_python (PyObject *obj)
 
   try
     {
-      if (PyBool_Check (obj))
+      if (AMD_PyBool_Check (obj))
 	{
 	  cmp = AMD_PyObject_IsTrue (obj);
 	  if (cmp >= 0)
@@ -2025,7 +2025,7 @@ convert_value_from_python (PyObject *obj)
 	  else
 	    value = value_from_longest (builtin_type_pylong, l);
 	}
-      else if (PyFloat_Check (obj))
+      else if (AMD_PyFloat_Check (obj))
 	{
 	  double d = AMD_PyFloat_AsDouble (obj);
 
@@ -2068,7 +2068,7 @@ gdbpy_history (PyObject *self, PyObject *args)
 {
   int i;
 
-  if (!PyArg_ParseTuple (args, "i", &i))
+  if (!AMD_PyArg_ParseTuple (args, "i", &i))
     return NULL;
 
   PyObject *result = nullptr;
@@ -2093,7 +2093,7 @@ gdbpy_add_history (PyObject *self, PyObject *args)
 {
   PyObject *value_obj;
 
-  if (!PyArg_ParseTuple (args, "O", &value_obj))
+  if (!AMD_PyArg_ParseTuple (args, "O", &value_obj))
     return nullptr;
 
   struct value *value = convert_value_from_python (value_obj);
@@ -2128,7 +2128,7 @@ gdbpy_convenience_variable (PyObject *self, PyObject *args)
   const char *varname;
   struct value *res_val = NULL;
 
-  if (!PyArg_ParseTuple (args, "s", &varname))
+  if (!AMD_PyArg_ParseTuple (args, "s", &varname))
     return NULL;
 
   PyObject *result = nullptr;
@@ -2156,7 +2156,7 @@ gdbpy_convenience_variable (PyObject *self, PyObject *args)
     }
 
   if (result == nullptr && !found)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return result;
 }
@@ -2169,11 +2169,11 @@ gdbpy_set_convenience_variable (PyObject *self, PyObject *args)
   PyObject *value_obj;
   struct value *value = NULL;
 
-  if (!PyArg_ParseTuple (args, "sO", &varname, &value_obj))
+  if (!AMD_PyArg_ParseTuple (args, "sO", &varname, &value_obj))
     return NULL;
 
   /* None means to clear the variable.  */
-  if (value_obj != Py_None)
+  if (value_obj != AMD_Py_None)
     {
       value = convert_value_from_python (value_obj);
       if (value == NULL)
@@ -2201,7 +2201,7 @@ gdbpy_set_convenience_variable (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Returns 1 in OBJ is a gdb.Value object, 0 otherwise.  */

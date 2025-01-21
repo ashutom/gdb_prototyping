@@ -70,12 +70,12 @@ stpy_get_encoding (PyObject *self, void *closure)
   PyObject *result;
 
   /* An encoding can be set to NULL by the user, so check before
-     attempting a Python FromString call.  If NULL return Py_None.  */
+     attempting a Python FromString call.  If NULL return AMD_Py_None.  */
   if (self_string->encoding)
     result = AMD_PyUnicode_FromString (self_string->encoding);
   else
     {
-      result = Py_None;
+      result = AMD_Py_None;
       Py_INCREF (result);
     }
 

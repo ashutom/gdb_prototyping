@@ -357,7 +357,7 @@ register_descriptor_iter_find (PyObject *self, PyObject *args, PyObject *kw)
 	return gdbpy_get_register_descriptor (gdbarch, regnum).release ();
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* See python-internal.h.  */

@@ -466,7 +466,7 @@ infpy_get_connection_num (PyObject *self, void *closure)
 
   process_stratum_target *target = inf->inferior->process_target ();
   if (target == nullptr)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return gdb_py_object_from_longest (target->connection_number).release ();
 }
@@ -488,8 +488,8 @@ infpy_get_was_attached (PyObject *self, void *closure)
 
   INFPY_REQUIRE_VALID (inf);
   if (inf->inferior->attach_flag)
-    Py_RETURN_TRUE;
-  Py_RETURN_FALSE;
+    AMD_Py_RETURN_TRUE;
+  AMD_Py_RETURN_FALSE;
 }
 
 /* Getter of gdb.Inferior.progspace.  */
@@ -636,7 +636,7 @@ infpy_write_memory (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (ex);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of
@@ -713,7 +713,7 @@ infpy_search_memory (PyObject *self, PyObject *args, PyObject *kw)
   if (found)
     return gdb_py_object_from_ulongest (found_addr).release ();
   else
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of gdb.Inferior.is_valid (self) -> Boolean.
@@ -725,9 +725,9 @@ infpy_is_valid (PyObject *self, PyObject *args)
   inferior_object *inf = (inferior_object *) self;
 
   if (! inf->inferior)
-    Py_RETURN_FALSE;
+    AMD_Py_RETURN_FALSE;
 
-  Py_RETURN_TRUE;
+  AMD_Py_RETURN_TRUE;
 }
 
 /* Implementation of gdb.Inferior.thread_from_handle (self, handle)
@@ -786,7 +786,7 @@ infpy_thread_from_thread_handle (PyObject *self, PyObject *args, PyObject *kw)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of gdb.Inferior.architecture.  */
@@ -826,7 +826,7 @@ infpy_clear_env (PyObject *obj)
   INFPY_REQUIRE_VALID (self);
 
   self->inferior->environment.clear ();
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implement set_env.  */
@@ -845,7 +845,7 @@ infpy_set_env (PyObject *obj, PyObject *args, PyObject *kw)
     return nullptr;
 
   self->inferior->environment.set (name, val);
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implement unset_env.  */
@@ -862,7 +862,7 @@ infpy_unset_env (PyObject *obj, PyObject *args, PyObject *kw)
     return nullptr;
 
   self->inferior->environment.unset (name);
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Getter for "arguments".  */
@@ -876,7 +876,7 @@ infpy_get_args (PyObject *self, void *closure)
 
   const std::string &args = inf->inferior->args ();
   if (args.empty ())
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return host_string_to_python_string (args.c_str ()).release ();
 }
@@ -968,7 +968,7 @@ infpy_get_main_name (PyObject *self, void *closure)
     }
 
   if (name == nullptr)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return host_string_to_python_string (name).release ();
 }

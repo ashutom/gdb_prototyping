@@ -148,7 +148,7 @@ typedef long Py_hash_t;
 #endif
 
 /* A template variable holding the format character (as for
-   Py_BuildValue) for a given type.  */
+   AMD_Py_BuildValue) for a given type.  */
 template<typename T>
 struct gdbpy_method_format {};
 
@@ -177,7 +177,7 @@ struct gdbpy_method_format<unsigned>
 };
 
 /* A helper function to compute the AMD_PyObject_CallMethod /
-   Py_BuildValue format given the argument types.  */
+   AMD_Py_BuildValue format given the argument types.  */
 
 template<typename... Args>
 constexpr std::array<char, sizeof... (Args) + 1>

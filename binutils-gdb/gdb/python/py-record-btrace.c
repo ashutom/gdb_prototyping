@@ -261,10 +261,11 @@ recpy_bt_insn_is_speculative (PyObject *self, void *closure)
   if (insn == NULL)
     return NULL;
 
-  if (insn->flags & BTRACE_INSN_FLAG_SPECULATIVE)
-    Py_RETURN_TRUE;
-  else
-    Py_RETURN_FALSE;
+  if (insn->flags & BTRACE_INSN_FLAG_SPECULATIVE){
+    AMD_Py_RETURN_TRUE;
+  }else{
+    AMD_Py_RETURN_FALSE;
+  }
 }
 
 /* Implementation of RecordInstruction.data [buffer] for btrace.
@@ -352,7 +353,7 @@ recpy_bt_func_symbol (PyObject *self, void *closure)
     return NULL;
 
   if (func->sym == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return symbol_to_symbol_object (func->sym);
 }
@@ -392,7 +393,7 @@ recpy_bt_func_up (PyObject *self, void *closure)
     return NULL;
 
   if (func->up == 0)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return recpy_func_new (((recpy_element_object *) self)->thread,
 			 RECORD_METHOD_BTRACE, func->up);
@@ -410,7 +411,7 @@ recpy_bt_func_prev (PyObject *self, void *closure)
     return NULL;
 
   if (func->prev == 0)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return recpy_func_new (((recpy_element_object *) self)->thread,
 			 RECORD_METHOD_BTRACE, func->prev);
@@ -428,7 +429,7 @@ recpy_bt_func_next (PyObject *self, void *closure)
     return NULL;
 
   if (func->next == 0)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return recpy_func_new (((recpy_element_object *) self)->thread,
 			 RECORD_METHOD_BTRACE, func->next);
@@ -528,7 +529,7 @@ btpy_list_slice (PyObject *self, PyObject *value)
 
   if (PyLong_Check (value))
     {
-      Py_ssize_t index = PyLong_AsSsize_t (value);
+      Py_ssize_t index = AMD_PyLong_AsSsize_t (value);
 
       /* Emulate Python behavior for negative indices.  */
       if (index < 0)
@@ -537,10 +538,10 @@ btpy_list_slice (PyObject *self, PyObject *value)
       return btpy_list_item (self, index);
     }
 
-  if (!PySlice_Check (value))
+  if (!AMD_PySlice_Check (value))
     return AMD_PyErr_Format ((*AMD_PyExc_TypeError), _("Index must be int or slice."));
 
-  if (0 != PySlice_GetIndicesEx (value, length, &start, &stop,
+  if (0 != AMD_PySlice_GetIndicesEx (value, length, &start, &stop,
 				 &step, &slicelength))
     return NULL;
 
@@ -622,8 +623,8 @@ btpy_list_richcompare (PyObject *self, PyObject *other, int op)
 
   if (Py_TYPE (self) != Py_TYPE (other))
     {
-      Py_INCREF (Py_NotImplemented);
-      return Py_NotImplemented;
+      Py_INCREF (*AMD_Py_NotImplemented);
+      return *AMD_Py_NotImplemented;
     }
 
   switch (op)
@@ -633,27 +634,30 @@ btpy_list_richcompare (PyObject *self, PyObject *other, int op)
 	  && obj1->element_type == obj2->element_type
 	  && obj1->first == obj2->first
 	  && obj1->last == obj2->last
-	  && obj1->step == obj2->step)
-	Py_RETURN_TRUE;
-      else
-	Py_RETURN_FALSE;
+	  && obj1->step == obj2->step){
+      AMD_Py_RETURN_TRUE;
+    }
+    else{
+      AMD_Py_RETURN_FALSE;
+    }
 
     case Py_NE:
       if (obj1->thread != obj2->thread
 	  || obj1->element_type != obj2->element_type
 	  || obj1->first != obj2->first
 	  || obj1->last != obj2->last
-	  || obj1->step != obj2->step)
-	Py_RETURN_TRUE;
-      else
-	Py_RETURN_FALSE;
-
+	  || obj1->step != obj2->step){
+      AMD_Py_RETURN_TRUE;
+    }
+    else{
+      AMD_Py_RETURN_FALSE;
+    }
     default:
       break;
   }
 
-  Py_INCREF (Py_NotImplemented);
-  return Py_NotImplemented;
+  Py_INCREF (*AMD_Py_NotImplemented);
+  return *AMD_Py_NotImplemented;
 }
 
 /* Implementation of
@@ -676,12 +680,12 @@ recpy_bt_format (PyObject *self, void *closure)
   const struct btrace_config * config;
 
   if (tinfo == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   config = btrace_conf (&tinfo->btrace);
 
   if (config == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return AMD_PyUnicode_FromString (btrace_format_short_string (config->format));
 }
@@ -696,10 +700,10 @@ recpy_bt_replay_position (PyObject *self, void *closure)
   thread_info * tinfo = record->thread;
 
   if (tinfo == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   if (tinfo->btrace.replay == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return btpy_item_new (tinfo, btrace_insn_number (tinfo->btrace.replay));
 }
@@ -715,12 +719,12 @@ recpy_bt_begin (PyObject *self, void *closure)
   struct btrace_insn_iterator iterator;
 
   if (tinfo == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   btrace_fetch (tinfo, record_btrace_get_cpu ());
 
   if (btrace_is_empty (tinfo))
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   btrace_insn_begin (&iterator, &tinfo->btrace);
   return btpy_item_new (tinfo, btrace_insn_number (&iterator));
@@ -737,12 +741,12 @@ recpy_bt_end (PyObject *self, void *closure)
   struct btrace_insn_iterator iterator;
 
   if (tinfo == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   btrace_fetch (tinfo, record_btrace_get_cpu ());
 
   if (btrace_is_empty (tinfo))
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   btrace_insn_end (&iterator, &tinfo->btrace);
   return btpy_item_new (tinfo, btrace_insn_number (&iterator));
@@ -761,12 +765,12 @@ recpy_bt_instruction_history (PyObject *self, void *closure)
   unsigned long last = 0;
 
    if (tinfo == NULL)
-     Py_RETURN_NONE;
+     AMD_Py_RETURN_NONE;
 
    btrace_fetch (tinfo, record_btrace_get_cpu ());
 
    if (btrace_is_empty (tinfo))
-     Py_RETURN_NONE;
+     AMD_Py_RETURN_NONE;
 
    btrace_insn_begin (&iterator, &tinfo->btrace);
    first = btrace_insn_number (&iterator);
@@ -790,12 +794,12 @@ recpy_bt_function_call_history (PyObject *self, void *closure)
   unsigned long last = 0;
 
   if (tinfo == NULL)
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   btrace_fetch (tinfo, record_btrace_get_cpu ());
 
   if (btrace_is_empty (tinfo))
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   btrace_call_begin (&iterator, &tinfo->btrace);
   first = btrace_call_number (&iterator);
@@ -815,7 +819,7 @@ recpy_call_filter (const uint64_t payload, const uint64_t ip,
   std::optional<std::string> result;
 
   gdb_assert (ptw_filter != nullptr);
-  if ((PyObject *) ptw_filter == Py_None)
+  if ((PyObject *) ptw_filter == AMD_Py_None)
     return result;
 
   gdbpy_enter enter_py;
@@ -824,7 +828,7 @@ recpy_call_filter (const uint64_t payload, const uint64_t ip,
 
   gdbpy_ref<> py_ip;
   if (ip == 0)
-    py_ip = gdbpy_ref<>::new_reference (Py_None);
+    py_ip = gdbpy_ref<>::new_reference (AMD_Py_None);
   else
     py_ip = gdb_py_object_from_ulongest (ip);
 
@@ -839,8 +843,8 @@ recpy_call_filter (const uint64_t payload, const uint64_t ip,
       gdbpy_error (_("Couldn't call the ptwrite filter."));
     }
 
-  /* Py_None is valid and results in no output.  */
-  if (py_result == Py_None)
+  /* AMD_Py_None is valid and results in no output.  */
+  if (py_result == AMD_Py_None)
     {
       result = "";
       return result;
@@ -899,10 +903,10 @@ gdbpy_load_ptwrite_filter (const struct extension_language_defn *extlang,
   btinfo->ptw_context = get_ptwrite_filter ();
 
 #if defined (HAVE_STRUCT_PT_EVENT_VARIANT_PTWRITE)
-  if (!btinfo->target->conf.pt.ptwrite && btinfo->ptw_context != Py_None)
+  if (!btinfo->target->conf.pt.ptwrite && btinfo->ptw_context != AMD_Py_None)
     warning (_("The target doesn't support decoding ptwrite events."));
 #else
-  if (btinfo->ptw_context != Py_None)
+  if (btinfo->ptw_context != AMD_Py_None)
     warning (_("Libipt doesn't support decoding ptwrite events."));
 #endif /* defined (HAVE_STRUCT_PT_EVENT_VARIANT_PTWRITE) */
 
@@ -922,7 +926,7 @@ recpy_bt_goto (PyObject *self, PyObject *args)
   if (tinfo == NULL || btrace_is_empty (tinfo))
 	return AMD_PyErr_Format (gdbpy_gdb_error, _("Empty branch trace."));
 
-  if (!PyArg_ParseTuple (args, "O", &parse_obj))
+  if (!AMD_PyArg_ParseTuple (args, "O", &parse_obj))
     return NULL;
 
   if (Py_TYPE (parse_obj) != &recpy_insn_type)
@@ -945,7 +949,7 @@ recpy_bt_goto (PyObject *self, PyObject *args)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* Implementation of BtraceRecord.clear (self) -> None.  */
@@ -958,7 +962,7 @@ recpy_bt_clear (PyObject *self, PyObject *args)
 
   btrace_clear (tinfo);
 
-  Py_RETURN_NONE;
+  AMD_Py_RETURN_NONE;
 }
 
 /* BtraceList methods.  */

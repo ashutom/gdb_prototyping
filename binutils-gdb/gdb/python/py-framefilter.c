@@ -138,7 +138,7 @@ extract_value (PyObject *obj, struct value **value)
       /* The Python code has returned 'None' for a value, so we set
 	 value to NULL.  This flags that GDB should read the
 	 value.  */
-      if (vresult == Py_None)
+      if (vresult == AMD_Py_None)
 	{
 	  *value = NULL;
 	  return EXT_LANG_BT_OK;
@@ -268,7 +268,7 @@ get_py_iter_from_func (PyObject *filter, const char *func)
 
       if (result != NULL)
 	{
-	  if (result == Py_None)
+	  if (result == AMD_Py_None)
 	    {
 	      return result.release ();
 	    }
@@ -279,7 +279,7 @@ get_py_iter_from_func (PyObject *filter, const char *func)
 	}
     }
   else
-    Py_RETURN_NONE;
+    AMD_Py_RETURN_NONE;
 
   return NULL;
 }
@@ -648,12 +648,12 @@ py_mi_print_variables (PyObject *filter, struct ui_out *out,
 
   ui_out_emit_list list_emitter (out, "variables");
 
-  if (args_iter != Py_None
+  if (args_iter != AMD_Py_None
       && (enumerate_args (args_iter.get (), out, args_type, raw_frame_args_p,
 			  1, frame) == EXT_LANG_BT_ERROR))
     return EXT_LANG_BT_ERROR;
 
-  if (locals_iter != Py_None
+  if (locals_iter != AMD_Py_None
       && (enumerate_locals (locals_iter.get (), out, 1, args_type, 1, frame)
 	  == EXT_LANG_BT_ERROR))
     return EXT_LANG_BT_ERROR;
@@ -678,7 +678,7 @@ py_print_locals (PyObject *filter,
 
   ui_out_emit_list list_emitter (out, "locals");
 
-  if (locals_iter != Py_None
+  if (locals_iter != AMD_Py_None
       && (enumerate_locals (locals_iter.get (), out, indent, args_type,
 			    0, frame) == EXT_LANG_BT_ERROR))
     return EXT_LANG_BT_ERROR;
@@ -710,7 +710,7 @@ py_print_args (PyObject *filter,
 
   if (args_type == CLI_PRESENCE)
     {
-      if (args_iter != Py_None)
+      if (args_iter != AMD_Py_None)
 	{
 	  gdbpy_ref<> item (AMD_PyIter_Next (args_iter.get ()));
 
@@ -720,7 +720,7 @@ py_print_args (PyObject *filter,
 	    return EXT_LANG_BT_ERROR;
 	}
     }
-  else if (args_iter != Py_None
+  else if (args_iter != AMD_Py_None
 	   && (enumerate_args (args_iter.get (), out, args_type,
 			       raw_frame_args, 0, frame)
 	       == EXT_LANG_BT_ERROR))
@@ -835,7 +835,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	  if (paddr == NULL)
 	    return EXT_LANG_BT_ERROR;
 
-	  if (paddr != Py_None)
+	  if (paddr != AMD_Py_None)
 	    {
 	      if (get_addr_from_python (paddr.get (), &address) < 0)
 		return EXT_LANG_BT_ERROR;
@@ -932,7 +932,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	      if (msymbol.minsym != NULL)
 		function = msymbol.minsym->print_name ();
 	    }
-	  else if (py_func != Py_None)
+	  else if (py_func != AMD_Py_None)
 	    {
 	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
 			       _("FrameDecorator.function: expecting a " \
@@ -974,7 +974,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	  if (py_fn == NULL)
 	    return EXT_LANG_BT_ERROR;
 
-	  if (py_fn != Py_None)
+	  if (py_fn != AMD_Py_None)
 	    {
 	      gdb::unique_xmalloc_ptr<char>
 		filename (python_string_to_host_string (py_fn.get ()));
@@ -999,7 +999,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
 	  if (py_line == NULL)
 	    return EXT_LANG_BT_ERROR;
 
-	  if (py_line != Py_None)
+	  if (py_line != AMD_Py_None)
 	    {
 	      line = AMD_PyLong_AsLong (py_line.get ());
 	      if (AMD_PyErr_Occurred ())
@@ -1049,7 +1049,7 @@ py_print_frame (PyObject *filter, frame_filter_flags flags,
       if (elided == NULL)
 	return EXT_LANG_BT_ERROR;
 
-      if (elided != Py_None)
+      if (elided != AMD_Py_None)
 	{
 	  PyObject *item;
 
@@ -1112,7 +1112,7 @@ bootstrap_python_frame_filters (const frame_info_ptr &frame,
   if (iterable == NULL)
     return NULL;
 
-  if (iterable != Py_None)
+  if (iterable != AMD_Py_None)
     return AMD_PyObject_GetIter (iterable.get ());
   else
     return iterable.release ();
@@ -1194,7 +1194,7 @@ gdbpy_apply_frame_filter (const struct extension_language_defn *extlang,
   /* If iterable is None, then there are no frame filters registered.
      If this is the case, defer to default GDB printing routines in MI
      and CLI.  */
-  if (iterable == Py_None)
+  if (iterable == AMD_Py_None)
     return EXT_LANG_BT_NO_FILTERS;
 
   htab_up levels_printed (htab_create (20,
