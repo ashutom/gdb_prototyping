@@ -265,7 +265,8 @@ Py_ssize_t AMD_PyObject_Length(PyObject *o);
 /*Internal functions which need to be supported here because of the tempalated approach*/
 void AMD_lib_exception_failure_handeler();
 void* AMD_get_lib_handle();
-void* check_symbol_resolution(void* functionpointer, char*);
+void* check_symbol_resolution(void* functionpointer, const char*);
+void __attribute__((constructor)) amd_lib_constructor();
 
 template<typename T>
 T* AMD_PyObject_New(PyTypeObject* objptr){
