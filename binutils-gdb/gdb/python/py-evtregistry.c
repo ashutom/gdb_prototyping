@@ -79,7 +79,7 @@ eventregistry_object *
 create_eventregistry_object (void)
 {
   gdbpy_ref<eventregistry_object>
-    eventregistry_obj (AMD_PyObject_New<eventregistry_object>(&eventregistry_object_type));
+    eventregistry_obj (AMD_PyObject_New(eventregistry_object,&eventregistry_object_type));
 
   if (eventregistry_obj == NULL)
     return NULL;

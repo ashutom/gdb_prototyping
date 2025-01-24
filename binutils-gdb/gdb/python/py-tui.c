@@ -371,7 +371,7 @@ gdbpy_tui_window_maker::operator() (const char *win_name)
   gdbpy_enter enter_py;
 
   gdbpy_ref<gdbpy_tui_window> wrapper
-    (AMD_PyObject_New<gdbpy_tui_window>(&gdbpy_tui_window_object_type));
+    (AMD_PyObject_New(gdbpy_tui_window,&gdbpy_tui_window_object_type));
   if (wrapper == nullptr)
     {
       gdbpy_print_stack ();

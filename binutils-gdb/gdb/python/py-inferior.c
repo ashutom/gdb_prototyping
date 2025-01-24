@@ -238,7 +238,7 @@ inferior_to_inferior_object (struct inferior *inferior)
   inf_obj = infpy_inf_data_key.get (inferior);
   if (!inf_obj)
     {
-      inf_obj = AMD_PyObject_New<inferior_object>(&inferior_object_type);
+      inf_obj = AMD_PyObject_New(inferior_object,&inferior_object_type);
       if (!inf_obj)
 	return NULL;
 

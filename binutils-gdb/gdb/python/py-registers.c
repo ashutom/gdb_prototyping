@@ -107,7 +107,7 @@ gdbpy_get_reggroup (const reggroup *reggroup)
     {
       /* Create a new object and fill in its details.  */
       gdbpy_ref<reggroup_object> group
-	(AMD_PyObject_New<reggroup_object>(&reggroup_object_type));
+	(AMD_PyObject_New(reggroup_object,&reggroup_object_type));
       if (group == NULL)
 	return NULL;
       group->reggroup = reggroup;
@@ -163,7 +163,7 @@ gdbpy_get_register_descriptor (struct gdbarch *gdbarch,
   if (vec[regnum] == nullptr)
     {
       gdbpy_ref <register_descriptor_object> reg
-	(AMD_PyObject_New<register_descriptor_object>(&register_descriptor_object_type));
+	(AMD_PyObject_New(register_descriptor_object,&register_descriptor_object_type));
       if (reg == NULL)
 	return NULL;
       reg->regnum = regnum;
@@ -240,7 +240,7 @@ gdbpy_new_reggroup_iterator (struct gdbarch *gdbarch)
 
   /* Create a new object and fill in its internal state.  */
   reggroup_iterator_object *iter
-    = AMD_PyObject_New<reggroup_iterator_object>(&reggroup_iterator_object_type);
+    = AMD_PyObject_New(reggroup_iterator_object,&reggroup_iterator_object_type);
   if (iter == NULL)
     return NULL;
   iter->index = 0;
@@ -278,7 +278,7 @@ gdbpy_new_register_descriptor_iterator (struct gdbarch *gdbarch,
   /* Create a new iterator object initialised for this architecture and
      fill in all of the details.  */
   register_descriptor_iterator_object *iter
-    = AMD_PyObject_New<register_descriptor_iterator_object>(&register_descriptor_iterator_object_type);
+    = AMD_PyObject_New(register_descriptor_iterator_object,&register_descriptor_iterator_object_type);
   if (iter == NULL)
     return NULL;
   iter->regnum = 0;

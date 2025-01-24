@@ -44,7 +44,7 @@ gdbpy_buffer_to_membuf (gdb::unique_xmalloc_ptr<gdb_byte> buffer,
 			CORE_ADDR address,
 			ULONGEST length)
 {
-  gdbpy_ref<membuf_object> membuf_obj (AMD_PyObject_New<membuf_object>(&membuf_object_type));
+  gdbpy_ref<membuf_object> membuf_obj (AMD_PyObject_New(membuf_object,&membuf_object_type));
   if (membuf_obj == nullptr)
     return nullptr;
 

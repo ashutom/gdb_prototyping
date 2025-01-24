@@ -29,7 +29,7 @@ evpy_dealloc (PyObject *self)
 gdbpy_ref<>
 create_event_object (PyTypeObject *py_type)
 {
-  gdbpy_ref<event_object> event_obj (AMD_PyObject_New<event_object>(py_type));
+  gdbpy_ref<event_object> event_obj (AMD_PyObject_New(event_object,py_type));
   if (event_obj == NULL)
     return NULL;
 

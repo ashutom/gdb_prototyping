@@ -199,7 +199,7 @@ PyObject *
 recpy_insn_new (thread_info *thread, enum record_method method,
 		Py_ssize_t number)
 {
-  recpy_element_object * const obj = AMD_PyObject_New<recpy_element_object>(&recpy_insn_type);
+  recpy_element_object * const obj = AMD_PyObject_New(recpy_element_object,&recpy_insn_type);
 
   if (obj == NULL)
    return NULL;
@@ -295,7 +295,7 @@ PyObject *
 recpy_func_new (thread_info *thread, enum record_method method,
 		Py_ssize_t number)
 {
-  recpy_element_object * const obj = AMD_PyObject_New<recpy_element_object>(&recpy_func_type);
+  recpy_element_object * const obj = AMD_PyObject_New(recpy_element_object,&recpy_func_type);
 
   if (obj == NULL)
    return NULL;
@@ -418,8 +418,8 @@ recpy_element_richcompare (PyObject *self, PyObject *other, int op)
 
   if (Py_TYPE (self) != Py_TYPE (other))
     {
-      Py_INCREF (*AMD_Py_NotImplemented);
-      return *AMD_Py_NotImplemented;
+      Py_INCREF (AMD_Py_NotImplemented);
+      return AMD_Py_NotImplemented;
     }
 
   switch (op)
@@ -447,8 +447,8 @@ recpy_element_richcompare (PyObject *self, PyObject *other, int op)
       break;
   }
 
-  Py_INCREF (*AMD_Py_NotImplemented);
-  return *AMD_Py_NotImplemented;
+  Py_INCREF (AMD_Py_NotImplemented);
+  return AMD_Py_NotImplemented;
 }
 
 /* Create a new gdb.RecordGap object.  */
@@ -456,7 +456,7 @@ recpy_element_richcompare (PyObject *self, PyObject *other, int op)
 PyObject *
 recpy_gap_new (int reason_code, const char *reason_string, Py_ssize_t number)
 {
-  recpy_gap_object * const obj = AMD_PyObject_New<recpy_gap_object>(&recpy_gap_type);
+  recpy_gap_object * const obj = AMD_PyObject_New(recpy_gap_object,&recpy_gap_type);
 
   if (obj == NULL)
    return NULL;
@@ -504,7 +504,7 @@ PyObject *
 recpy_aux_new (thread_info *thread, enum record_method method,
 	       Py_ssize_t number)
 {
-  recpy_element_object * const obj = AMD_PyObject_New<recpy_element_object>(&recpy_aux_type);
+  recpy_element_object * const obj = AMD_PyObject_New(recpy_element_object,&recpy_aux_type);
 
   if (obj == NULL)
    return NULL;
@@ -695,7 +695,7 @@ gdbpy_current_recording (PyObject *self, PyObject *args)
   if (find_record_target () == NULL)
     AMD_Py_RETURN_NONE;
 
-  ret = AMD_PyObject_New<recpy_record_object>(&recpy_record_type);
+  ret = AMD_PyObject_New(recpy_record_object,&recpy_record_type);
   ret->thread = inferior_thread ();
   ret->method = target_record_method (ret->thread->ptid);
 

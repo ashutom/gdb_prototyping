@@ -184,7 +184,7 @@ static PyObject *
 btpy_list_new (thread_info *thread, Py_ssize_t first, Py_ssize_t last,
 	       Py_ssize_t step, PyTypeObject *element_type)
 {
-  btpy_list_object * const obj = AMD_PyObject_New<btpy_list_object>(&btpy_list_type);
+  btpy_list_object * const obj = AMD_PyObject_New(btpy_list_object,&btpy_list_type);
 
   if (obj == NULL)
     return NULL;
@@ -623,8 +623,8 @@ btpy_list_richcompare (PyObject *self, PyObject *other, int op)
 
   if (Py_TYPE (self) != Py_TYPE (other))
     {
-      Py_INCREF (*AMD_Py_NotImplemented);
-      return *AMD_Py_NotImplemented;
+      Py_INCREF (AMD_Py_NotImplemented);
+      return AMD_Py_NotImplemented;
     }
 
   switch (op)
@@ -656,8 +656,8 @@ btpy_list_richcompare (PyObject *self, PyObject *other, int op)
       break;
   }
 
-  Py_INCREF (*AMD_Py_NotImplemented);
-  return *AMD_Py_NotImplemented;
+  Py_INCREF (AMD_Py_NotImplemented);
+  return AMD_Py_NotImplemented;
 }
 
 /* Implementation of

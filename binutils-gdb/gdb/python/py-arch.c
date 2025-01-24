@@ -50,7 +50,7 @@ extern PyTypeObject arch_object_type
 static PyObject *
 arch_object_data_init (struct gdbarch *gdbarch)
 {
-  arch_object *arch_obj = AMD_PyObject_New<arch_object>(&arch_object_type);
+  arch_object *arch_obj = AMD_PyObject_New(arch_object, &arch_object_type);
 
   if (arch_obj == NULL)
     return NULL;

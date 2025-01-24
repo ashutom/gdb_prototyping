@@ -362,7 +362,7 @@ frapy_function (PyObject *self, PyObject *args)
 PyObject *
 frame_info_to_frame_object (const frame_info_ptr &frame)
 {
-  gdbpy_ref<frame_object> frame_obj (AMD_PyObject_New<frame_object>(&frame_object_type));
+  gdbpy_ref<frame_object> frame_obj (AMD_PyObject_New(frame_object,&frame_object_type));
   if (frame_obj == NULL)
     return NULL;
 
@@ -736,8 +736,8 @@ frapy_richcompare (PyObject *self, PyObject *other, int op)
   if (!AMD_PyObject_TypeCheck (other, &frame_object_type)
       || (op != Py_EQ && op != Py_NE))
     {
-      Py_INCREF (*AMD_Py_NotImplemented);
-      return *AMD_Py_NotImplemented;
+      Py_INCREF (AMD_Py_NotImplemented);
+      return AMD_Py_NotImplemented;
     }
 
   frame_object *self_frame = (frame_object *) self;

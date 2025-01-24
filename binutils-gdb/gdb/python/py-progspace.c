@@ -598,7 +598,7 @@ pspace_to_pspace_object (struct program_space *pspace)
   if (result == NULL)
     {
       gdbpy_ref<pspace_object> object
-	((pspace_object *) AMD_PyObject_New<pspace_object>(&pspace_object_type));
+	((pspace_object *) AMD_PyObject_New(pspace_object,&pspace_object_type));
       if (object == NULL)
 	return NULL;
       if (!pspy_initialize (object.get ()))

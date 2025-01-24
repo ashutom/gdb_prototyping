@@ -105,7 +105,7 @@ field_dealloc (PyObject *obj)
 static PyObject *
 field_new (void)
 {
-  gdbpy_ref<field_object> result (AMD_PyObject_New<field_object>(&field_object_type));
+  gdbpy_ref<field_object> result (AMD_PyObject_New(field_object,&field_object_type));
 
   if (result != NULL)
     {
@@ -202,7 +202,7 @@ convert_field (struct type *type, int field)
   if (type->code () == TYPE_CODE_STRUCT)
     arg.reset (AMD_PyBool_FromLong (field < TYPE_N_BASECLASSES (type)));
   else
-    arg = gdbpy_ref<>::new_reference (*AMD_Py_False);
+    arg = gdbpy_ref<>::new_reference (AMD_Py_False);
   if (AMD_PyObject_SetAttrString (result.get (), "is_base_class", arg.get ()) < 0)
     return NULL;
 
@@ -1142,8 +1142,8 @@ typy_richcompare (PyObject *self, PyObject *other, int op)
      for equality or inequality.  */
   if (type2 == NULL || (op != Py_EQ && op != Py_NE))
     {
-      Py_INCREF (*AMD_Py_NotImplemented);
-      return *AMD_Py_NotImplemented;
+      Py_INCREF (AMD_Py_NotImplemented);
+      return AMD_Py_NotImplemented;
     }
 
   if (type1 == type2)
@@ -1375,7 +1375,7 @@ typy_make_iter (PyObject *self, enum gdbpy_iter_kind kind)
   if (typy_get_composite (((type_object *) self)->type) == NULL)
     return NULL;
 
-  typy_iter_obj = AMD_PyObject_New<typy_iterator_object>(&type_iterator_object_type);
+  typy_iter_obj = AMD_PyObject_New(typy_iterator_object,&type_iterator_object_type);
   if (typy_iter_obj == NULL)
       return NULL;
 
@@ -1480,7 +1480,7 @@ type_to_type_object (struct type *type)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  type_obj = AMD_PyObject_New<type_object>(&type_object_type);
+  type_obj = AMD_PyObject_New(type_object,&type_object_type);
   if (type_obj)
     set_type (type_obj, type);
 

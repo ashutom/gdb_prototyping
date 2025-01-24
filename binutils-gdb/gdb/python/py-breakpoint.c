@@ -837,7 +837,7 @@ bppy_get_locations (PyObject *self, void *closure)
   for (bp_location &loc : self_bp->bp->locations ())
     {
       gdbpy_ref<py_bploc_t> py_bploc
-	(AMD_PyObject_New<py_bploc_t>(&breakpoint_location_object_type));
+	(AMD_PyObject_New(py_bploc_t, &breakpoint_location_object_type));
       if (py_bploc == nullptr)
 	return nullptr;
 
@@ -1261,7 +1261,7 @@ gdbpy_breakpoint_created (struct breakpoint *bp)
     }
   else
     {
-      newbp = AMD_PyObject_New<gdbpy_breakpoint_object> (&breakpoint_object_type);
+      newbp = AMD_PyObject_New(gdbpy_breakpoint_object,&breakpoint_object_type);
       pybp_debug_printf ("attaching new breakpoint object");
     }
   if (newbp)

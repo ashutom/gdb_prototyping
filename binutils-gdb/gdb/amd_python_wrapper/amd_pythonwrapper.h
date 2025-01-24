@@ -2,17 +2,7 @@
 #define __AMD_PYTHON_WRAPPER__
 
 #include <Python.h>
-#include "amd_function_pointers_list.h"
-
-
-#define check_lib_handeler_execption(handle)    if(!handle){   \
-                                                      AMD_lib_exception_failure_handeler();  \
-                                                }  \
-
-#define AMD_PyRun_String(str, s, g, l)  AMD_PyRun_StringFlags(str,s,g,l,NULL)
-#define AMD_PyRun_InteractiveLoop(f, p) AMD_PyRun_InteractiveLoopFlags(f, p, NULL)
-
-#define AMD_PySlice_Check(op) AMD_Py_IS_TYPE(op, AMD_PySlice_Type)
+//#include "amd_function_pointers_list.h"
 
 extern PyObject** AMD_PyExc_RuntimeError;
 extern PyObject** AMD_PyExc_ValueError;
@@ -33,19 +23,24 @@ extern PyTypeObject* AMD_PyFloat_Type;
 extern int* AMD_Py_DontWriteBytecodeFlag;
 extern int* AMD_Py_IgnoreEnvironmentFlag;
 extern PyObject*  AMD_Py_None;
-extern PyObject** AMD_Py_False;
-extern PyObject** AMD_Py_True;
-extern PyObject** AMD_Py_NotImplemented;
+extern _longobject*  AMD_Py_FalseStructPtr;
+extern _longobject*  AMD_Py_TrueStructPtr;
+extern PyObject*  AMD_Py_NotImplementedStructPtr;
 
-
+#define AMD_PyRun_String(str, s, g, l)  AMD_PyRun_StringFlags(str,s,g,l,NULL)
+#define AMD_PyRun_InteractiveLoop(f, p) AMD_PyRun_InteractiveLoopFlags(f, p, NULL)
+#define AMD_PySlice_Check(op) AMD_Py_IS_TYPE(op, AMD_PySlice_Type)
 #define AMD_Py_DECREF(ob)  _AMD_Py_DECREF((PyObject*) ob);
-#define AMD_Py_RETURN_FALSE return _AMD_Py_RETURN_FALSE_();
-#define AMD_Py_RETURN_TRUE return _AMD_Py_RETURN_TRUE_();
-#define AMD_Py_RETURN_NONE return _AMD_Py_RETURN_NONE_();
-#define AMD_PyBool_Check(x) AMD_Py_IS_TYPE(x,AMD_PyBool_Type)
-#define AMD_Py_BuildValue   AMD_Py_BuildValue_SizeT
-#define AMD_PyFloat_Check(op) AMD_PyObject_TypeCheck(op,AMD_PyFloat_Type)
-
+#define AMD_Py_RETURN_FALSE return  Py_INCREF(AMD_Py_False), AMD_Py_False
+#define AMD_Py_RETURN_TRUE return   Py_INCREF(AMD_Py_True), AMD_Py_True
+#define AMD_Py_RETURN_NONE return   Py_INCREF(AMD_Py_NotImplemented), AMD_Py_NotImplemented
+#define AMD_PyBool_Check(x)         AMD_Py_IS_TYPE(x,AMD_PyBool_Type)
+#define AMD_Py_BuildValue           AMD_Py_BuildValue_SizeT
+#define AMD_PyFloat_Check(op)       AMD_PyObject_TypeCheck(op,AMD_PyFloat_Type)
+#define AMD_Py_False ((PyObject *)  AMD_Py_FalseStructPtr)
+#define AMD_Py_True ((PyObject *)   AMD_Py_TrueStructPtr)
+#define AMD_Py_NotImplemented (AMD_Py_NotImplementedStructPtr)
+#define AMD_PyObject_New(type, typeobj) ((type *)_AMD_PyObject_New_(typeobj))
 
 typedef char* (*AMD_PyOS_Readlinefp) (FILE *, FILE *, const char *);
 void AMD_Assign_AMD_PyOS_Readlinefp(AMD_PyOS_Readlinefp FP);
@@ -236,8 +231,6 @@ PyObject* AMD_PyEval_EvalCode(PyObject *, PyObject *, PyObject *);
 int AMD_PyRun_InteractiveLoopFlags(FILE *fp, const char *filename,PyCompilerFlags *flags);
 PyObject* AMD_PyRun_StringFlags(const char *, int, PyObject *, PyObject *, PyCompilerFlags *);
 PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int start, PyCompilerFlags *flags,int optimize);
-void AMD_Py_CompileStringExFlags(const wchar_t *);
-
 
 int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
                                      Py_ssize_t *step, Py_ssize_t *slicelength);
@@ -245,37 +238,38 @@ int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, 
 void AMD_Py_Initialize(void);
 void AMD_Py_Finalize(void);
 
-PyObject* AMD_Py_NewRef(PyObject* ob);
-inline PyObject* _AMD_Py_RETURN_FALSE_() {
-    return AMD_Py_NewRef(*AMD_Py_False);
-}
-inline PyObject* _AMD_Py_RETURN_TRUE_(){
-    return AMD_Py_NewRef(*AMD_Py_True);
-}
-inline PyObject* _AMD_Py_RETURN_NONE_(){
-    return AMD_Py_NewRef(AMD_Py_None);
-}
-
 void _AMD_Py_DECREF(PyObject* ob);
 int  AMD_PyIter_Check(PyObject *);
 Py_ssize_t AMD_PyLong_AsSsize_t(PyObject *);
 Py_ssize_t AMD_PyObject_Length(PyObject *o);
 
+PyObject * _AMD_PyObject_New_(PyTypeObject *);
+PyObject* AMD_PyObject_Type(PyObject *o);
 
-/*Internal functions which need to be supported here because of the tempalated approach*/
-void AMD_lib_exception_failure_handeler();
-void* AMD_get_lib_handle();
-void* check_symbol_resolution(void* functionpointer, const char*);
+/*Internal functions */
 void __attribute__((constructor)) amd_lib_constructor();
 
+
+#if 0 //these APIs are not needed
 template<typename T>
 T* AMD_PyObject_New(PyTypeObject* objptr){
    AMD_get_lib_handle();   
    char str[]="_PyObject_New";
-   py_new_func fp =  NULL;
-   fp =  (py_new_func) check_symbol_resolution((void*) fp,str);
+   py_new_func fp =(py_new_func) AMD_check_symbol_resolution((void*) fp,str);
    PyObject* retval = (*fp)(objptr);
    return (T*) retval;
 }
+void AMD_Py_CompileStringExFlags(const wchar_t *);
+PyObject* AMD_Py_NewRef(PyObject* ob);
+inline PyObject* _AMD_Py_RETURN_FALSE_() {
+    return AMD_Py_NewRef(AMD_Py_False);
+}
+inline PyObject* _AMD_Py_RETURN_TRUE_(){
+    return AMD_Py_NewRef(AMD_Py_True);
+}
+inline PyObject* _AMD_Py_RETURN_NONE_(){
+    return AMD_Py_NewRef(AMD_Py_None);
+}
+#endif
 
 #endif /* __AMD_PYTHON_WRAPPER__ */

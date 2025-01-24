@@ -344,7 +344,7 @@ symbol_to_symbol_object (struct symbol *sym)
 {
   symbol_object *sym_obj;
 
-  sym_obj = AMD_PyObject_New<symbol_object>(&symbol_object_type);
+  sym_obj = AMD_PyObject_New(symbol_object,&symbol_object_type);
   if (sym_obj)
     set_symbol (sym_obj, sym);
 

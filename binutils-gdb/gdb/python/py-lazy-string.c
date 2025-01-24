@@ -218,7 +218,7 @@ gdbpy_create_lazy_string_object (CORE_ADDR address, long length,
       }
     }
 
-  str_obj = AMD_PyObject_New<lazy_string_object>(&lazy_string_object_type);
+  str_obj = AMD_PyObject_New(lazy_string_object,&lazy_string_object_type);
   if (!str_obj)
     return NULL;
 

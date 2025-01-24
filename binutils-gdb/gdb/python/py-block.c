@@ -85,7 +85,8 @@ blpy_iter (PyObject *self)
 
   BLPY_REQUIRE_VALID (self, block);
 
-  block_iter_obj = AMD_PyObject_New<block_syms_iterator_object>(&block_syms_iterator_object_type);
+  block_iter_obj = AMD_PyObject_New(block_syms_iterator_object,
+				 &block_syms_iterator_object_type);
   if (block_iter_obj == NULL)
       return NULL;
 
@@ -323,7 +324,7 @@ block_to_block_object (const struct block *block, struct objfile *objfile)
       return py_result;
     }
 
-  result = AMD_PyObject_New<block_object>(&block_object_type);
+  result = AMD_PyObject_New(block_object, &block_object_type);
   result->block = block;
   result->objfile = objfile;
 
@@ -479,8 +480,8 @@ blpy_richcompare (PyObject *self, PyObject *other, int op)
   if (!AMD_PyObject_TypeCheck (other, &block_object_type)
       || (op != Py_EQ && op != Py_NE))
     {
-      Py_INCREF (*AMD_Py_NotImplemented);
-      return *AMD_Py_NotImplemented;
+      Py_INCREF (AMD_Py_NotImplemented);
+      return AMD_Py_NotImplemented;
     }
 
   bool expected = self == other;

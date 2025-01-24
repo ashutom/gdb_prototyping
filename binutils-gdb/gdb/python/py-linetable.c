@@ -85,7 +85,7 @@ symtab_to_linetable_object (PyObject *symtab)
 {
   linetable_object *ltable;
 
-  ltable = AMD_PyObject_New<linetable_object>(&linetable_object_type);
+  ltable = AMD_PyObject_New(linetable_object,&linetable_object_type);
   if (ltable != NULL)
     {
       ltable->symtab = symtab;
@@ -102,7 +102,7 @@ build_linetable_entry (int line, CORE_ADDR address)
 {
   linetable_entry_object *obj;
 
-  obj = AMD_PyObject_New<linetable_entry_object>(&linetable_entry_object_type);
+  obj = AMD_PyObject_New(linetable_entry_object,&linetable_entry_object_type);
   if (obj != NULL)
     {
       obj->line = line;
@@ -348,7 +348,7 @@ ltpy_iter (PyObject *self)
 
   LTPY_REQUIRE_VALID (self, symtab);
 
-  ltpy_iter_obj = AMD_PyObject_New<ltpy_iterator_object>(&ltpy_iterator_object_type);
+  ltpy_iter_obj = AMD_PyObject_New(ltpy_iterator_object,&ltpy_iterator_object_type);
   if (ltpy_iter_obj == NULL)
     return NULL;
 

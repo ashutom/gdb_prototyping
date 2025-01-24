@@ -735,7 +735,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
   PyObject *symbols_obj = NULL;
   PyObject *unions_obj = NULL;
   PyObject *address_obj = NULL;
-  PyObject *styling_obj = *AMD_Py_False;
+  PyObject *styling_obj = AMD_Py_False;
   PyObject *nibbles_obj = NULL;
   PyObject *deref_refs_obj = NULL;
   PyObject *actual_objects_obj = NULL;
@@ -1943,7 +1943,7 @@ value_to_value_object (struct value *val)
 {
   value_object *val_obj;
 
-  val_obj = AMD_PyObject_New<value_object>(&value_object_type);
+  val_obj = AMD_PyObject_New(value_object,&value_object_type);
   if (val_obj != NULL)
     {
       val->incref ();

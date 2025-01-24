@@ -286,7 +286,7 @@ pyuw_create_unwind_info (PyObject *pyo_pending_frame,
 	      != nullptr);
 
   unwind_info_object *unwind_info
-    = AMD_PyObject_New<unwind_info_object>(&unwind_info_object_type);
+    = AMD_PyObject_New(unwind_info_object,&unwind_info_object_type);
 
   unwind_info->frame_id = frame_id;
   Py_INCREF (pyo_pending_frame);
@@ -837,7 +837,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
 		     paddress (gdbarch, get_frame_pc (this_frame)));
 
   /* Create PendingFrame instance to pass to sniffers.  */
-  pending_frame_object *pfo = AMD_PyObject_New<pending_frame_object>(&pending_frame_object_type);
+  pending_frame_object *pfo = AMD_PyObject_New(pending_frame_object,&pending_frame_object_type);
   gdbpy_ref<> pyo_pending_frame ((PyObject *) pfo);
   if (pyo_pending_frame == NULL)
     {

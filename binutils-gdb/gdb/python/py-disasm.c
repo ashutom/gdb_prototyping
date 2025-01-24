@@ -1201,7 +1201,7 @@ private:
   static disasm_info_object *
   allocate_disasm_info_object ()
   {
-    return (disasm_info_object *) AMD_PyObject_New<disasm_info_object>(&disasm_info_object_type);
+    return (disasm_info_object *) AMD_PyObject_New(disasm_info_object,&disasm_info_object_type);
   }
 
   /* A reference to a gdb.disassembler.DisassembleInfo object.  When this

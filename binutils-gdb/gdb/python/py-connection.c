@@ -92,7 +92,7 @@ target_to_connection_object (process_stratum_target *target)
       else
 	type = &connection_object_type;
 
-      conn_obj.reset (AMD_PyObject_New<connection_object>(type));
+      conn_obj.reset (AMD_PyObject_New(connection_object,type));
       if (conn_obj == nullptr)
 	return nullptr;
       conn_obj->target = target;

@@ -44,7 +44,7 @@ create_thread_object (struct thread_info *tp)
   if (inf_obj == NULL)
     return NULL;
 
-  thread_obj.reset (AMD_PyObject_New<thread_object>(&thread_object_type));
+  thread_obj.reset (AMD_PyObject_New(thread_object,&thread_object_type));
   if (thread_obj == NULL)
     return NULL;
 

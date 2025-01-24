@@ -467,7 +467,7 @@ symtab_to_symtab_object (struct symtab *symtab)
 {
   symtab_object *symtab_obj;
 
-  symtab_obj = AMD_PyObject_New<symtab_object>(&symtab_object_type);
+  symtab_obj = AMD_PyObject_New(symtab_object,&symtab_object_type);
   if (symtab_obj)
     set_symtab (symtab_obj, symtab);
 
@@ -479,7 +479,7 @@ symtab_to_symtab_object (struct symtab *symtab)
 PyObject *
 symtab_and_line_to_sal_object (struct symtab_and_line sal)
 {
-  gdbpy_ref<sal_object> sal_obj (AMD_PyObject_New<sal_object>(&sal_object_type));
+  gdbpy_ref<sal_object> sal_obj (AMD_PyObject_New(sal_object,&sal_object_type));
   if (sal_obj != NULL)
     {
       if (set_sal (sal_obj.get (), sal) < 0)
