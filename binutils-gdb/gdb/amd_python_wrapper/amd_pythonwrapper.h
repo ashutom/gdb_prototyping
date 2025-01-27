@@ -237,6 +237,12 @@ int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, 
 
 void AMD_Py_Initialize(void);
 void AMD_Py_Finalize(void);
+void AMD_PyConfig_InitPythonConfig(PyConfig *config);
+PyStatus AMD_PyConfig_SetString(PyConfig *config, wchar_t **config_str, const wchar_t *str);
+int  AMD_PyStatus_Exception(PyStatus err);
+PyStatus AMD_PyConfig_Read(PyConfig *config);
+PyStatus AMD_Py_InitializeFromConfig(const PyConfig *config);
+void AMD_PyConfig_Clear(PyConfig *);
 
 void _AMD_Py_DECREF(PyObject* ob);
 int  AMD_PyIter_Check(PyObject *);

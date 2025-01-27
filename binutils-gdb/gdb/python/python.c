@@ -2247,24 +2247,24 @@ do_start_initialization ()
 #else
   PyConfig config;
 
-  PyConfig_InitPythonConfig (&config);
-  PyStatus status = PyConfig_SetString (&config, &config.program_name,
+  AMD_PyConfig_InitPythonConfig (&config);
+  PyStatus status = AMD_PyConfig_SetString (&config, &config.program_name,
 					progname_copy);
-  if (PyStatus_Exception (status))
+  if (AMD_PyStatus_Exception (status))
     goto init_done;
 
   config.write_bytecode = python_write_bytecode ();
   config.use_environment = !python_ignore_environment;
 
-  status = PyConfig_Read (&config);
-  if (PyStatus_Exception (status))
+  status = AMD_PyConfig_Read (&config);
+  if (AMD_PyStatus_Exception (status))
     goto init_done;
 
-  status = Py_InitializeFromConfig (&config);
+  status = AMD_Py_InitializeFromConfig (&config);
 
 init_done:
-  PyConfig_Clear (&config);
-  if (PyStatus_Exception (status))
+  AMD_PyConfig_Clear (&config);
+  if (AMD_PyStatus_Exception (status))
     return false;
 #endif
 #else

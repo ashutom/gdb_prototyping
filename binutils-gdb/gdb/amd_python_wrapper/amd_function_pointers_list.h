@@ -81,6 +81,10 @@ typedef PyObject* (*py_compilestringexflags) (const char *str, const char *filen
 typedef void (*pyerr_setobject) (PyObject* ob1, PyObject* ob2);
 typedef int (*pyslice_getindicesex) (PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
                                      Py_ssize_t *step, Py_ssize_t *slicelength);
-
+typedef void (*pyconfig_initpythonconfig) (PyConfig *config);
+typedef PyStatus (*pyconfig_setstring) (PyConfig *config, wchar_t **config_str, const wchar_t *str);
+typedef int  (*pystatus_exception) (PyStatus err);
+typedef PyStatus (*pyconfig_read) (PyConfig *config);
+typedef PyStatus (*py_initializefromconfig) (const PyConfig *config);
 
 #endif //_AMD_FUNCTION_POINTER_LIST_H_

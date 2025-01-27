@@ -149,6 +149,8 @@ static inline void CheckNASSIGN_FP_To_Table_From_LIB_Using_Handle(void* f,const 
    AMD_TRACE_API
    if(AMD_FunctionPointerTablePtr->count(std::string(str))>0){
       fprintf(stderr, "%s, %s\n", "Alaready present in table hence overriding pointer for", str);
+   }else{
+      fprintf(stdout, "%s, %s\n", "Adding function pointer for", str);
    }
    (*AMD_FunctionPointerTablePtr).insert(std::make_pair(str,AMD_check_symbol_resolution(f,str)));   
 }
@@ -197,7 +199,8 @@ static void Initialize_Fun_Pointer_Table(){
       "PyImport_ExtendInittab",  "PyEval_EvalCode",  "PyEval_SaveThread",  "PyEval_RestoreThread",
       "PyRun_InteractiveLoopFlags",  "PyRun_StringFlags", "Py_CompileStringExFlags", "Py_Initialize",  "Py_Finalize",
       "PyErr_Occurred",  "PyErr_SetObject",  "PyObject_Call",  "Py_SetProgramName", "PySlice_GetIndicesEx",
-      "Py_DecRef",  "PyIter_Check",  "_Py_Dealloc", "_PyObject_New", "PyObject_Type"
+      "Py_DecRef",  "PyIter_Check",  "_Py_Dealloc", "_PyObject_New", "PyObject_Type", "PyConfig_InitPythonConfig",
+      "PyConfig_SetString", "PyStatus_Exception", "PyConfig_Read", "Py_InitializeFromConfig", "PyConfig_Clear"
    };
    //lets assing
    for(int i=0;i<functionnames.size();i++){
@@ -986,6 +989,42 @@ PyObject* AMD_PyObject_Type(PyObject *ob){
    AMD_TRACE_API
    pylist_astuple fp = (pylist_astuple) get_fun_pointer_from_table("PyObject_Type");
    return (*fp)(ob);
+}
+
+void AMD_PyConfig_InitPythonConfig(PyConfig *config){
+   AMD_TRACE_API
+   pyconfig_initpythonconfig fp = (pyconfig_initpythonconfig) get_fun_pointer_from_table("PyConfig_InitPythonConfig");
+   return (*fp)(config);
+}
+
+PyStatus AMD_PyConfig_SetString(PyConfig *config, wchar_t **config_str, const wchar_t *str){
+   AMD_TRACE_API
+   pyconfig_setstring fp = (pyconfig_setstring) get_fun_pointer_from_table("PyConfig_SetString");
+   return (*fp)(config,config_str,str);
+}
+
+int  AMD_PyStatus_Exception(PyStatus err){
+   AMD_TRACE_API
+   pystatus_exception fp = (pystatus_exception) get_fun_pointer_from_table("PyStatus_Exception");
+   return (*fp)(err);
+}
+
+PyStatus AMD_PyConfig_Read(PyConfig *config){
+   AMD_TRACE_API
+   pyconfig_read fp = (pyconfig_read) get_fun_pointer_from_table("PyConfig_Read");
+   return (*fp)(config);
+}
+
+PyStatus AMD_Py_InitializeFromConfig(const PyConfig *config){
+   AMD_TRACE_API
+   py_initializefromconfig fp = (py_initializefromconfig) get_fun_pointer_from_table("Py_InitializeFromConfig");
+   return (*fp)(config);
+}
+
+void AMD_PyConfig_Clear(PyConfig * config){
+   AMD_TRACE_API
+   pyconfig_initpythonconfig fp = (pyconfig_initpythonconfig) get_fun_pointer_from_table("PyConfig_Clear");
+   return (*fp)(config);
 }
 
 #if 0
