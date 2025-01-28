@@ -157,20 +157,20 @@ convert_buffer_and_type_to_value (PyObject *obj, struct type *type,
     }
   else
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+      AMD_PyErr_SetString((AMD_PyExc_TypeError),
 		       _("Object must support the python buffer protocol."));
       return nullptr;
     }
 
   if (require_exact_size_p && type->length () != py_buf.len)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       _("Size of type is not equal to that of buffer object."));
       return nullptr;
     }
   else if (!require_exact_size_p && type->length () > py_buf.len)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       _("Size of type is larger than that of buffer object."));
       return nullptr;
     }
@@ -197,7 +197,7 @@ valpy_init (PyObject *self, PyObject *args, PyObject *kwds)
       type = type_object_to_type (type_obj);
       if (type == nullptr)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+	  AMD_PyErr_SetString((AMD_PyExc_TypeError),
 			   _("type argument must be a gdb.Type."));
 	  return -1;
 	}
@@ -362,7 +362,7 @@ valpy_to_array (PyObject *self, PyObject *args)
 	{
 	  val = value_to_array (val);
 	  if (val == nullptr)
-	    AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), _("Value is not array-like."));
+	    AMD_PyErr_SetString((AMD_PyExc_TypeError), _("Value is not array-like."));
 	  else
 	    result = value_to_value_object (val);
 	}
@@ -544,7 +544,7 @@ valpy_lazy_string (PyObject *self, PyObject *args, PyObject *kw)
 
   if (length < -1)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("Invalid length."));
+      AMD_PyErr_SetString((AMD_PyExc_ValueError), _("Invalid length."));
       return NULL;
     }
 
@@ -716,7 +716,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
       /* This matches the error message that Python 3.3 raises when
 	 passing positionals to functions expecting keyword-only
 	 arguments.  */
-      AMD_PyErr_Format ((*AMD_PyExc_TypeError),
+      AMD_PyErr_Format ((AMD_PyExc_TypeError),
 		    "format_string() takes 0 positional arguments but %zu were given",
 		    positional_count);
       return NULL;
@@ -746,19 +746,19 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
 					kw,
 					"|O!O!O!O!O!O!O!O!O!O!O!O!O!IIIIs",
 					keywords,
-					&(*AMD_PyBool_Type), &raw_obj,
-					&(*AMD_PyBool_Type), &pretty_arrays_obj,
-					&(*AMD_PyBool_Type), &pretty_structs_obj,
-					&(*AMD_PyBool_Type), &array_indexes_obj,
-					&(*AMD_PyBool_Type), &symbols_obj,
-					&(*AMD_PyBool_Type), &unions_obj,
-					&(*AMD_PyBool_Type), &address_obj,
-					&(*AMD_PyBool_Type), &styling_obj,
-					&(*AMD_PyBool_Type), &nibbles_obj,
-					&(*AMD_PyBool_Type), &summary_obj,
-					&(*AMD_PyBool_Type), &deref_refs_obj,
-					&(*AMD_PyBool_Type), &actual_objects_obj,
-					&(*AMD_PyBool_Type), &static_members_obj,
+					&(AMD_PyBool_Type), &raw_obj,
+					&(AMD_PyBool_Type), &pretty_arrays_obj,
+					&(AMD_PyBool_Type), &pretty_structs_obj,
+					&(AMD_PyBool_Type), &array_indexes_obj,
+					&(AMD_PyBool_Type), &symbols_obj,
+					&(AMD_PyBool_Type), &unions_obj,
+					&(AMD_PyBool_Type), &address_obj,
+					&(AMD_PyBool_Type), &styling_obj,
+					&(AMD_PyBool_Type), &nibbles_obj,
+					&(AMD_PyBool_Type), &summary_obj,
+					&(AMD_PyBool_Type), &deref_refs_obj,
+					&(AMD_PyBool_Type), &actual_objects_obj,
+					&(AMD_PyBool_Type), &static_members_obj,
 					&opts.print_max_chars,
 					&opts.print_max,
 					&opts.max_depth,
@@ -809,7 +809,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
 	{
 	  /* Mimic the message on standard Python ones for similar
 	     errors.  */
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	  AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			   "a single character is required");
 	  return NULL;
 	}
@@ -844,7 +844,7 @@ valpy_do_cast (PyObject *self, PyObject *args, enum exp_opcode op)
   type = type_object_to_type (type_obj);
   if (! type)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Argument must be a type."));
       return NULL;
     }
@@ -953,7 +953,7 @@ static Py_ssize_t
 valpy_length (PyObject *self)
 {
   /* We don't support getting the number of elements in a struct / class.  */
-  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
+  AMD_PyErr_SetString((PyObject *)(AMD_PyExc_NotImplementedError),
 		   _("Invalid operation on gdb.Value."));
   return -1;
 }
@@ -975,7 +975,7 @@ value_has_field (struct value *v, PyObject *field)
   parent_type = type_object_to_type (type_object.get ());
   if (parent_type == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+      AMD_PyErr_SetString((AMD_PyExc_TypeError),
 		       _("'parent_type' attribute of gdb.Field object is not a"
 			 "gdb.Type object."));
       return -1;
@@ -1031,7 +1031,7 @@ get_field_type (PyObject *field)
     return NULL;
   ftype = type_object_to_type (ftype_obj.get ());
   if (ftype == NULL)
-    AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+    AMD_PyErr_SetString((AMD_PyExc_TypeError),
 		     _("'type' attribute of gdb.Field object is not a "
 		       "gdb.Type object."));
 
@@ -1066,7 +1066,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 	return NULL;
       else if (valid_field == 0)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+	  AMD_PyErr_SetString((AMD_PyExc_TypeError),
 			   _("Invalid lookup for a field not contained in "
 			     "the value."));
 
@@ -1099,7 +1099,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 	    {
 	      if (!AMD_PyObject_HasAttrString (key, "bitpos"))
 		{
-		  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_AttributeError),
+		  AMD_PyErr_SetString((AMD_PyExc_AttributeError),
 				   _("gdb.Field object has no name and no "
 				     "'bitpos' attribute."));
 
@@ -1189,7 +1189,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 static int
 valpy_setitem (PyObject *self, PyObject *key, PyObject *value)
 {
-  AMD_PyErr_Format ((*AMD_PyExc_NotImplementedError),
+  AMD_PyErr_Format ((AMD_PyExc_NotImplementedError),
 		_("Setting of struct elements is not currently supported."));
   return -1;
 }
@@ -1217,7 +1217,7 @@ valpy_call (PyObject *self, PyObject *args, PyObject *keywords)
   if (ftype->code () != TYPE_CODE_FUNC && ftype->code () != TYPE_CODE_METHOD
       && ftype->code () != TYPE_CODE_INTERNAL_FUNCTION)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Value is not callable (not TYPE_CODE_FUNC"
 			 " or TYPE_CODE_METHOD"
 			 " or TYPE_CODE_INTERNAL_FUNCTION)."));
@@ -1226,7 +1226,7 @@ valpy_call (PyObject *self, PyObject *args, PyObject *keywords)
 
   if (! PyTuple_Check (args))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+      AMD_PyErr_SetString((AMD_PyExc_TypeError),
 		       _("Inferior arguments must be provided in a tuple."));
       return NULL;
     }
@@ -1623,7 +1623,7 @@ valpy_power (PyObject *self, PyObject *other, PyObject *unused)
      about it.  */
   if (unused != AMD_Py_None)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
+      AMD_PyErr_SetString((PyObject *)(AMD_PyExc_NotImplementedError),
 		       "Invalid operation on gdb.Value.");
       return NULL;
     }
@@ -1814,7 +1814,7 @@ valpy_richcompare_throw (PyObject *self, PyObject *other, int op)
       break;
     default:
       /* Can't happen.  */
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
+      AMD_PyErr_SetString((PyObject *)(AMD_PyExc_NotImplementedError),
 		       _("Invalid operation on gdb.Value."));
       result = -1;
       break;
@@ -1845,7 +1845,7 @@ valpy_richcompare (PyObject *self, PyObject *other, int op)
 	AMD_Py_RETURN_TRUE;
       default:
 	/* Can't happen.  */
-	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_NotImplementedError),
+	AMD_PyErr_SetString((PyObject *)(AMD_PyExc_NotImplementedError),
 			 _("Invalid operation on gdb.Value."));
 	return NULL;
     }
@@ -1967,7 +1967,7 @@ value_object_to_value (PyObject *self)
 {
   value_object *real;
 
-  if (! AMD_PyObject_TypeCheck (self, &value_object_type))
+  if (! PyObject_TypeCheck (self, &value_object_type))
     return NULL;
   real = (value_object *) self;
   return real->value;
@@ -2001,7 +2001,7 @@ convert_value_from_python (PyObject *obj)
 	    {
 	      /* If the error was an overflow, we can try converting to
 		 ULONGEST instead.  */
-	      if (AMD_PyErr_ExceptionMatches ((*AMD_PyExc_OverflowError)))
+	      if (AMD_PyErr_ExceptionMatches ((AMD_PyExc_OverflowError)))
 		{
 		  gdbpy_err_fetch fetched_error;
 		  gdbpy_ref<> zero = gdb_py_object_from_longest (0);
@@ -2041,7 +2041,7 @@ convert_value_from_python (PyObject *obj)
 	      = current_language->value_string (gdbpy_enter::get_gdbarch (),
 						s.get (), strlen (s.get ()));
 	}
-      else if (AMD_PyObject_TypeCheck (obj, &value_object_type))
+      else if (PyObject_TypeCheck (obj, &value_object_type))
 	value = ((value_object *) obj)->value->copy ();
       else if (gdbpy_is_lazy_string (obj))
 	{
@@ -2051,7 +2051,7 @@ convert_value_from_python (PyObject *obj)
 	  value = ((value_object *) result)->value->copy ();
 	}
       else
-	AMD_PyErr_Format ((*AMD_PyExc_TypeError),
+	AMD_PyErr_Format ((AMD_PyExc_TypeError),
 		      _("Could not convert Python object: %S."), obj);
     }
   catch (const gdb_exception &except)
@@ -2209,7 +2209,7 @@ gdbpy_set_convenience_variable (PyObject *self, PyObject *args)
 int
 gdbpy_is_value_object (PyObject *obj)
 {
-  return AMD_PyObject_TypeCheck (obj, &value_object_type);
+  return PyObject_TypeCheck (obj, &value_object_type);
 }
 
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION

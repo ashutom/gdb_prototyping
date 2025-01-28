@@ -350,7 +350,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
   const int name_len = strlen (name);
   if (name_len == 0)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("MI notification name is empty."));
+      AMD_PyErr_SetString((AMD_PyExc_ValueError), _("MI notification name is empty."));
       return nullptr;
     }
   for (int i = 0; i < name_len; i++)
@@ -358,7 +358,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
       if (!isalnum (name[i]) && name[i] != '-')
 	{
 	  AMD_PyErr_Format
-	    ((*AMD_PyExc_ValueError),
+	    ((AMD_PyExc_ValueError),
 	     _("MI notification name contains invalid character: %c."),
 	     name[i]);
 	  return nullptr;
@@ -369,7 +369,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
   if (!(data == AMD_Py_None || PyDict_Check (data)))
     {
       AMD_PyErr_Format
-	((*AMD_PyExc_ValueError),
+	((AMD_PyExc_ValueError),
 	 _("MI notification data must be either None or a dictionary, not %s"),
 	 Py_TYPE (data)->tp_name);
       return nullptr;

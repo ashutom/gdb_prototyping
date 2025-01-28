@@ -70,7 +70,7 @@ get_symtab (PyObject *linetable)
     symtab = symtab_object_to_symtab (get_symtab (lt_obj));		\
     if (symtab == NULL)							\
       {									\
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),				\
+	  AMD_PyErr_SetString(AMD_PyExc_RuntimeError,				\
 			   _("Symbol Table in line table is invalid."));\
 	  return NULL;							\
 	}								\
@@ -192,7 +192,7 @@ ltpy_has_line (PyObject *self, PyObject *args)
 
   if (symtab->linetable () == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Linetable information not found in symbol table"));
       return NULL;
     }
@@ -222,7 +222,7 @@ ltpy_get_all_source_lines (PyObject *self, PyObject *args)
 
   if (symtab->linetable () == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Linetable information not found in symbol table"));
       return NULL;
     }
@@ -397,7 +397,7 @@ ltpy_iternext (PyObject *self)
   if (symtab->linetable () == nullptr
       || iter_obj->current_index >= symtab->linetable ()->nitems)
     {
-      AMD_PyErr_SetNone ((*AMD_PyExc_StopIteration));
+      AMD_PyErr_SetNone ((AMD_PyExc_StopIteration));
       return NULL;
     }
 
@@ -413,7 +413,7 @@ ltpy_iternext (PyObject *self)
       /* Exit if the internal value is the last item in the line table.  */
       if (iter_obj->current_index >= symtab->linetable ()->nitems)
 	{
-	  AMD_PyErr_SetNone ((*AMD_PyExc_StopIteration));
+	  AMD_PyErr_SetNone ((AMD_PyExc_StopIteration));
 	  return NULL;
 	}
       item = &(symtab->linetable ()->item[iter_obj->current_index]);

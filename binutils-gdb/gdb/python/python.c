@@ -569,7 +569,7 @@ gdbpy_parameter_value (const setting &var)
       }
     }
 
-  return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
+  return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
 		       _("Programmer error: unhandled type."));
 }
 
@@ -598,14 +598,14 @@ gdbpy_parameter (PyObject *self, PyObject *args)
     }
 
   if (cmd == CMD_LIST_AMBIGUOUS)
-    return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
+    return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
 			 _("Parameter `%s' is ambiguous."), arg);
   else if (!found)
-    return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
+    return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
 			 _("Could not find parameter `%s'."), arg);
 
   if (!cmd->var.has_value ())
-    return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
+    return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
 			 _("`%s' is not a parameter."), arg);
 
   return gdbpy_parameter_value (*cmd->var);
@@ -653,8 +653,8 @@ execute_gdb_command (PyObject *self, PyObject *args, PyObject *kw)
 				    nullptr };
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!O!", keywords, &arg,
-					&(*AMD_PyBool_Type), &from_tty_obj,
-					&(*AMD_PyBool_Type), &to_string_obj))
+					&(AMD_PyBool_Type), &from_tty_obj,
+					&(AMD_PyBool_Type), &to_string_obj))
     return nullptr;
 
   bool from_tty = false;
@@ -792,7 +792,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
 				   "symtabs", NULL};
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!IO", keywords,
-					&regex, &(*AMD_PyBool_Type),
+					&regex, &(AMD_PyBool_Type),
 					&minsyms_p_obj, &throttle,
 					&symtab_list))
     return NULL;
@@ -876,7 +876,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
   /* Check throttle bounds and exit if in excess.  */
   if (throttle != 0 && count > throttle)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Number of breakpoints exceeds throttled maximum."));
       return NULL;
     }
@@ -1023,7 +1023,7 @@ gdbpy_parse_and_eval (PyObject *self, PyObject *args, PyObject *kw)
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!", keywords,
 					&expr_str,
-					&(*AMD_PyBool_Type), &global_context_obj))
+					&(AMD_PyBool_Type), &global_context_obj))
     return nullptr;
 
   parser_flags flags = 0;
@@ -1146,7 +1146,7 @@ gdbpy_post_event (PyObject *self, PyObject *args)
 
   if (!AMD_PyCallable_Check (func))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Posted event is not callable"));
       return NULL;
     }
@@ -1226,7 +1226,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	     string, set  PROMPT.  Anything else, set an exception.  */
 	  if (result != AMD_Py_None && !PyUnicode_Check (result.get ()))
 	    {
-	      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
+	      AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
 			    _("Return from prompt_hook must " \
 			      "be either a Python string, or None"));
 	      gdbpy_print_stack ();
@@ -1321,7 +1321,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
     return {};
   else if (!PyBytes_Check (result.get ()))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+      AMD_PyErr_SetString((AMD_PyExc_TypeError),
 		       _("Return value from gdb.colorize should be a bytes object or None."));
       gdbpy_print_stack ();
       return {};
@@ -1390,7 +1390,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
 
   if (!PyBytes_Check (result.get ()))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+      AMD_PyErr_SetString((AMD_PyExc_TypeError),
 		       _("Return value from gdb.colorize_disasm should be a bytes object or None."));
       gdbpy_print_stack ();
       return {};
@@ -1448,7 +1448,7 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
 	 default, but it feels like there's too much scope of mistakes in
 	 this case, so better to require the user to provide both
 	 arguments.  */
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       _("The architecture and progspace arguments must both be supplied"));
       return nullptr;
     }
@@ -1458,7 +1458,7 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
 	 Just check that these objects are valid.  */
       if (!gdbpy_is_progspace (pspace_obj))
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+	  AMD_PyErr_SetString((AMD_PyExc_TypeError),
 			   _("The progspace argument is not a gdb.Progspace object"));
 	  return nullptr;
 	}
@@ -1466,14 +1466,14 @@ gdbpy_format_address (PyObject *self, PyObject *args, PyObject *kw)
       pspace = progspace_object_to_program_space (pspace_obj);
       if (pspace == nullptr)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	  AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			   _("The progspace argument is not valid"));
 	  return nullptr;
 	}
 
       if (!gdbpy_is_architecture (arch_obj))
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+	  AMD_PyErr_SetString((AMD_PyExc_TypeError),
 			   _("The architecture argument is not a gdb.Architecture object"));
 	  return nullptr;
 	}
@@ -1653,7 +1653,7 @@ gdbpy_print_stack (void)
 void
 gdbpy_print_stack_or_quit ()
 {
-  if (AMD_PyErr_ExceptionMatches ((*AMD_PyExc_KeyboardInterrupt)))
+  if (AMD_PyErr_ExceptionMatches ((AMD_PyExc_KeyboardInterrupt)))
     {
       AMD_PyErr_Clear ();
       throw_quit ("Quit");
@@ -1812,7 +1812,7 @@ gdbpy_handle_missing_debuginfo (const struct extension_language_defn *extlang,
 
   if (!gdbpy_is_string (pyo_execute_ret.get ()))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       "return value from _handle_missing_debuginfo should "
 		       "be None, a Bool, or a String");
       gdbpy_print_stack ();
@@ -2009,12 +2009,12 @@ set_python_ignore_environment (const char *args, int from_tty,
 			       struct cmd_list_element *c)
 {
 #ifdef HAVE_PYTHON
-  /* (*AMD_Py_IgnoreEnvironmentFlag) is deprecated in Python 3.12.  Disable
+  /* (AMD_Py_IgnoreEnvironmentFlag) is deprecated in Python 3.12.  Disable
      its usage in Python 3.10 and above since the PyConfig mechanism
      is now (also) used in 3.10 and higher.  See do_start_initialization()
      in this file.  */
 #if PY_VERSION_HEX < 0x030a0000
-  (*AMD_Py_IgnoreEnvironmentFlag) = python_ignore_environment ? 1 : 0;
+  (AMD_Py_IgnoreEnvironmentFlag) = python_ignore_environment ? 1 : 0;
 #endif
 #endif
 }
@@ -2086,7 +2086,7 @@ set_python_dont_write_bytecode (const char *args, int from_tty,
      is now (also) used in 3.10 and higher.  See do_start_initialization()
      in this file.  */
 #if PY_VERSION_HEX < 0x030a0000
-  (*AMD_Py_DontWriteBytecodeFlag) = !python_write_bytecode ();
+  (AMD_Py_DontWriteBytecodeFlag) = !python_write_bytecode ();
 #endif
 #endif /* HAVE_PYTHON */
 }
@@ -2294,7 +2294,7 @@ init_done:
       || AMD_PyModule_AddIntConstant (gdb_module, "STDLOG", 2) < 0)
     return false;
 
-  gdbpy_gdb_error = AMD_PyErr_NewException ("gdb.error", (*AMD_PyExc_RuntimeError), NULL);
+  gdbpy_gdb_error = AMD_PyErr_NewException ("gdb.error", (AMD_PyExc_RuntimeError), NULL);
   if (gdbpy_gdb_error == NULL
       || gdb_pymodule_addobject (gdb_module, "error", gdbpy_gdb_error) < 0)
     return false;

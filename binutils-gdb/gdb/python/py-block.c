@@ -54,7 +54,7 @@ struct block_syms_iterator_object {
     block = block_object_to_block (block_obj);		\
     if (block == NULL)					\
       {							\
-	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),	\
+	AMD_PyErr_SetString(AMD_PyExc_RuntimeError,	\
 			 _("Block is invalid."));	\
 	return NULL;					\
       }							\
@@ -66,7 +66,7 @@ struct block_syms_iterator_object {
   do {									\
     if (block_obj->block == NULL)					\
       {									\
-	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),	\
+	      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,	\
 			 _("Source block for iterator is invalid."));	\
 	return NULL;							\
       }									\
@@ -247,7 +247,7 @@ blpy_getitem (PyObject *self, PyObject *key)
       return symbol_to_symbol_object (sym);
     }
 
-  AMD_PyErr_SetObject ((*AMD_PyExc_KeyError), key);
+  AMD_PyErr_SetObject ((AMD_PyExc_KeyError), key);
   return nullptr;
 }
 
@@ -338,7 +338,7 @@ block_to_block_object (const struct block *block, struct objfile *objfile)
 const struct block *
 block_object_to_block (PyObject *obj)
 {
-  if (! AMD_PyObject_TypeCheck (obj, &block_object_type))
+  if (! PyObject_TypeCheck (obj, &block_object_type))
     return NULL;
   return ((block_object *) obj)->block;
 }
@@ -375,7 +375,7 @@ blpy_block_syms_iternext (PyObject *self)
 
   if (sym == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_StopIteration)	, _("Symbol is null."));
+      AMD_PyErr_SetString((AMD_PyExc_StopIteration)	, _("Symbol is null."));
       return NULL;
     }
 
@@ -477,7 +477,7 @@ blpy_hash (PyObject *self)
 static PyObject *
 blpy_richcompare (PyObject *self, PyObject *other, int op)
 {
-  if (!AMD_PyObject_TypeCheck (other, &block_object_type)
+  if (!PyObject_TypeCheck (other, &block_object_type)
       || (op != Py_EQ && op != Py_NE))
     {
       Py_INCREF (AMD_Py_NotImplemented);

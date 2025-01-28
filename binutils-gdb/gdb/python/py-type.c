@@ -123,7 +123,7 @@ field_new (void)
 int
 gdbpy_is_field (PyObject *obj)
 {
-  return AMD_PyObject_TypeCheck (obj, &field_object_type);
+  return PyObject_TypeCheck (obj, &field_object_type);
 }
 
 /* Return the code for this type.  */
@@ -431,7 +431,7 @@ typy_is_signed (PyObject *self, void *closure)
 
   if (!is_scalar_type (type))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       _("Type must be a scalar type"));
       return nullptr;
     }
@@ -545,7 +545,7 @@ typy_get_composite (struct type *type)
       && type->code () != TYPE_CODE_METHOD
       && type->code () != TYPE_CODE_FUNC)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+      AMD_PyErr_SetString((AMD_PyExc_TypeError),
 		       "Type is not a structure, union, enum, or function type.");
       return NULL;
     }
@@ -570,7 +570,7 @@ typy_array_1 (PyObject *self, PyObject *args, int is_vector)
     {
       if (!PyLong_Check (n2_obj))
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+	  AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 			   _("Array bound must be an integer"));
 	  return NULL;
 	}
@@ -586,7 +586,7 @@ typy_array_1 (PyObject *self, PyObject *args, int is_vector)
 
   if (n2 < n1 - 1) /* Note: An empty array has n2 == n1 - 1.  */
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       _("Array length must not be negative"));
       return NULL;
     }
@@ -653,7 +653,7 @@ typy_range (PyObject *self, PyObject *args)
       && type->code () != TYPE_CODE_STRING
       && type->code () != TYPE_CODE_RANGE)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("This type does not have a range."));
       return NULL;
     }
@@ -719,7 +719,7 @@ typy_target (PyObject *self, PyObject *args)
 
   if (!type->target_type ())
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Type does not have a target."));
       return NULL;
     }
@@ -951,7 +951,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (type->name () == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), _("Null type name."));
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError, _("Null type name."));
       return NULL;
     }
 
@@ -967,7 +967,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (! info)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), err.c_str ());
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError, err.c_str ());
       return NULL;
     }
   demangled = info->tree;
@@ -979,7 +979,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (demangled->type != DEMANGLE_COMPONENT_TEMPLATE)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), _("Type is not a template."));
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError, _("Type is not a template."));
       return NULL;
     }
 
@@ -991,7 +991,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (! demangled)
     {
-      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError), _("No argument %d in template."),
+      AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("No argument %d in template."),
 		    argno);
       return NULL;
     }
@@ -1017,7 +1017,7 @@ typy_template_argument (PyObject *self, PyObject *args)
 
   if (argno < 0)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Template argument number must be non-negative"));
       return NULL;
     }
@@ -1027,7 +1027,7 @@ typy_template_argument (PyObject *self, PyObject *args)
       block = block_object_to_block (block_obj);
       if (! block)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+	  AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 			   _("Second argument must be block."));
 	  return NULL;
 	}
@@ -1052,7 +1052,7 @@ typy_template_argument (PyObject *self, PyObject *args)
 
   if (argno >= TYPE_N_TEMPLATE_ARGUMENTS (type))
     {
-      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError), _("No argument %d in template."),
+      AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("No argument %d in template."),
 		    argno);
       return NULL;
     }
@@ -1062,7 +1062,7 @@ typy_template_argument (PyObject *self, PyObject *args)
     return type_to_type_object (sym->type ());
   else if (sym->aclass () == LOC_OPTIMIZED_OUT)
     {
-      AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),
+      AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
 		    _("Template argument is optimized out"));
       return NULL;
     }
@@ -1303,7 +1303,7 @@ typy_getitem (PyObject *self, PyObject *key)
       if (t_field_name && (strcmp_iw (t_field_name, field.get ()) == 0))
 	return convert_field (type, i).release ();
     }
-  AMD_PyErr_SetObject ((*AMD_PyExc_KeyError), key);
+  AMD_PyErr_SetObject ((AMD_PyExc_KeyError), key);
   return NULL;
 }
 
@@ -1326,7 +1326,7 @@ typy_get (PyObject *self, PyObject *args)
   /* typy_getitem returned error status.  If the exception is
      KeyError, clear the exception status and return the defval
      instead.  Otherwise return the exception unchanged.  */
-  if (!AMD_PyErr_ExceptionMatches ((*AMD_PyExc_KeyError)))
+  if (!AMD_PyErr_ExceptionMatches ((AMD_PyExc_KeyError)))
     return NULL;
 
   AMD_PyErr_Clear ();
@@ -1490,7 +1490,7 @@ type_to_type_object (struct type *type)
 struct type *
 type_object_to_type (PyObject *obj)
 {
-  if (! AMD_PyObject_TypeCheck (obj, &type_object_type))
+  if (! PyObject_TypeCheck (obj, &type_object_type))
     return NULL;
   return ((type_object *) obj)->type;
 }
@@ -1516,7 +1516,7 @@ gdbpy_lookup_type (PyObject *self, PyObject *args, PyObject *kw)
       block = block_object_to_block (block_obj);
       if (! block)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+	  AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 			   _("'block' argument must be a Block."));
 	  return NULL;
 	}

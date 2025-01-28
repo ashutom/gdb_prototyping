@@ -280,7 +280,7 @@ frapy_read_register (PyObject *self, PyObject *args, PyObject *kw)
 	= value_of_register (regnum, get_next_frame_sentinel_okay (frame));
 
       if (val == NULL)
-	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("Can't read register."));
+	AMD_PyErr_SetString((AMD_PyExc_ValueError), _("Can't read register."));
       else
 	result = value_to_value_object (val);
     }
@@ -318,7 +318,7 @@ frapy_block (PyObject *self, PyObject *args)
 
   if (block == NULL || fn_block == NULL || fn_block->function () == NULL)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("Cannot locate block for frame."));
       return NULL;
     }
@@ -503,7 +503,7 @@ frapy_read_var (PyObject *self, PyObject *args, PyObject *kw)
 					&block_obj))
     return nullptr;
 
-  if (AMD_PyObject_TypeCheck (sym_obj, &symbol_object_type))
+  if (PyObject_TypeCheck (sym_obj, &symbol_object_type))
     var = symbol_object_to_symbol (sym_obj);
   else if (gdbpy_is_string (sym_obj))
     {
@@ -541,7 +541,7 @@ frapy_read_var (PyObject *self, PyObject *args, PyObject *kw)
 
       if (!var)
 	{
-	  AMD_PyErr_Format ((*AMD_PyExc_ValueError),
+	  AMD_PyErr_Format ((AMD_PyExc_ValueError),
 			_("Variable '%s' not found."), var_name.get ());
 
 	  return NULL;
@@ -549,7 +549,7 @@ frapy_read_var (PyObject *self, PyObject *args, PyObject *kw)
     }
   else
     {
-      AMD_PyErr_Format ((*AMD_PyExc_TypeError),
+      AMD_PyErr_Format ((AMD_PyExc_TypeError),
 		    _("argument 1 must be gdb.Symbol or str, not %s"),
 		    Py_TYPE (sym_obj)->tp_name);
       return NULL;
@@ -715,7 +715,7 @@ gdbpy_frame_stop_reason_string (PyObject *self, PyObject *args)
 
   if (reason < UNWIND_FIRST || reason > UNWIND_LAST)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       _("Invalid frame stop reason."));
       return NULL;
     }
@@ -733,7 +733,7 @@ frapy_richcompare (PyObject *self, PyObject *other, int op)
 {
   int result;
 
-  if (!AMD_PyObject_TypeCheck (other, &frame_object_type)
+  if (!PyObject_TypeCheck (other, &frame_object_type)
       || (op != Py_EQ && op != Py_NE))
     {
       Py_INCREF (AMD_Py_NotImplemented);

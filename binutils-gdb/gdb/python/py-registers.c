@@ -221,7 +221,7 @@ gdbpy_reggroup_iter_next (PyObject *self)
     = gdbarch_reggroups (iter_obj->gdbarch);
   if (iter_obj->index >= groups.size ())
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_StopIteration), _("No more groups"));
+      AMD_PyErr_SetString((AMD_PyExc_StopIteration), _("No more groups"));
       return NULL;
     }
 
@@ -270,7 +270,7 @@ gdbpy_new_register_descriptor_iterator (struct gdbarch *gdbarch,
       grp = reggroup_find (gdbarch, group_name);
       if (grp == NULL)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	  AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			   _("Unknown register group name."));
 	  return NULL;
 	}
@@ -311,7 +311,7 @@ gdbpy_register_descriptor_iter_next (PyObject *self)
     {
       if (iter_obj->regnum >= gdbarch_num_cooked_regs (gdbarch))
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_StopIteration), _("No more registers"));
+	  AMD_PyErr_SetString((AMD_PyExc_StopIteration), _("No more registers"));
 	  return NULL;
 	}
 
@@ -379,7 +379,7 @@ gdbpy_parse_register_id (struct gdbarch *gdbarch, PyObject *pyo_reg_id,
 						  strlen (reg_name.get ()));
 	  if (*reg_num >= 0)
 	    return true;
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), "Bad register");
+	  AMD_PyErr_SetString((AMD_PyExc_ValueError), "Bad register");
 	}
     }
   /* The register could be its internal GDB register number.  */
@@ -397,7 +397,7 @@ gdbpy_parse_register_id (struct gdbarch *gdbarch, PyObject *pyo_reg_id,
 	  return true;
 	}
       else
-	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), "Bad register");
+	AMD_PyErr_SetString((AMD_PyExc_ValueError), "Bad register");
     }
   /* The register could be a gdb.RegisterDescriptor object.  */
   else if (AMD_PyObject_IsInstance (pyo_reg_id,
@@ -411,11 +411,11 @@ gdbpy_parse_register_id (struct gdbarch *gdbarch, PyObject *pyo_reg_id,
 	  return true;
 	}
       else
-	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			 _("Invalid Architecture in RegisterDescriptor"));
     }
   else
-    AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), _("Invalid type for register"));
+    AMD_PyErr_SetString((AMD_PyExc_TypeError), _("Invalid type for register"));
 
   gdb_assert (AMD_PyErr_Occurred ());
   return false;

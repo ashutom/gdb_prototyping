@@ -47,7 +47,7 @@ python_string_to_unicode (PyObject *obj)
     }
   else
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+      AMD_PyErr_SetString((AMD_PyExc_TypeError),
 		       _("Expected a string object."));
       unicode_str = NULL;
     }
@@ -219,7 +219,7 @@ gdbpy_convert_exception (const struct gdb_exception &exception)
   PyObject *exc_class;
 
   if (exception.reason == RETURN_QUIT)
-    exc_class = (*AMD_PyExc_KeyboardInterrupt);
+    exc_class = (AMD_PyExc_KeyboardInterrupt);
   else if (exception.reason == RETURN_FORCED_QUIT)
     quit_force (NULL, 0);
   else if (exception.error == MEMORY_ERROR)
@@ -264,7 +264,7 @@ get_addr_from_python (PyObject *obj, CORE_ADDR *addr)
 
       if (sizeof (val) > sizeof (CORE_ADDR) && ((CORE_ADDR) val) != val)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	  AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			   _("Overflow converting to address."));
 	  return -1;
 	}
@@ -388,7 +388,7 @@ gdbpy_handle_exception ()
      for user errors.  However, a missing message for gdb.GdbError
      exceptions is arguably a bug, so we flag it as such.  */
 
-  if (fetched_error.type_matches ((*AMD_PyExc_KeyboardInterrupt)))
+  if (fetched_error.type_matches ((AMD_PyExc_KeyboardInterrupt)))
     throw_quit ("Quit");
   else if (! fetched_error.type_matches (gdbpy_gdberror_exc)
 	   || msg == NULL || *msg == '\0')

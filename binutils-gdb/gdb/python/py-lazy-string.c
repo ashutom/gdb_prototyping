@@ -178,7 +178,7 @@ gdbpy_create_lazy_string_object (CORE_ADDR address, long length,
 
   if (length < -1)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("Invalid length."));
+      AMD_PyErr_SetString((AMD_PyExc_ValueError), _("Invalid length."));
       return NULL;
     }
 
@@ -192,7 +192,7 @@ gdbpy_create_lazy_string_object (CORE_ADDR address, long length,
 
   if (!type)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError,
 		       _("A lazy string's type cannot be NULL."));
       return NULL;
     }
@@ -211,7 +211,7 @@ gdbpy_create_lazy_string_object (CORE_ADDR address, long length,
 	  length = array_length;
 	else if (length != array_length)
 	  {
-	    AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("Invalid length."));
+	    AMD_PyErr_SetString((AMD_PyExc_ValueError), _("Invalid length."));
 	    return NULL;
 	  }
 	break;
@@ -248,7 +248,7 @@ gdbpy_initialize_lazy_string (void)
 int
 gdbpy_is_lazy_string (PyObject *result)
 {
-  return AMD_PyObject_TypeCheck (result, &lazy_string_object_type);
+  return PyObject_TypeCheck (result, &lazy_string_object_type);
 }
 
 /* Return the type of a character in lazy string LAZY.  */

@@ -39,7 +39,7 @@ evregpy_connect (PyObject *self, PyObject *function)
 
   if (!AMD_PyCallable_Check (func))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError), "Function is not callable");
+      AMD_PyErr_SetString(AMD_PyExc_RuntimeError, "Function is not callable");
       return NULL;
     }
 

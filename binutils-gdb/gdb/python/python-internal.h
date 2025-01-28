@@ -416,7 +416,7 @@ struct gdbpy_breakpoint_object
 #define BPPY_REQUIRE_VALID(Breakpoint)                                  \
     do {                                                                \
       if ((Breakpoint)->bp == NULL)                                     \
-	return AMD_PyErr_Format ((*AMD_PyExc_RuntimeError),                        \
+	return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),                        \
 			     _("Breakpoint %d is invalid."),            \
 			     (Breakpoint)->number);                     \
     } while (0)
@@ -427,7 +427,7 @@ struct gdbpy_breakpoint_object
     do {                                                                \
       if ((Breakpoint)->bp == NULL)                                     \
 	{                                                               \
-	  AMD_PyErr_Format ((*AMD_PyExc_RuntimeError), _("Breakpoint %d is invalid."), \
+	  AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("Breakpoint %d is invalid."), \
 			(Breakpoint)->number);                          \
 	  return -1;                                                    \
 	}                                                               \

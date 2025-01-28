@@ -56,7 +56,7 @@ extern PyTypeObject remote_connection_object_type
   do {								\
     if (connection->target == nullptr)				\
       {								\
-	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),			\
+	AMD_PyErr_SetString(AMD_PyExc_RuntimeError,			\
 			 _("Connection no longer exists."));	\
 	return nullptr;						\
       }								\
@@ -396,7 +396,7 @@ connpy_send_packet (PyObject *self, PyObject *args, PyObject *kw)
   /* Check the packet is now a bytes object.  */
   if (!PyBytes_Check (packet_obj))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), _("Packet is not a bytes object"));
+      AMD_PyErr_SetString((AMD_PyExc_TypeError), _("Packet is not a bytes object"));
       return nullptr;
     }
 
@@ -410,7 +410,7 @@ connpy_send_packet (PyObject *self, PyObject *args, PyObject *kw)
 
   if (packet_len == 0)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError), _("Packet must not be empty"));
+      AMD_PyErr_SetString((AMD_PyExc_ValueError), _("Packet must not be empty"));
       return nullptr;
     }
 

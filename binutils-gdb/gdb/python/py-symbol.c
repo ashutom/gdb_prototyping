@@ -44,7 +44,7 @@ struct symbol_object {
     symbol = symbol_object_to_symbol (symbol_obj);	\
     if (symbol == NULL)					\
       {							\
-	AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),		\
+	AMD_PyErr_SetString(AMD_PyExc_RuntimeError,		\
 			 _("Symbol is invalid."));	\
 	return NULL;					\
       }							\
@@ -271,16 +271,16 @@ sympy_value (PyObject *self, PyObject *args)
   if (!AMD_PyArg_ParseTuple (args, "|O", &frame_obj))
     return NULL;
 
-  if (frame_obj != NULL && !AMD_PyObject_TypeCheck (frame_obj, &frame_object_type))
+  if (frame_obj != NULL && !PyObject_TypeCheck (frame_obj, &frame_object_type))
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), "argument is not a frame");
+      AMD_PyErr_SetString((AMD_PyExc_TypeError), "argument is not a frame");
       return NULL;
     }
 
   SYMPY_REQUIRE_VALID (self, symbol);
   if (symbol->aclass () == LOC_TYPEDEF)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError), "cannot get the value of a typedef");
+      AMD_PyErr_SetString((AMD_PyExc_TypeError), "cannot get the value of a typedef");
       return NULL;
     }
 
@@ -355,7 +355,7 @@ symbol_to_symbol_object (struct symbol *sym)
 struct symbol *
 symbol_object_to_symbol (PyObject *obj)
 {
-  if (! AMD_PyObject_TypeCheck (obj, &symbol_object_type))
+  if (! PyObject_TypeCheck (obj, &symbol_object_type))
     return NULL;
   return ((symbol_object *) obj)->symbol;
 }

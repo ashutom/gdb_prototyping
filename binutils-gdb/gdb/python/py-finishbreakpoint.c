@@ -191,7 +191,7 @@ bpfinishpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 
       if (frame == NULL)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	  AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			   _("Invalid ID for the `frame' object."));
 	}
       else
@@ -199,14 +199,14 @@ bpfinishpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 	  prev_frame = get_prev_frame (frame);
 	  if (prev_frame == 0)
 	    {
-	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			       _("\"FinishBreakpoint\" not "
 				 "meaningful in the outermost "
 				 "frame."));
 	    }
 	  else if (get_frame_type (prev_frame) == DUMMY_FRAME)
 	    {
-	      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			       _("\"FinishBreakpoint\" cannot "
 				 "be set on a dummy frame."));
 	    }
@@ -225,7 +225,7 @@ bpfinishpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
 
   if (inferior_ptid == null_ptid)
     {
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       _("No thread currently selected."));
       return -1;
     }
@@ -237,7 +237,7 @@ bpfinishpy_init (PyObject *self, PyObject *args, PyObject *kwargs)
       internal_bp = AMD_PyObject_IsTrue (internal);
       if (internal_bp == -1)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	  AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			   _("The value of `internal' must be a boolean."));
 	  return -1;
 	}

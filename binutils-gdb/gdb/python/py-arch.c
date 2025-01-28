@@ -36,7 +36,7 @@ static const registry<gdbarch>::key<PyObject, gdb::noop_deleter<PyObject>>
     arch = arch_object_to_gdbarch (arch_obj);			\
     if (arch == NULL)						\
       {                   \
-        AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_RuntimeError),_("Architecture is invalid."));	\
+        AMD_PyErr_SetString(AMD_PyExc_RuntimeError,_("Architecture is invalid."));	\
         return NULL;						\
       }								\
   } while (0)
@@ -77,7 +77,7 @@ arch_object_to_gdbarch (PyObject *obj)
 bool
 gdbpy_is_architecture (PyObject *obj)
 {
-  return AMD_PyObject_TypeCheck (obj, &arch_object_type);
+  return PyObject_TypeCheck (obj, &arch_object_type);
 }
 
 /* Returns the Python architecture object corresponding to GDBARCH.
@@ -148,7 +148,7 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
 
       if (end < start)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+	  AMD_PyErr_SetString((AMD_PyExc_ValueError),
 			   _("Argument 'end_pc' should be greater than or "
 			     "equal to the argument 'start_pc'."));
 
@@ -160,7 +160,7 @@ archpy_disassemble (PyObject *self, PyObject *args, PyObject *kw)
       count = AMD_PyLong_AsLong (count_obj);
       if (AMD_PyErr_Occurred () || count < 0)
 	{
-	  AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_TypeError),
+	  AMD_PyErr_SetString((AMD_PyExc_TypeError),
 			   _("Argument 'count' should be an non-negative "
 			     "integer."));
 
@@ -308,7 +308,7 @@ archpy_integer_type (PyObject *self, PyObject *args, PyObject *kw)
       break;
 
     default:
-      AMD_PyErr_SetString((PyObject *)(*AMD_PyExc_ValueError),
+      AMD_PyErr_SetString((AMD_PyExc_ValueError),
 		       _("no integer type of that size is available"));
       return nullptr;
     }

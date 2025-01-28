@@ -504,7 +504,7 @@ btpy_list_item (PyObject *self, Py_ssize_t index)
   Py_ssize_t number;
 
   if (index < 0 || index >= btpy_list_length (self))
-    return AMD_PyErr_Format ((*AMD_PyExc_IndexError), _("Index out of range: %zd."),
+    return AMD_PyErr_Format ((AMD_PyExc_IndexError), _("Index out of range: %zd."),
 			 index);
 
   number = obj->first + (obj->step * index);
@@ -539,7 +539,7 @@ btpy_list_slice (PyObject *self, PyObject *value)
     }
 
   if (!AMD_PySlice_Check (value))
-    return AMD_PyErr_Format ((*AMD_PyExc_TypeError), _("Index must be int or slice."));
+    return AMD_PyErr_Format ((AMD_PyExc_TypeError), _("Index must be int or slice."));
 
   if (0 != AMD_PySlice_GetIndicesEx (value, length, &start, &stop,
 				 &step, &slicelength))
@@ -596,7 +596,7 @@ btpy_list_index (PyObject *self, PyObject *value)
   const LONGEST index = btpy_list_position (self, value);
 
   if (index < 0)
-    return AMD_PyErr_Format ((*AMD_PyExc_ValueError), _("Not in list."));
+    return AMD_PyErr_Format ((AMD_PyExc_ValueError), _("Not in list."));
 
   return gdb_py_object_from_longest (index).release ();
 }
@@ -930,7 +930,7 @@ recpy_bt_goto (PyObject *self, PyObject *args)
     return NULL;
 
   if (Py_TYPE (parse_obj) != &recpy_insn_type)
-    return AMD_PyErr_Format ((*AMD_PyExc_TypeError), _("Argument must be instruction."));
+    return AMD_PyErr_Format ((AMD_PyExc_TypeError), _("Argument must be instruction."));
   obj = (const recpy_element_object *) parse_obj;
 
   try

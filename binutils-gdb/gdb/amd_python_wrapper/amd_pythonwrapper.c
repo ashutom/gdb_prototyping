@@ -22,25 +22,25 @@ static const char* LIBRARY_WITH_PATH = "/usr/lib64/libpython3.9.so.1.0";
 static void * PY_LIB_HANDLE=NULL;
 
 //Data Objects from lib
-PyObject** AMD_PyExc_RuntimeError=nullptr;
-PyObject** AMD_PyExc_ValueError=nullptr;
-PyObject** AMD_PyExc_TypeError=nullptr;
-PyObject** AMD_PyExc_KeyError=nullptr;
-PyObject** AMD_PyExc_StopIteration=nullptr;
-PyObject** AMD_PyExc_AttributeError=nullptr;
-PyObject** AMD_PyExc_SystemError=nullptr;
-PyObject** AMD_PyExc_NotImplementedError=nullptr;
-PyObject** AMD_PyExc_IndexError=nullptr;
-PyObject** AMD_PyExc_NameError=nullptr;
-PyObject** AMD_PyExc_KeyboardInterrupt=nullptr;
-PyObject** AMD_PyExc_OverflowError=nullptr;
-PyTypeObject* AMD_PyBool_Type=nullptr;
-PyTypeObject* AMD_PySlice_Type=nullptr;
-PyTypeObject* AMD_PyEllipsis_Type=nullptr;
-PyTypeObject* AMD_PyFloat_Type=nullptr;
-int* AMD_Py_DontWriteBytecodeFlag=nullptr;
-int* AMD_Py_IgnoreEnvironmentFlag=nullptr;
-PyObject*  AMD_Py_None=nullptr;
+PyObject** _AMD_PyExc_RuntimeError=nullptr;
+PyObject** _AMD_PyExc_ValueError=nullptr;
+PyObject** _AMD_PyExc_TypeError=nullptr;
+PyObject** _AMD_PyExc_KeyError=nullptr;
+PyObject** _AMD_PyExc_StopIteration=nullptr;
+PyObject** _AMD_PyExc_AttributeError=nullptr;
+PyObject** _AMD_PyExc_SystemError=nullptr;
+PyObject** _AMD_PyExc_NotImplementedError=nullptr;
+PyObject** _AMD_PyExc_IndexError=nullptr;
+PyObject** _AMD_PyExc_NameError=nullptr;
+PyObject** _AMD_PyExc_KeyboardInterrupt=nullptr;
+PyObject** _AMD_PyExc_OverflowError=nullptr;
+PyTypeObject* _AMD_PyBool_Type=nullptr;
+PyTypeObject* _AMD_PySlice_Type=nullptr;
+PyTypeObject* _AMD_PyEllipsis_Type=nullptr;
+PyTypeObject* _AMD_PyFloat_Type=nullptr;
+int* _AMD_Py_DontWriteBytecodeFlag=nullptr;
+int* _AMD_Py_IgnoreEnvironmentFlag=nullptr;
+PyObject*  _AMD_Py_None=nullptr;
 
 _longobject*  AMD_Py_FalseStructPtr=nullptr;
 _longobject*  AMD_Py_TrueStructPtr=nullptr;
@@ -213,32 +213,32 @@ static void Initialize_AMD_PyAPI_DATA(){
    AMD_TRACE_API
    void* placeholder=nullptr;
 
-   AMD_PyExc_RuntimeError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_RuntimeError");
-   AMD_PyExc_ValueError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_ValueError");
-   AMD_PyExc_TypeError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_TypeError");
-   AMD_PyExc_KeyError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_KeyError");
-   AMD_PyExc_StopIteration = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_StopIteration");
-   AMD_PyExc_AttributeError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_AttributeError");
-   AMD_PyExc_SystemError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_SystemError");
-   AMD_PyExc_NotImplementedError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_NotImplementedError");
-   AMD_PyExc_IndexError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_IndexError");
-   AMD_PyExc_NameError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_NameError");
-   AMD_PyExc_KeyboardInterrupt = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_KeyboardInterrupt");
-   AMD_PyExc_OverflowError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_OverflowError");
+   _AMD_PyExc_RuntimeError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_RuntimeError");
+   _AMD_PyExc_ValueError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_ValueError");
+   _AMD_PyExc_TypeError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_TypeError");
+   _AMD_PyExc_KeyError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_KeyError");
+   _AMD_PyExc_StopIteration = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_StopIteration");
+   _AMD_PyExc_AttributeError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_AttributeError");
+   _AMD_PyExc_SystemError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_SystemError");
+   _AMD_PyExc_NotImplementedError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_NotImplementedError");
+   _AMD_PyExc_IndexError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_IndexError");
+   _AMD_PyExc_NameError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_NameError");
+   _AMD_PyExc_KeyboardInterrupt = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_KeyboardInterrupt");
+   _AMD_PyExc_OverflowError = (PyObject**)AMD_check_symbol_resolution(placeholder,"PyExc_OverflowError");
 
    AMD_Py_TrueStructPtr = (_longobject*)AMD_check_symbol_resolution(placeholder,"_Py_TrueStruct");
    AMD_Py_FalseStructPtr = (_longobject*)AMD_check_symbol_resolution(placeholder,"_Py_FalseStruct");
    AMD_Py_NotImplementedStructPtr = (PyObject*)AMD_check_symbol_resolution(placeholder,"_Py_NotImplementedStruct");
 
-   AMD_Py_None = (PyObject*)AMD_check_symbol_resolution(placeholder,"_Py_NoneStruct");
+   _AMD_Py_None = (PyObject*)AMD_check_symbol_resolution(placeholder,"_Py_NoneStruct");
 
-   AMD_PyBool_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyBool_Type");
-   AMD_PySlice_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PySlice_Type");
-   AMD_PyEllipsis_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyEllipsis_Type");
-   AMD_PyFloat_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyFloat_Type");
+   _AMD_PyBool_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyBool_Type");
+   _AMD_PySlice_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PySlice_Type");
+   _AMD_PyEllipsis_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyEllipsis_Type");
+   _AMD_PyFloat_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyFloat_Type");
 
-   AMD_Py_DontWriteBytecodeFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_DontWriteBytecodeFlag");
-   AMD_Py_IgnoreEnvironmentFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_IgnoreEnvironmentFlag");
+   _AMD_Py_DontWriteBytecodeFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_DontWriteBytecodeFlag");
+   _AMD_Py_IgnoreEnvironmentFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_IgnoreEnvironmentFlag");
 }
 
 void amd_lib_constructor() {
@@ -250,14 +250,14 @@ void amd_lib_constructor() {
    Initialize_Fun_Pointer_Table();
 
    if(false == SKIP_START){
-      printObjectType(*AMD_PyExc_RuntimeError);
+      printObjectType(*_AMD_PyExc_RuntimeError);
    }else{
-      printObjectType((PyObject*)AMD_PyExc_RuntimeError);
+      printObjectType((PyObject*)*_AMD_PyExc_RuntimeError);
    }
-   fprintf(stdout, "%s\n", " Trying to print : AMD_PyExc_RuntimeError <<<<<<<<<<<<<<<<<<<<<<<<");
-   PyObject* AMD_PyExc_RuntimeError_forprinting = *AMD_PyExc_RuntimeError;
+   /*fprintf(stdout, "%s\n", " Trying to print : *_AMD_PyExc_RuntimeError <<<<<<<<<<<<<<<<<<<<<<<<");
+   PyObject* AMD_PyExc_RuntimeError_forprinting = *_AMD_PyExc_RuntimeError;
    PyTypeObject* type_for_printing=AMD_PyExc_RuntimeError_forprinting->ob_type;
-   printf("Trying to print : type_for_printing->tp_name  : is [ %s ] <<<<<<<<<<<<<<< \n", type_for_printing->tp_name);
+   printf("Trying to print : type_for_printing->tp_name  : is [ %s ] <<<<<<<<<<<<<<< \n", type_for_printing->tp_name);*/   
 
    GLOBAL_INIT=true;
 }  
@@ -364,15 +364,15 @@ int AMD_PyArg_ParseTuple(PyObject * obj, const char * cstr, ...){
    return result;
 }
 
-inline int AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type){
+/*inline int AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type){
    AMD_TRACE_API
    return ob->ob_type == type;
 }
 
 int  AMD_PyObject_TypeCheck(PyObject *ob, PyTypeObject* type){
    AMD_TRACE_API
-   int result = 0;
-   result = AMD_Py_IS_TYPE(ob,type);
+   //int result = AMD_Py_IS_TYPE(ob,type);
+   int result = Py_IS_TYPE(ob,type);
    if(0 == result){
       // Look up the symbol
       pytypeissubtype Py_pytypeissubtype=(pytypeissubtype)get_fun_pointer_from_table("PyType_IsSubtype");
@@ -382,7 +382,7 @@ int  AMD_PyObject_TypeCheck(PyObject *ob, PyTypeObject* type){
    }
   
    return result ;
-}
+}*/
 
 
 void AMD_PyErr_SetString(PyObject *exception, const char* Errstr){
@@ -962,20 +962,9 @@ int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, 
    return (*fp) (r,length,start,stop,step,slicelength); //execute
 }
 
-void _AMD_Py_DECREF(PyObject* ob){
-   AMD_TRACE_API
-   pyerr_setnone fp =(pyerr_setnone) get_fun_pointer_from_table("Py_DecRef");
-   return (*fp) (ob); //execute   
-}
-
 int  AMD_PyIter_Check(PyObject* ob){
    AMD_TRACE_API
    pyobj_istrue fp =(pyobj_istrue) get_fun_pointer_from_table("PyIter_Check");
-   return (*fp) (ob); //execute    
-}
-void  _Py_Dealloc(PyObject* ob){
-   AMD_TRACE_API
-   pyerr_setnone fp = (pyerr_setnone) get_fun_pointer_from_table("_Py_Dealloc");
    return (*fp) (ob); //execute    
 }
 
@@ -1027,7 +1016,26 @@ void AMD_PyConfig_Clear(PyConfig * config){
    return (*fp)(config);
 }
 
+void  _Py_Dealloc(PyObject* ob){
+   AMD_TRACE_API
+   pyerr_setnone fp = (pyerr_setnone) get_fun_pointer_from_table("_Py_Dealloc");
+   return (*fp) (ob); //execute
+}
+
+int PyType_IsSubtype(PyTypeObject* left, PyTypeObject* right){
+   AMD_TRACE_API
+   pytypeissubtype fp = (pytypeissubtype) get_fun_pointer_from_table("PyType_IsSubtype");
+   return (*fp) (left,right); //execute
+}
+
 #if 0
+
+void _AMD_Py_DECREF(PyObject* ob){
+   AMD_TRACE_API
+   pyerr_setnone fp =(pyerr_setnone) get_fun_pointer_from_table("Py_DecRef");
+   return (*fp) (ob); //execute   
+}
+
 void AMD_Py_CompileStringExFlags(const wchar_t * str){
    AMD_TRACE_API
    pysys_setpath fp =(pysys_setpath) get_fun_pointer_from_table("Py_CompileStringExFlags");
