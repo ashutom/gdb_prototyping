@@ -357,7 +357,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
     {
       if (!isalnum (name[i]) && name[i] != '-')
 	{
-	  AMD_PyErr_Format
+	  PyErr_Format
 	    ((AMD_PyExc_ValueError),
 	     _("MI notification name contains invalid character: %c."),
 	     name[i]);
@@ -368,7 +368,7 @@ gdbpy_notify_mi (PyObject *self, PyObject *args, PyObject *kwargs)
   /* Validate additional data.  */
   if (!(data == AMD_Py_None || PyDict_Check (data)))
     {
-      AMD_PyErr_Format
+      PyErr_Format
 	((AMD_PyExc_ValueError),
 	 _("MI notification data must be either None or a dictionary, not %s"),
 	 Py_TYPE (data)->tp_name);

@@ -569,7 +569,7 @@ gdbpy_parameter_value (const setting &var)
       }
     }
 
-  return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
+  return PyErr_Format ((AMD_PyExc_RuntimeError),
 		       _("Programmer error: unhandled type."));
 }
 
@@ -583,7 +583,7 @@ gdbpy_parameter (PyObject *self, PyObject *args)
   const char *arg;
   int found = -1;
 
-  if (! AMD_PyArg_ParseTuple (args, "s", &arg))
+  if (! PyArg_ParseTuple (args, "s", &arg))
     return NULL;
 
   std::string newarg = std::string ("show ") + arg;
@@ -598,14 +598,14 @@ gdbpy_parameter (PyObject *self, PyObject *args)
     }
 
   if (cmd == CMD_LIST_AMBIGUOUS)
-    return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
+    return PyErr_Format ((AMD_PyExc_RuntimeError),
 			 _("Parameter `%s' is ambiguous."), arg);
   else if (!found)
-    return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
+    return PyErr_Format ((AMD_PyExc_RuntimeError),
 			 _("Could not find parameter `%s'."), arg);
 
   if (!cmd->var.has_value ())
-    return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
+    return PyErr_Format ((AMD_PyExc_RuntimeError),
 			 _("`%s' is not a parameter."), arg);
 
   return gdbpy_parameter_value (*cmd->var);
@@ -910,7 +910,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
       else
 	symbol_name = p.msymbol.minsym->linkage_name ();
 
-      gdbpy_ref<> argList (AMD_Py_BuildValue("(s)", symbol_name.c_str ()));
+      gdbpy_ref<> argList (Py_BuildValue_SizeT("(s)", symbol_name.c_str ()));
       gdbpy_ref<> obj (AMD_PyObject_CallObject ((PyObject *)
 					    &breakpoint_object_type,
 					    argList.get ()));
@@ -937,7 +937,7 @@ gdbpy_decode_line (PyObject *self, PyObject *args)
   gdbpy_ref<> unparsed;
   location_spec_up locspec;
 
-  if (! AMD_PyArg_ParseTuple (args, "|s", &arg))
+  if (! PyArg_ParseTuple (args, "|s", &arg))
     return NULL;
 
   /* Treat a string consisting of just whitespace the same as
@@ -1141,7 +1141,7 @@ gdbpy_post_event (PyObject *self, PyObject *args)
 {
   PyObject *func;
 
-  if (!AMD_PyArg_ParseTuple (args, "O", &func))
+  if (!PyArg_ParseTuple (args, "O", &func))
     return NULL;
 
   if (!AMD_PyCallable_Check (func))
@@ -1213,7 +1213,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	    }
 
 	  gdbpy_ref<> result
-	    (AMD_PyObject_CallFunctionObjArgs (hook.get (), current_prompt.get (),
+	    (PyObject_CallFunctionObjArgs (hook.get (), current_prompt.get (),
 					   NULL));
 	  if (result == NULL)
 	    {
@@ -1226,7 +1226,7 @@ gdbpy_before_prompt_hook (const struct extension_language_defn *extlang,
 	     string, set  PROMPT.  Anything else, set an exception.  */
 	  if (result != AMD_Py_None && !PyUnicode_Check (result.get ()))
 	    {
-	      AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
+	      PyErr_Format ((AMD_PyExc_RuntimeError),
 			    _("Return from prompt_hook must " \
 			      "be either a Python string, or None"));
 	      gdbpy_print_stack ();
@@ -1307,7 +1307,7 @@ gdbpy_colorize (const std::string &filename, const std::string &contents)
      contents (a bytes object).  This function should return either a bytes
      object, the same contents with styling applied, or None to indicate
      that no styling should be performed.  */
-  gdbpy_ref<> result (AMD_PyObject_CallFunctionObjArgs (hook.get (),
+  gdbpy_ref<> result (PyObject_CallFunctionObjArgs (hook.get (),
 						    fname_arg.get (),
 						    contents_arg.get (),
 						    nullptr));
@@ -1375,7 +1375,7 @@ gdbpy_colorize_disasm (const std::string &content, gdbarch *gdbarch)
       return {};
     }
 
-  gdbpy_ref<> result (AMD_PyObject_CallFunctionObjArgs (hook.get (),
+  gdbpy_ref<> result (PyObject_CallFunctionObjArgs (hook.get (),
 						    content_arg.get (),
 						    gdbarch_arg.get (),
 						    nullptr));
@@ -1790,7 +1790,7 @@ gdbpy_handle_missing_debuginfo (const struct extension_language_defn *extlang,
 
   /* Call the function, passing in the Python objfile object.  */
   gdbpy_ref<> pyo_execute_ret
-    (AMD_PyObject_CallFunctionObjArgs (pyo_handler.get (), pyo_objfile.get (),
+    (PyObject_CallFunctionObjArgs (pyo_handler.get (), pyo_objfile.get (),
 				   nullptr));
   if (pyo_execute_ret == nullptr)
     {
@@ -1861,7 +1861,7 @@ gdbpy_start_type_printers (const struct extension_language_defn *extlang,
       return;
     }
 
-  printers_obj = AMD_PyObject_CallFunctionObjArgs (func.get (), (char *) NULL);
+  printers_obj = PyObject_CallFunctionObjArgs (func.get (), (char *) NULL);
   if (printers_obj == NULL)
     gdbpy_print_stack ();
   else
@@ -1914,7 +1914,7 @@ gdbpy_apply_type_printers (const struct extension_language_defn *extlang,
       return EXT_LANG_RC_ERROR;
     }
 
-  gdbpy_ref<> result_obj (AMD_PyObject_CallFunctionObjArgs (func.get (),
+  gdbpy_ref<> result_obj (PyObject_CallFunctionObjArgs (func.get (),
 							printers_obj,
 							type_obj.get (),
 							(char *) NULL));
@@ -2193,6 +2193,7 @@ gdbpy_gdb_exiting (int exit_code)
 static bool
 do_start_initialization ()
 {
+  amd_lib_constructor(); //Call constructor first
   /* Define all internal modules.  These are all imported (and thus
      created) during initialization.  */
   struct _inittab mods[] =

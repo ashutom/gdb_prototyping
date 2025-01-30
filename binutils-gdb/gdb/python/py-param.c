@@ -498,7 +498,7 @@ static gdb::unique_xmalloc_ptr<char>
 call_doc_function (PyObject *obj, PyObject *method, PyObject *arg)
 {
   gdb::unique_xmalloc_ptr<char> data;
-  gdbpy_ref<> result (AMD_PyObject_CallMethodObjArgs (obj, method, arg, NULL));
+  gdbpy_ref<> result (PyObject_CallMethodObjArgs (obj, method, arg, NULL));
 
   if (result == NULL)
     return NULL;
@@ -809,7 +809,7 @@ parmpy_init (PyObject *self, PyObject *args, PyObject *kwds)
   const literal_def *extra_literals;
   enum var_types type;
 
-  if (! AMD_PyArg_ParseTuple (args, "sii|O", &name, &cmdtype, &parmclass,
+  if (! PyArg_ParseTuple (args, "sii|O", &name, &cmdtype, &parmclass,
 			  &enum_values))
     return -1;
 
@@ -820,7 +820,7 @@ parmpy_init (PyObject *self, PyObject *args, PyObject *kwds)
       && cmdtype != class_trace && cmdtype != class_obscure
       && cmdtype != class_maintenance)
     {
-      AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("Invalid command class argument."));
+      PyErr_Format ((AMD_PyExc_RuntimeError), _("Invalid command class argument."));
       return -1;
     }
 

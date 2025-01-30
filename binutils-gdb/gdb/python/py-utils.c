@@ -227,7 +227,7 @@ gdbpy_convert_exception (const struct gdb_exception &exception)
   else
     exc_class = gdbpy_gdb_error;
 
-  AMD_PyErr_Format (exc_class, "%s", exception.what ());
+  PyErr_Format (exc_class, "%s", exception.what ());
 }
 
 /* Converts OBJ to a CORE_ADDR value.
@@ -603,5 +603,5 @@ gdbpy_fix_doc_string_indentation (gdb::unique_xmalloc_ptr<char> doc)
 PyObject *
 gdb_py_invalid_object_repr (PyObject *self)
 {
-  return AMD_PyUnicode_FromFormat ("<%s (invalid)>", Py_TYPE (self)->tp_name);
+  return PyUnicode_FromFormat ("<%s (invalid)>", Py_TYPE (self)->tp_name);
 }

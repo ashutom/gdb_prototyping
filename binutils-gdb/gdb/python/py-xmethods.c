@@ -106,7 +106,7 @@ invoke_match_method (PyObject *matcher, PyObject *py_obj_type,
   if (py_xmethod_name == NULL)
     return NULL;
 
-  return AMD_PyObject_CallMethodObjArgs (matcher, py_match_method_name,
+  return PyObject_CallMethodObjArgs (matcher, py_match_method_name,
 				     py_obj_type, py_xmethod_name.get (),
 				     NULL);
 }
@@ -307,7 +307,7 @@ python_xmethod_worker::do_get_arg_types (std::vector<type *> *arg_types)
     }
 
   gdbpy_ref<> py_argtype_list
-    (AMD_PyObject_CallMethodObjArgs (m_py_worker, py_get_arg_types_method_name,
+    (PyObject_CallMethodObjArgs (m_py_worker, py_get_arg_types_method_name,
 				 NULL));
   if (py_argtype_list == NULL)
     {

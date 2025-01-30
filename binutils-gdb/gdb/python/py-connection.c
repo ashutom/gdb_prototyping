@@ -205,7 +205,7 @@ connpy_repr (PyObject *obj)
   if (target == nullptr)
     return gdb_py_invalid_object_repr (obj);
 
-  return AMD_PyUnicode_FromFormat ("<%s num=%d, what=\"%s\">",
+  return PyUnicode_FromFormat ("<%s num=%d, what=\"%s\">",
 			       Py_TYPE (obj)->tp_name,
 			       target->connection_number,
 			       make_target_connection_string (target).c_str ());

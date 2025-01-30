@@ -252,7 +252,7 @@ unwind_infopy_repr (PyObject *self)
   frame_info_ptr frame = pending_frame->frame_info;
 
   if (frame == nullptr)
-    return AMD_PyUnicode_FromFormat ("<%s for an invalid frame>",
+    return PyUnicode_FromFormat ("<%s for an invalid frame>",
 				 Py_TYPE (self)->tp_name);
 
   std::string saved_reg_names;
@@ -267,7 +267,7 @@ unwind_infopy_repr (PyObject *self)
 	saved_reg_names = (saved_reg_names + ", ") + name;
     }
 
-  return AMD_PyUnicode_FromFormat ("<%s frame #%d, saved_regs=(%s)>",
+  return PyUnicode_FromFormat ("<%s frame #%d, saved_regs=(%s)>",
 			       Py_TYPE (self)->tp_name,
 			       frame_relative_level (frame),
 			       saved_reg_names.c_str ());
@@ -353,7 +353,7 @@ unwind_infopy_add_saved_register (PyObject *self, PyObject *args, PyObject *kw)
   ULONGEST reg_size = register_size (pending_frame->gdbarch, regnum);
   if (reg_size != value->type ()->length ())
     {
-      AMD_PyErr_Format ((AMD_PyExc_ValueError),
+      PyErr_Format ((AMD_PyExc_ValueError),
 		    "The value of the register returned by the Python "
 		    "sniffer has unexpected size: %s instead of %s.",
 		    pulongest (value->type ()->length ()),
@@ -432,7 +432,7 @@ pending_framepy_str (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return AMD_PyUnicode_FromFormat ("SP=%s,PC=%s", sp_str, pc_str);
+  return PyUnicode_FromFormat ("SP=%s,PC=%s", sp_str, pc_str);
 }
 
 /* Implement PendingFrame.__repr__().  */
@@ -459,7 +459,7 @@ pending_framepy_repr (PyObject *self)
       GDB_PY_HANDLE_EXCEPTION (except);
     }
 
-  return AMD_PyUnicode_FromFormat ("<%s level=%d, sp=%s, pc=%s>",
+  return PyUnicode_FromFormat ("<%s level=%d, sp=%s, pc=%s>",
 			       Py_TYPE (self)->tp_name,
 			       frame_relative_level (frame),
 			       sp_str,
@@ -497,7 +497,7 @@ pending_framepy_read_register (PyObject *self, PyObject *args, PyObject *kw)
       value *val = value_of_register
         (regnum, get_next_frame_sentinel_okay (pending_frame->frame_info));
       if (val == NULL)
-	AMD_PyErr_Format ((AMD_PyExc_ValueError),
+	PyErr_Format ((AMD_PyExc_ValueError),
 		      "Cannot read register %d from frame.",
 		      regnum);
       else
@@ -869,7 +869,7 @@ pyuw_sniffer (const struct frame_unwind *self, const frame_info_ptr &this_frame,
 
   /* A (gdb.UnwindInfo, str) tuple, or None.  */
   gdbpy_ref<> pyo_execute_ret
-    (AMD_PyObject_CallFunctionObjArgs (pyo_execute.get (),
+    (PyObject_CallFunctionObjArgs (pyo_execute.get (),
 				   pyo_pending_frame.get (), NULL));
   if (pyo_execute_ret == nullptr)
     {

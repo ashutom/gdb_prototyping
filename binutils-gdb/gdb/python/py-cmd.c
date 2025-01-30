@@ -128,7 +128,7 @@ cmdpy_function (const char *args, int from_tty, cmd_list_element *command)
     }
 
   gdbpy_ref<> ttyobj (AMD_PyBool_FromLong (from_tty));
-  gdbpy_ref<> result (AMD_PyObject_CallMethodObjArgs ((PyObject *) obj, invoke_cst,
+  gdbpy_ref<> result (PyObject_CallMethodObjArgs ((PyObject *) obj, invoke_cst,
 						  argobj.get (), ttyobj.get (),
 						  NULL));
 
@@ -204,7 +204,7 @@ cmdpy_completer_helper (struct cmd_list_element *command,
 	}
     }
 
-  gdbpy_ref<> resultobj (AMD_PyObject_CallMethodObjArgs ((PyObject *) obj,
+  gdbpy_ref<> resultobj (PyObject_CallMethodObjArgs ((PyObject *) obj,
 						     complete_cst,
 						     textobj.get (),
 						     wordobj.get (), NULL));
@@ -387,7 +387,7 @@ gdbpy_parse_command_name (const char *name,
   elt = lookup_cmd_1 (&prefix_text2, *start_list, NULL, NULL, 1);
   if (elt == NULL || elt == CMD_LIST_AMBIGUOUS)
     {
-      AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("Could not find command prefix %s."),
+      PyErr_Format ((AMD_PyExc_RuntimeError), _("Could not find command prefix %s."),
 		    prefix_text.c_str ());
       return NULL;
     }
@@ -398,7 +398,7 @@ gdbpy_parse_command_name (const char *name,
       return result;
     }
 
-  AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("'%s' is not a prefix command."),
+  PyErr_Format ((AMD_PyExc_RuntimeError), _("'%s' is not a prefix command."),
 		prefix_text.c_str ());
   return NULL;
 }
@@ -440,7 +440,7 @@ cmdpy_init (PyObject *self, PyObject *args, PyObject *kw)
     {
       /* Note: this is apparently not documented in Python.  We return
 	 0 for success, -1 for failure.  */
-      AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
+      PyErr_Format ((AMD_PyExc_RuntimeError),
 		    _("Command object already initialized."));
       return -1;
     }
@@ -458,13 +458,13 @@ cmdpy_init (PyObject *self, PyObject *args, PyObject *kw)
       && cmdtype != class_maintenance && cmdtype != class_user
       && cmdtype != class_tui)
     {
-      AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("Invalid command class argument."));
+      PyErr_Format ((AMD_PyExc_RuntimeError), _("Invalid command class argument."));
       return -1;
     }
 
   if (completetype < -1 || completetype >= (int) N_COMPLETERS)
     {
-      AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
+      PyErr_Format ((AMD_PyExc_RuntimeError),
 		    _("Invalid completion type argument."));
       return -1;
     }
@@ -668,7 +668,7 @@ gdbpy_string_to_argv (PyObject *self, PyObject *args)
 {
   const char *input;
 
-  if (!AMD_PyArg_ParseTuple (args, "s", &input))
+  if (!PyArg_ParseTuple (args, "s", &input))
     return NULL;
 
   gdbpy_ref<> py_argv (AMD_PyList_New (0));

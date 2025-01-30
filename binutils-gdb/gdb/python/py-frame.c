@@ -94,7 +94,7 @@ frapy_repr (PyObject *self)
     return gdb_py_invalid_object_repr (self);
 
   const frame_id &fid = frame_obj->frame_id;
-  return AMD_PyUnicode_FromFormat ("<%s level=%d frame-id=%s>",
+  return PyUnicode_FromFormat ("<%s level=%d frame-id=%s>",
 			       Py_TYPE (self)->tp_name,
 			       frame_relative_level (f_info),
 			       fid.to_string ().c_str ());
@@ -541,7 +541,7 @@ frapy_read_var (PyObject *self, PyObject *args, PyObject *kw)
 
       if (!var)
 	{
-	  AMD_PyErr_Format ((AMD_PyExc_ValueError),
+	  PyErr_Format ((AMD_PyExc_ValueError),
 			_("Variable '%s' not found."), var_name.get ());
 
 	  return NULL;
@@ -549,7 +549,7 @@ frapy_read_var (PyObject *self, PyObject *args, PyObject *kw)
     }
   else
     {
-      AMD_PyErr_Format ((AMD_PyExc_TypeError),
+      PyErr_Format ((AMD_PyExc_TypeError),
 		    _("argument 1 must be gdb.Symbol or str, not %s"),
 		    Py_TYPE (sym_obj)->tp_name);
       return NULL;
@@ -710,7 +710,7 @@ gdbpy_frame_stop_reason_string (PyObject *self, PyObject *args)
   int reason;
   const char *str;
 
-  if (!AMD_PyArg_ParseTuple (args, "i", &reason))
+  if (!PyArg_ParseTuple (args, "i", &reason))
     return NULL;
 
   if (reason < UNWIND_FIRST || reason > UNWIND_LAST)

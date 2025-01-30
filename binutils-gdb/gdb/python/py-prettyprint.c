@@ -78,7 +78,7 @@ search_pp_list (PyObject *list, PyObject *value)
 	    continue;
 	}
 
-      gdbpy_ref<> printer (AMD_PyObject_CallFunctionObjArgs (function, value,
+      gdbpy_ref<> printer (PyObject_CallFunctionObjArgs (function, value,
 							 NULL));
       if (printer == NULL)
 	return NULL;
@@ -202,7 +202,7 @@ pretty_print_one_value (PyObject *printer, struct value **out_value)
 	result = gdbpy_ref<>::new_reference (AMD_Py_None);
       else
 	{
-	  result.reset (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_to_string_cst,
+	  result.reset (PyObject_CallMethodObjArgs (printer, gdbpy_to_string_cst,
 						    NULL));
 	  if (result != NULL)
 	    {
@@ -237,7 +237,7 @@ gdbpy_get_display_hint (PyObject *printer)
   if (! AMD_PyObject_HasAttr (printer, gdbpy_display_hint_cst))
     return NULL;
 
-  gdbpy_ref<> hint (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_display_hint_cst,
+  gdbpy_ref<> hint (PyObject_CallMethodObjArgs (printer, gdbpy_display_hint_cst,
 						NULL));
   if (hint != NULL)
     {
@@ -372,7 +372,7 @@ print_children (PyObject *printer, const char *hint,
   is_map = hint && ! strcmp (hint, "map");
   is_array = hint && ! strcmp (hint, "array");
 
-  gdbpy_ref<> children (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_children_cst,
+  gdbpy_ref<> children (PyObject_CallMethodObjArgs (printer, gdbpy_children_cst,
 						    NULL));
   if (children == NULL)
     {
@@ -425,7 +425,7 @@ print_children (PyObject *printer, const char *hint,
 	  gdbpy_print_stack ();
 	  continue;
 	}
-      if (! AMD_PyArg_ParseTuple (item.get (), "sO", &name, &py_v))
+      if (! PyArg_ParseTuple (item.get (), "sO", &name, &py_v))
 	{
 	  /* The user won't necessarily get a stack trace here, so provide
 	     more context.  */
@@ -679,7 +679,7 @@ gdbpy_default_visualizer (PyObject *self, PyObject *args)
   PyObject *val_obj;
   struct value *value;
 
-  if (! AMD_PyArg_ParseTuple (args, "O", &val_obj))
+  if (! PyArg_ParseTuple (args, "O", &val_obj))
     return NULL;
   value = value_object_to_value (val_obj);
   if (! value)

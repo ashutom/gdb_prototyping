@@ -54,7 +54,7 @@ struct gdbpy_breakpoint_location_object
 #define BPLOCPY_REQUIRE_VALID(Breakpoint, Location)                         \
     do {                                                                    \
       if ((Breakpoint)->bp != (Location)->bp_loc->owner)                    \
-	return AMD_PyErr_Format ((AMD_PyExc_RuntimeError),                            \
+	return PyErr_Format ((AMD_PyExc_RuntimeError),                            \
 			     _("Breakpoint location is invalid."));	    \
     } while (0)
 
@@ -64,7 +64,7 @@ struct gdbpy_breakpoint_location_object
     do {                                                                    \
       if ((Breakpoint)->bp != (Location)->bp_loc->owner)                    \
 	{                                                                   \
-	  AMD_PyErr_Format ((AMD_PyExc_RuntimeError),                                 \
+	  PyErr_Format ((AMD_PyExc_RuntimeError),                                 \
 			_("Breakpoint location is invalid."));		    \
 	  return -1;                                                        \
 	}                                                                   \
@@ -1069,7 +1069,7 @@ bppy_repr (PyObject *self)
 {
   const auto bp = (struct gdbpy_breakpoint_object*) self;
   if (bp->bp == nullptr)
-    return AMD_PyUnicode_FromFormat ("<%s (invalid)>", Py_TYPE (self)->tp_name);
+    return PyUnicode_FromFormat ("<%s (invalid)>", Py_TYPE (self)->tp_name);
 
   std::string str = " ";
   if (bp->bp->thread != -1)
@@ -1080,7 +1080,7 @@ bppy_repr (PyObject *self)
     str += string_printf ("enable_count=%d ", bp->bp->enable_count);
   str.pop_back ();
 
-  return AMD_PyUnicode_FromFormat ("<%s%s number=%d hits=%d%s>",
+  return PyUnicode_FromFormat ("<%s%s number=%d hits=%d%s>",
 			       Py_TYPE (self)->tp_name,
 			       (bp->bp->enable_state == bp_enabled
 				? "" : " disabled"), bp->bp->number,
@@ -1770,7 +1770,7 @@ bplocpy_repr (PyObject *py_self)
       str += fn_name;
     }
 
-  return AMD_PyUnicode_FromFormat ("<%s %s>", Py_TYPE (self)->tp_name,
+  return PyUnicode_FromFormat ("<%s %s>", Py_TYPE (self)->tp_name,
 			       str.c_str ());
 }
 

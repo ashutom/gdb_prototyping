@@ -35,6 +35,7 @@ gdbpy_readline_wrapper (FILE *sys_stdin, FILE *sys_stdout,
 			char *prompt)
 #endif
 {
+  printf(" !!!!!  ^^^^  GDB API : [%s] \n", __FUNCTION__);
   int n;
   const char *p = NULL;
   std::string buffer;
@@ -89,6 +90,7 @@ gdbpy_readline_wrapper (FILE *sys_stdin, FILE *sys_stdout,
 static int CPYCHECKER_NEGATIVE_RESULT_SETS_EXCEPTION
 gdbpy_initialize_gdb_readline (void)
 {
+  printf(" !!!!!  ^^^^  GDB API : [%s] \n", __FUNCTION__);
   /* Python's readline module conflicts with GDB's use of readline
      since readline is not reentrant.  Ideally, a reentrant wrapper to
      GDB's readline should be implemented to replace Python's readline
@@ -109,7 +111,7 @@ class GdbRemoveReadlineFinder:\n\
 \n\
 sys.meta_path.append(GdbRemoveReadlineFinder())\n\
 ") == 0)
-    /*PyOS_ReadlineFunctionPointer = gdbpy_readline_wrapper;*/
+    //PyOS_ReadlineFunctionPointer = gdbpy_readline_wrapper;
     AMD_Assign_AMD_PyOS_Readlinefp(gdbpy_readline_wrapper);
 
   return 0;

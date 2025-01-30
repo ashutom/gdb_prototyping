@@ -285,7 +285,7 @@ salpy_str (PyObject *self)
       filename = symtab_to_filename_for_display (symtab);
     }
 
-  return AMD_PyUnicode_FromFormat ("symbol and line for %s, line %d", filename,
+  return PyUnicode_FromFormat ("symbol and line for %s, line %d", filename,
 			       sal->line);
 }
 

@@ -337,7 +337,7 @@ typy_fields (PyObject *self, PyObject *args)
   if (r == NULL)
     return NULL;
 
-  return AMD_Py_BuildValue ("[O]", r.get ());
+  return Py_BuildValue_SizeT ("[O]", r.get ());
 }
 
 /* Return a sequence of all field names.  Each field is a gdb.Field object.  */
@@ -563,7 +563,7 @@ typy_array_1 (PyObject *self, PyObject *args, int is_vector)
   struct type *array = NULL;
   struct type *type = ((type_object *) self)->type;
 
-  if (! AMD_PyArg_ParseTuple (args, "l|O", &n1, &n2_obj))
+  if (! PyArg_ParseTuple (args, "l|O", &n1, &n2_obj))
     return NULL;
 
   if (n2_obj)
@@ -991,7 +991,7 @@ typy_legacy_template_argument (struct type *type, const struct block *block,
 
   if (! demangled)
     {
-      AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("No argument %d in template."),
+      PyErr_Format ((AMD_PyExc_RuntimeError), _("No argument %d in template."),
 		    argno);
       return NULL;
     }
@@ -1012,7 +1012,7 @@ typy_template_argument (PyObject *self, PyObject *args)
   PyObject *block_obj = NULL;
   struct symbol *sym;
 
-  if (! AMD_PyArg_ParseTuple (args, "i|O", &argno, &block_obj))
+  if (! PyArg_ParseTuple (args, "i|O", &argno, &block_obj))
     return NULL;
 
   if (argno < 0)
@@ -1052,7 +1052,7 @@ typy_template_argument (PyObject *self, PyObject *args)
 
   if (argno >= TYPE_N_TEMPLATE_ARGUMENTS (type))
     {
-      AMD_PyErr_Format ((AMD_PyExc_RuntimeError), _("No argument %d in template."),
+      PyErr_Format ((AMD_PyExc_RuntimeError), _("No argument %d in template."),
 		    argno);
       return NULL;
     }
@@ -1062,7 +1062,7 @@ typy_template_argument (PyObject *self, PyObject *args)
     return type_to_type_object (sym->type ());
   else if (sym->aclass () == LOC_OPTIMIZED_OUT)
     {
-      AMD_PyErr_Format ((AMD_PyExc_RuntimeError),
+      PyErr_Format ((AMD_PyExc_RuntimeError),
 		    _("Template argument is optimized out"));
       return NULL;
     }
@@ -1105,7 +1105,7 @@ typy_repr (PyObject *self)
   auto py_typename = AMD_PyUnicode_Decode (type_name.c_str (), type_name.size (),
 				       host_charset (), NULL);
 
-  return AMD_PyUnicode_FromFormat ("<%s code=%s name=%U>", Py_TYPE (self)->tp_name,
+  return PyUnicode_FromFormat ("<%s code=%s name=%U>", Py_TYPE (self)->tp_name,
 			       code, py_typename);
 }
 
@@ -1316,7 +1316,7 @@ typy_get (PyObject *self, PyObject *args)
 {
   PyObject *key, *defval = AMD_Py_None, *result;
 
-  if (!AMD_PyArg_UnpackTuple (args, "get", 1, 2, &key, &defval))
+  if (!PyArg_UnpackTuple (args, "get", 1, 2, &key, &defval))
     return NULL;
 
   result = typy_getitem (self, key);
@@ -1343,7 +1343,7 @@ typy_has_key (PyObject *self, PyObject *args)
   const char *field;
   int i;
 
-  if (!AMD_PyArg_ParseTuple (args, "s", &field))
+  if (!PyArg_ParseTuple (args, "s", &field))
     return NULL;
 
   /* We want just fields of this type, not of base types, so instead of

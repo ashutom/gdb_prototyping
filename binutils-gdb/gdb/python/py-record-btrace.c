@@ -68,7 +68,7 @@ btrace_insn_from_recpy_insn (const PyObject * const pyobject)
 
   if (Py_TYPE (pyobject) != &recpy_insn_type)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("Must be gdb.RecordInstruction"));
+      PyErr_Format (gdbpy_gdb_error, _("Must be gdb.RecordInstruction"));
       return NULL;
     }
 
@@ -77,20 +77,20 @@ btrace_insn_from_recpy_insn (const PyObject * const pyobject)
 
   if (tinfo == NULL || btrace_is_empty (tinfo))
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("No such instruction."));
+      PyErr_Format (gdbpy_gdb_error, _("No such instruction."));
       return NULL;
     }
 
   if (btrace_find_insn_by_number (&iter, &tinfo->btrace, obj->number) == 0)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("No such instruction."));
+      PyErr_Format (gdbpy_gdb_error, _("No such instruction."));
       return NULL;
     }
 
   insn = btrace_insn_get (&iter);
   if (insn == NULL)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("Not a valid instruction."));
+      PyErr_Format (gdbpy_gdb_error, _("Not a valid instruction."));
       return NULL;
     }
 
@@ -111,7 +111,7 @@ btrace_func_from_recpy_func (const PyObject * const pyobject)
 
   if (Py_TYPE (pyobject) != &recpy_func_type)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("Must be gdb.RecordFunctionSegment"));
+      PyErr_Format (gdbpy_gdb_error, _("Must be gdb.RecordFunctionSegment"));
       return NULL;
     }
 
@@ -120,20 +120,20 @@ btrace_func_from_recpy_func (const PyObject * const pyobject)
 
   if (tinfo == NULL || btrace_is_empty (tinfo))
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("No such function segment."));
+      PyErr_Format (gdbpy_gdb_error, _("No such function segment."));
       return NULL;
     }
 
   if (btrace_find_call_by_number (&iter, &tinfo->btrace, obj->number) == 0)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("No such function segment."));
+      PyErr_Format (gdbpy_gdb_error, _("No such function segment."));
       return NULL;
     }
 
   func = btrace_call_get (&iter);
   if (func == NULL)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("Not a valid function segment."));
+      PyErr_Format (gdbpy_gdb_error, _("Not a valid function segment."));
       return NULL;
     }
 
@@ -152,7 +152,7 @@ btpy_item_new (thread_info *tinfo, Py_ssize_t number)
 
   if (btrace_find_insn_by_number (&iter, &tinfo->btrace, number) == 0)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("No such instruction."));
+      PyErr_Format (gdbpy_gdb_error, _("No such instruction."));
       return nullptr;
     }
 
@@ -447,7 +447,7 @@ recpy_bt_aux_data (PyObject *self, void *closure)
 
   if (Py_TYPE (self) != &recpy_aux_type)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("Must be a gdb.Auxiliary."));
+      PyErr_Format (gdbpy_gdb_error, _("Must be a gdb.Auxiliary."));
       return nullptr;
     }
 
@@ -456,20 +456,20 @@ recpy_bt_aux_data (PyObject *self, void *closure)
 
   if (tinfo == nullptr || btrace_is_empty (tinfo))
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("No such auxiliary object."));
+      PyErr_Format (gdbpy_gdb_error, _("No such auxiliary object."));
       return nullptr;
     }
 
   if (btrace_find_insn_by_number (&iter, &tinfo->btrace, obj->number) == 0)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("No such auxiliary object."));
+      PyErr_Format (gdbpy_gdb_error, _("No such auxiliary object."));
       return nullptr;
     }
 
   insn = btrace_insn_get (&iter);
   if (insn == nullptr || insn->iclass != BTRACE_INSN_AUX)
     {
-      AMD_PyErr_Format (gdbpy_gdb_error, _("Not a valid auxiliary object."));
+      PyErr_Format (gdbpy_gdb_error, _("Not a valid auxiliary object."));
       return nullptr;
     }
 
@@ -504,7 +504,7 @@ btpy_list_item (PyObject *self, Py_ssize_t index)
   Py_ssize_t number;
 
   if (index < 0 || index >= btpy_list_length (self))
-    return AMD_PyErr_Format ((AMD_PyExc_IndexError), _("Index out of range: %zd."),
+    return PyErr_Format ((AMD_PyExc_IndexError), _("Index out of range: %zd."),
 			 index);
 
   number = obj->first + (obj->step * index);
@@ -515,7 +515,7 @@ btpy_list_item (PyObject *self, Py_ssize_t index)
 	   || obj->element_type == &recpy_aux_type)
     return btpy_item_new (obj->thread, number);
   else
-    return AMD_PyErr_Format (gdbpy_gdb_error, _("Not a valid BtraceList object."));
+    return PyErr_Format (gdbpy_gdb_error, _("Not a valid BtraceList object."));
 }
 
 /* Implementation of BtraceList.__getitem__ (self, slice) -> BtraceList.  */
@@ -539,7 +539,7 @@ btpy_list_slice (PyObject *self, PyObject *value)
     }
 
   if (!AMD_PySlice_Check (value))
-    return AMD_PyErr_Format ((AMD_PyExc_TypeError), _("Index must be int or slice."));
+    return PyErr_Format ((AMD_PyExc_TypeError), _("Index must be int or slice."));
 
   if (0 != AMD_PySlice_GetIndicesEx (value, length, &start, &stop,
 				 &step, &slicelength))
@@ -596,7 +596,7 @@ btpy_list_index (PyObject *self, PyObject *value)
   const LONGEST index = btpy_list_position (self, value);
 
   if (index < 0)
-    return AMD_PyErr_Format ((AMD_PyExc_ValueError), _("Not in list."));
+    return PyErr_Format ((AMD_PyExc_ValueError), _("Not in list."));
 
   return gdb_py_object_from_longest (index).release ();
 }
@@ -832,7 +832,7 @@ recpy_call_filter (const uint64_t payload, const uint64_t ip,
   else
     py_ip = gdb_py_object_from_ulongest (ip);
 
-  gdbpy_ref<> py_result (AMD_PyObject_CallFunctionObjArgs ((PyObject *) ptw_filter,
+  gdbpy_ref<> py_result (PyObject_CallFunctionObjArgs ((PyObject *) ptw_filter,
 							py_payload.get (),
 							py_ip.get (),
 							nullptr));
@@ -924,13 +924,13 @@ recpy_bt_goto (PyObject *self, PyObject *args)
   PyObject *parse_obj;
 
   if (tinfo == NULL || btrace_is_empty (tinfo))
-	return AMD_PyErr_Format (gdbpy_gdb_error, _("Empty branch trace."));
+	return PyErr_Format (gdbpy_gdb_error, _("Empty branch trace."));
 
-  if (!AMD_PyArg_ParseTuple (args, "O", &parse_obj))
+  if (!PyArg_ParseTuple (args, "O", &parse_obj))
     return NULL;
 
   if (Py_TYPE (parse_obj) != &recpy_insn_type)
-    return AMD_PyErr_Format ((AMD_PyExc_TypeError), _("Argument must be instruction."));
+    return PyErr_Format ((AMD_PyExc_TypeError), _("Argument must be instruction."));
   obj = (const recpy_element_object *) parse_obj;
 
   try

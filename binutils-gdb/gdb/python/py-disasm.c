@@ -321,7 +321,7 @@ disasmpy_info_repr (PyObject *self)
 
   const char *arch_name
     = (gdbarch_bfd_arch_info (obj->gdbarch))->printable_name;
-  return AMD_PyUnicode_FromFormat ("<%s address=%s architecture=%s>",
+  return PyUnicode_FromFormat ("<%s address=%s architecture=%s>",
 			       Py_TYPE (obj)->tp_name,
 			       core_addr_to_string_nz (obj->address),
 			       arch_name);
@@ -886,7 +886,7 @@ gdbpy_disassembler::read_memory_func (bfd_vma memaddr, gdb_byte *buff,
   if (!AMD_PyObject_CheckBuffer (result_obj.get ())
       || AMD_PyObject_GetBuffer (result_obj.get(), &py_buff, PyBUF_CONTIG_RO) < 0)
     {
-      AMD_PyErr_Format ((AMD_PyExc_TypeError),
+      PyErr_Format ((AMD_PyExc_TypeError),
 		    _("Result from read_memory is not a buffer"));
       dis->store_exception (gdbpy_err_fetch ());
       return -1;
@@ -899,7 +899,7 @@ gdbpy_disassembler::read_memory_func (bfd_vma memaddr, gdb_byte *buff,
   /* Validate that the buffer is the correct length.  */
   if (py_buff.len != len)
     {
-      AMD_PyErr_Format ((AMD_PyExc_ValueError),
+      PyErr_Format ((AMD_PyExc_ValueError),
 		    _("Buffer returned from read_memory is sized %d instead of the expected %d"),
 		    py_buff.len, len);
       dis->store_exception (gdbpy_err_fetch ());
@@ -1019,7 +1019,7 @@ disasmpy_result_init (PyObject *self, PyObject *args, PyObject *kwargs)
 
   if (string != nullptr && parts_list != nullptr)
     {
-      AMD_PyErr_Format ((AMD_PyExc_ValueError),
+      PyErr_Format ((AMD_PyExc_ValueError),
 		    _("Cannot use 'string' and 'parts' when creating %s."),
 		    Py_TYPE (self)->tp_name);
       return -1;
@@ -1104,7 +1104,7 @@ disasmpy_result_repr (PyObject *self)
 
   gdb_assert (obj->parts != nullptr);
 
-  return AMD_PyUnicode_FromFormat ("<%s length=%d string=\"%U\">",
+  return PyUnicode_FromFormat ("<%s length=%d string=\"%U\">",
 			       Py_TYPE (obj)->tp_name,
 			       obj->length,
 			       disasmpy_result_str (self));
@@ -1257,7 +1257,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
   /* Call into the registered disassembler to (possibly) perform the
      disassembly.  */
   PyObject *insn_disas_obj = (PyObject *) disasm_info;
-  gdbpy_ref<> result (AMD_PyObject_CallFunctionObjArgs (hook.get (),
+  gdbpy_ref<> result (PyObject_CallFunctionObjArgs (hook.get (),
 						    insn_disas_obj,
 						    nullptr));
 
@@ -1347,7 +1347,7 @@ gdbpy_print_insn (struct gdbarch *gdbarch, CORE_ADDR memaddr,
     }
   if (length > max_insn_length)
     {
-      AMD_PyErr_Format
+      PyErr_Format
 	((AMD_PyExc_ValueError),
 	 _("Invalid length attribute: length %d greater than architecture maximum of %d"),
 	 length, max_insn_length);
@@ -1446,7 +1446,7 @@ disasmpy_text_part_repr (PyObject *self)
 
   gdb_assert (obj->string != nullptr);
 
-  return AMD_PyUnicode_FromFormat ("<%s string='%s', style='%s'>",
+  return PyUnicode_FromFormat ("<%s string='%s', style='%s'>",
 			       Py_TYPE (obj)->tp_name,
 			       obj->string->c_str (),
 			       get_style_name (obj->style));
@@ -1489,7 +1489,7 @@ disasmpy_addr_part_repr (PyObject *self)
 {
   disasm_addr_part_object *obj = (disasm_addr_part_object *) self;
 
-  return AMD_PyUnicode_FromFormat ("<%s address='%s'>",
+  return PyUnicode_FromFormat ("<%s address='%s'>",
 			       Py_TYPE (obj)->tp_name,
 			       core_addr_to_string_nz (obj->address));
 }

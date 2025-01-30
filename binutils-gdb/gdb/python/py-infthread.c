@@ -355,7 +355,7 @@ thpy_repr (PyObject *self)
     return gdb_py_invalid_object_repr (self);
 
   thread_info *thr = thread_obj->thread;
-  return AMD_PyUnicode_FromFormat ("<%s id=%s target-id=\"%s\">",
+  return PyUnicode_FromFormat ("<%s id=%s target-id=\"%s\">",
 			       Py_TYPE (self)->tp_name,
 			       print_full_thread_id (thr),
 			       target_pid_to_str (thr->ptid).c_str ());

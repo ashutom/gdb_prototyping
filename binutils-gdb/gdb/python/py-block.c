@@ -452,7 +452,7 @@ blpy_repr (PyObject *self)
       if (++written_symbols < len)
 	str += ", ";
     }
-  return AMD_PyUnicode_FromFormat ("<%s %s {%s}>", Py_TYPE (self)->tp_name,
+  return PyUnicode_FromFormat ("<%s %s {%s}>", Py_TYPE (self)->tp_name,
 			       name, str.c_str ());
 }
 

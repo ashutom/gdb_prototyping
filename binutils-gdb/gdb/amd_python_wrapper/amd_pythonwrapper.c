@@ -7,6 +7,34 @@
 #include "amd_pythonwrapper.h"
 #include "amd_function_pointers_list.h"
 
+
+//Ashutosh
+#include <execinfo.h>
+static void ashutosh_print_backtrace(void);
+static void ashutosh_print_backtrace(void) {  
+  void *buffer[100];  
+  char **symbols;  
+  int size;  
+
+  // Capture the backtrace  
+  size = backtrace(buffer, 100);  
+  symbols = backtrace_symbols(buffer, size);  
+
+  if (symbols == NULL) {  
+      perror("backtrace_symbols");  
+      exit(EXIT_FAILURE);  
+  }  
+
+  printf("Ashutosh : Backtrace:\n");  
+  for (int i = 0; i < size; i++) {  
+      printf("%d: %s\n", i, symbols[i]);  
+  }  
+
+  printf("Ashutosh : Backtrace Ends :\n\n\n");  
+  free(symbols);  
+}  
+
+
 /*
  The init part of the code is clearly the critical section if operated in multiple threads
  Since init would start at lod time hence that would single thread and executed under the constructor API
@@ -17,7 +45,9 @@ static const int AMD_APIVER = 1013;
 static bool GLOBAL_INIT=false;
 static std::unordered_map<std::string,void*>* AMD_FunctionPointerTablePtr=nullptr;
 /*This shall have to be made dynamic using the configuration file later */
-static const char* LIBRARY_WITH_PATH = "/usr/lib64/libpython3.9.so.1.0";
+//static const char* LIBRARY_WITH_PATH = "/lib/x86_64-linux-gnu/libpython3.10.so.1.0";
+static const char* LIBRARY_WITH_PATH = "/opt/ashutosh/python3.10/lib/libpython3.10.so.1.0";
+
 /* LIB handle */
 static void * PY_LIB_HANDLE=NULL;
 
@@ -45,6 +75,21 @@ PyObject*  _AMD_Py_None=nullptr;
 _longobject*  AMD_Py_FalseStructPtr=nullptr;
 _longobject*  AMD_Py_TrueStructPtr=nullptr;
 PyObject*  AMD_Py_NotImplementedStructPtr=nullptr;
+
+//va function pointers
+va_arg_pyfunc 			      AMD_PyArg_VaParseTupleAndKeywords=nullptr;
+pyunicode_fromformat       AMD_PyUnicode_FromFormat=nullptr;
+pyobj_callmethod           AMD_PyObject_CallMethod=nullptr;
+pyobj_callmethodobjargs    AMD_PyObject_CallMethodObjArgs=nullptr;
+pyobj_callfunctionobjargs  AMD_PyObject_CallFunctionObjArgs=nullptr;
+py_buildval                AMD_Py_BuildValue_SizeT=nullptr;
+pyarg_unpacktuple          AMD_PyArg_UnpackTuple=nullptr;
+pyerr_format               AMD_PyErr_Format=nullptr;
+pyarg_parsetuple           AMD_PyArg_ParseTuple=nullptr;
+
+
+//Special Data 
+//char* (*PyOS_ReadlineFunctionPointer)(FILE *, FILE *, const char *)
 
 // Debug functions begin :: TODO : move these to a seperate file
 static bool DEBUG_START=false;
@@ -79,11 +124,11 @@ static void SetEnviornment() {
 static void printObjectType(PyObject* obj) {
    AMD_TRACE_API
    if(DEBUG_START){
-      PyObject* objType = AMD_PyObject_Type(obj);  
+      PyTypeObject* objType = (PyTypeObject*) AMD_PyObject_Type(obj);  
       if (objType != NULL) {  
-         const char* typeName = Py_TYPE(objType)->tp_name;  
+         const char* typeName = objType->tp_name;
          printf("Type of object: %s\n", typeName);  
-         Py_DECREF(objType);  
+         //Py_DECREF(objType);
       } else {  
          printf("Failed to get object type.\n");  
       }  
@@ -157,7 +202,7 @@ static inline void CheckNASSIGN_FP_To_Table_From_LIB_Using_Handle(void* f,const 
 
 
 static void* get_fun_pointer_from_table(const char* funname){
-   AMD_TRACE_API
+   //AMD_TRACE_API
    void* funp=nullptr;
    if(AMD_FunctionPointerTablePtr && AMD_FunctionPointerTablePtr->count(funname)<=0){
       AMD_FunctionPointerTablePtr->insert(std::make_pair(funname,get_fun_pointer_from_handle(funp,funname)));
@@ -200,7 +245,8 @@ static void Initialize_Fun_Pointer_Table(){
       "PyRun_InteractiveLoopFlags",  "PyRun_StringFlags", "Py_CompileStringExFlags", "Py_Initialize",  "Py_Finalize",
       "PyErr_Occurred",  "PyErr_SetObject",  "PyObject_Call",  "Py_SetProgramName", "PySlice_GetIndicesEx",
       "Py_DecRef",  "PyIter_Check",  "_Py_Dealloc", "_PyObject_New", "PyObject_Type", "PyConfig_InitPythonConfig",
-      "PyConfig_SetString", "PyStatus_Exception", "PyConfig_Read", "Py_InitializeFromConfig", "PyConfig_Clear"
+      "PyConfig_SetString", "PyStatus_Exception", "PyConfig_Read", "Py_InitializeFromConfig", "PyConfig_Clear",
+      "PyObject_CallMethod"
    };
    //lets assing
    for(int i=0;i<functionnames.size();i++){
@@ -239,129 +285,59 @@ static void Initialize_AMD_PyAPI_DATA(){
 
    _AMD_Py_DontWriteBytecodeFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_DontWriteBytecodeFlag");
    _AMD_Py_IgnoreEnvironmentFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_IgnoreEnvironmentFlag");
+
+   AMD_PyArg_VaParseTupleAndKeywords= (va_arg_pyfunc)AMD_check_symbol_resolution(placeholder,"PyArg_VaParseTupleAndKeywords");
+   AMD_PyUnicode_FromFormat= (pyunicode_fromformat)AMD_check_symbol_resolution(placeholder,"PyUnicode_FromFormat");
+   AMD_PyObject_CallMethod= (pyobj_callmethod)AMD_check_symbol_resolution(placeholder,"PyObject_CallMethod");
+   AMD_PyObject_CallMethodObjArgs= (pyobj_callmethodobjargs)AMD_check_symbol_resolution(placeholder,"PyObject_CallMethodObjArgs");
+   AMD_Py_BuildValue_SizeT= (py_buildval)AMD_check_symbol_resolution(placeholder,"_Py_BuildValue_SizeT");
+   AMD_PyArg_UnpackTuple= (pyarg_unpacktuple)AMD_check_symbol_resolution(placeholder,"PyArg_UnpackTuple");
+   AMD_PyErr_Format= (pyerr_format)AMD_check_symbol_resolution(placeholder,"PyErr_Format");
+   AMD_PyArg_ParseTuple= (pyarg_parsetuple)AMD_check_symbol_resolution(placeholder,"PyArg_ParseTuple");
+   AMD_PyObject_CallFunctionObjArgs= (pyobj_callfunctionobjargs)AMD_check_symbol_resolution(placeholder,"PyObject_CallFunctionObjArgs");
 }
 
 void amd_lib_constructor() {
    AMD_TRACE_API
+   ashutosh_print_backtrace();
    SetEnviornment();
-   printf("AMD Constructor called\n");
+   printf("===> AMD Constructor start\n");
    AMD_get_lib_handle();
    Initialize_AMD_PyAPI_DATA();
    Initialize_Fun_Pointer_Table();
 
    if(false == SKIP_START){
-      printObjectType(*_AMD_PyExc_RuntimeError);
+      /*printObjectType(*_AMD_PyExc_RuntimeError);
+      fprintf(stdout, "%s\n", " Trying to print : *_AMD_PyExc_RuntimeError <<<<<<<<<<<<<<<<<<<<<<<<");
+      PyObject* AMD_PyExc_RuntimeError_forprinting = *_AMD_PyExc_RuntimeError;
+      PyTypeObject* type_for_printing=AMD_PyExc_RuntimeError_forprinting->ob_type;
+      printf("Trying to print : type_for_printing->tp_name  : is [ %s ] <<<<<<<<<<<<<<< \n", type_for_printing->tp_name);  */    
    }else{
-      printObjectType((PyObject*)*_AMD_PyExc_RuntimeError);
-   }
-   /*fprintf(stdout, "%s\n", " Trying to print : *_AMD_PyExc_RuntimeError <<<<<<<<<<<<<<<<<<<<<<<<");
-   PyObject* AMD_PyExc_RuntimeError_forprinting = *_AMD_PyExc_RuntimeError;
-   PyTypeObject* type_for_printing=AMD_PyExc_RuntimeError_forprinting->ob_type;
-   printf("Trying to print : type_for_printing->tp_name  : is [ %s ] <<<<<<<<<<<<<<< \n", type_for_printing->tp_name);*/   
+      PyObject* var=(PyObject*)*_AMD_PyExc_RuntimeError;
+      printObjectType(var);
+      /*fprintf(stdout, "%s\n", " Trying to print : *var <<<<<<<<<<<<<<<<<<<<<<<<");
+      PyObject* AMD_PyExc_RuntimeError_forprinting = *_AMD_PyExc_RuntimeError;
+      PyTypeObject* type_for_printing=AMD_PyExc_RuntimeError_forprinting->ob_type;
+      printf("Trying to print : type_for_printing->tp_name  : is [ %s ] <<<<<<<<<<<<<<< \n", type_for_printing->tp_name);*/
 
+   }
    GLOBAL_INIT=true;
+   printf("AMD Constructor Ends <=== \n");
 }  
 
+//SPECIAL ONE : assinging value TO Python from GDB
 void AMD_Assign_AMD_PyOS_Readlinefp(AMD_PyOS_Readlinefp FP){
    AMD_TRACE_API
-   AMD_get_lib_handle();
-   AMD_PyOS_Readlinefp* fp=nullptr;
+   ashutosh_print_backtrace();
    char symbolname[]="PyOS_ReadlineFunctionPointer";
-   fp = (AMD_PyOS_Readlinefp*) dlsym(PY_LIB_HANDLE, symbolname);
+   AMD_get_lib_handle();
+   AMD_PyOS_Readlinefp* fp=(AMD_PyOS_Readlinefp*) dlsym(PY_LIB_HANDLE, symbolname);
    if(!fp){
         fprintf(stderr, "%s , %s, %s \n", dlerror(), "Fatal!!  Symbol not found for : ", symbolname);
-        AMD_close_lib_handle();  
-        exit(EXIT_FAILURE);        
+        AMD_close_lib_handle();
+        exit(EXIT_FAILURE);
    }
    *fp=FP;
-}
-
-int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw,
-                                       const char *format, char **keywords, ...){
-   AMD_TRACE_API
-   va_arg_pyfunc fp=(va_arg_pyfunc) get_fun_pointer_from_table("PyArg_VaParseTupleAndKeywords");
-   //Use the function  
-   va_list ap;
-   va_start (ap, keywords);
-   int result = (*fp)(args, kw, format, keywords, ap);  
-   printf("Call status of the API :[ %s ]  is [ %d ]\n",__FUNCTION__, result);
-   va_end (ap);
-   return result;
-}
-PyObject * AMD_PyUnicode_FromFormat(const char *format,...){
-   AMD_TRACE_API
-   pyunicode_fromformat fp=(pyunicode_fromformat) get_fun_pointer_from_table("PyUnicode_FromFormat");
-   va_list ap;
-   va_start (ap, format);
-   PyObject * result = (*fp)(format,ap);
-   va_end (ap);
-   return result;  
-}
-PyObject * AMD_PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...){
-   AMD_TRACE_API
-   pyobj_callmethod fp=(pyobj_callmethod) get_fun_pointer_from_table("_PyObject_CallMethod_SizeT");
-
-   va_list ap;
-   va_start (ap, format);
-   PyObject * result = (*fp)(obj,name,format,ap);
-   va_end (ap);
-   return result;
-}
-PyObject* AMD_PyObject_CallMethodObjArgs(PyObject *obj, PyObject *name, ...){
-   AMD_TRACE_API
-   pyobj_callmethodobjargs fp=(pyobj_callmethodobjargs) get_fun_pointer_from_table("PyObject_CallMethodObjArgs");
-   va_list ap;
-   va_start (ap, name);
-   PyObject* result = (*fp)(obj,name,ap);
-   va_end (ap);
-   return result;
-}
-PyObject*  AMD_PyObject_CallFunctionObjArgs(PyObject *callable,...){
-   AMD_TRACE_API
-   pyobj_callfunctionobjargs fp=(pyobj_callfunctionobjargs) get_fun_pointer_from_table("PyObject_CallFunctionObjArgs");
-
-   va_list ap;
-   va_start (ap, callable);
-   PyObject* result = (*fp)(callable,ap);
-   va_end (ap);
-   return result;
-}
-PyObject* AMD_Py_BuildValue_SizeT(const char * str, ...){
-   AMD_TRACE_API
-   py_buildval fp =(py_buildval) get_fun_pointer_from_table("_Py_BuildValue_SizeT");
-   va_list ap;
-   va_start (ap, str);
-   PyObject* result = (*fp)(str,ap);
-   va_end (ap);
-   return result;
-}
-int AMD_PyArg_UnpackTuple(PyObject * ob, const char * action, Py_ssize_t min, Py_ssize_t max, ...){
-   AMD_TRACE_API
-   pyarg_unpacktuple fp=(pyarg_unpacktuple) get_fun_pointer_from_table("PyArg_UnpackTuple");
-   va_list ap;
-   va_start (ap, max);
-   int result = (*fp)(ob,action,min,max,ap);
-   va_end (ap);
-   return result;   
-}
-PyObject* AMD_PyErr_Format(PyObject *exception,const char *format,...){
-   AMD_TRACE_API
-   pyerr_format fp=(pyerr_format) get_fun_pointer_from_table("PyErr_Format");
-   va_list ap;
-   va_start (ap, format);
-   PyObject* result = (*fp)(exception,format,ap);
-   va_end (ap);
-   return result; 
-}
-
-int AMD_PyArg_ParseTuple(PyObject * obj, const char * cstr, ...){
-   AMD_TRACE_API
-   pyarg_parsetuple fp = (pyarg_parsetuple) get_fun_pointer_from_table("PyArg_ParseTuple");    
-   va_list ap;
-   va_start (ap, cstr);
-   int result = (*fp)(obj,cstr,ap);
-   va_end (ap);
-   return result;
 }
 
 /*inline int AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type){
@@ -1013,39 +989,17 @@ PyStatus AMD_Py_InitializeFromConfig(const PyConfig *config){
 void AMD_PyConfig_Clear(PyConfig * config){
    AMD_TRACE_API
    pyconfig_initpythonconfig fp = (pyconfig_initpythonconfig) get_fun_pointer_from_table("PyConfig_Clear");
-   return (*fp)(config);
+   return (*fp)(config);   
 }
 
 void  _Py_Dealloc(PyObject* ob){
    AMD_TRACE_API
    pyerr_setnone fp = (pyerr_setnone) get_fun_pointer_from_table("_Py_Dealloc");
-   return (*fp) (ob); //execute
+   return (*fp) (ob); //execute    
 }
 
 int PyType_IsSubtype(PyTypeObject* left, PyTypeObject* right){
    AMD_TRACE_API
    pytypeissubtype fp = (pytypeissubtype) get_fun_pointer_from_table("PyType_IsSubtype");
-   return (*fp) (left,right); //execute
+   return (*fp) (left,right); //execute    
 }
-
-#if 0
-
-void _AMD_Py_DECREF(PyObject* ob){
-   AMD_TRACE_API
-   pyerr_setnone fp =(pyerr_setnone) get_fun_pointer_from_table("Py_DecRef");
-   return (*fp) (ob); //execute   
-}
-
-void AMD_Py_CompileStringExFlags(const wchar_t * str){
-   AMD_TRACE_API
-   pysys_setpath fp =(pysys_setpath) get_fun_pointer_from_table("Py_CompileStringExFlags");
-   return (*fp) (str); //execute   
-}
-
-PyObject* AMD_Py_NewRef(PyObject* ob){
-   AMD_TRACE_API
-   pylist_astuple fp =(pylist_astuple) get_fun_pointer_from_table("Py_NewRef");
-   return (*fp) (ob); //execute   
-}
-
-#endif

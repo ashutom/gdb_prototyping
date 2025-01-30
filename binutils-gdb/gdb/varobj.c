@@ -474,7 +474,7 @@ instantiate_pretty_printer (PyObject *constructor, struct value *value)
   if (val_obj == nullptr)
     return NULL;
 
-  return AMD_PyObject_CallFunctionObjArgs (constructor, val_obj.get (), NULL);
+  return PyObject_CallFunctionObjArgs (constructor, val_obj.get (), NULL);
 }
 
 #endif

@@ -457,7 +457,7 @@ pspy_solib_name (PyObject *o, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  if (!AMD_PyArg_ParseTuple (args, "O", &pc_obj))
+  if (!PyArg_ParseTuple (args, "O", &pc_obj))
     return NULL;
   if (get_addr_from_python (pc_obj, &pc) < 0)
     return nullptr;
@@ -480,7 +480,7 @@ pspy_objfile_for_address (PyObject *o, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  if (!AMD_PyArg_ParseTuple (args, "O", &addr_obj))
+  if (!PyArg_ParseTuple (args, "O", &addr_obj))
     return nullptr;
   if (get_addr_from_python (addr_obj, &addr) < 0)
     return nullptr;
@@ -505,7 +505,7 @@ pspy_block_for_pc (PyObject *o, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  if (!AMD_PyArg_ParseTuple (args, "O", &pc_obj))
+  if (!PyArg_ParseTuple (args, "O", &pc_obj))
     return NULL;
   if (get_addr_from_python (pc_obj, &pc) < 0)
     return nullptr;
@@ -547,7 +547,7 @@ pspy_find_pc_line (PyObject *o, PyObject *args)
 
   PSPY_REQUIRE_VALID (self);
 
-  if (!AMD_PyArg_ParseTuple (args, "O", &pc_obj))
+  if (!PyArg_ParseTuple (args, "O", &pc_obj))
     return NULL;
   if (get_addr_from_python (pc_obj, &pc) < 0)
     return nullptr;

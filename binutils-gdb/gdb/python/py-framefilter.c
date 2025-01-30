@@ -1104,7 +1104,7 @@ bootstrap_python_frame_filters (const frame_info_ptr &frame,
   if (py_frame_high == NULL)
     return NULL;
 
-  gdbpy_ref<> iterable (AMD_PyObject_CallFunctionObjArgs (sort_func.get (),
+  gdbpy_ref<> iterable (PyObject_CallFunctionObjArgs (sort_func.get (),
 						      frame_obj.get (),
 						      py_frame_low.get (),
 						      py_frame_high.get (),

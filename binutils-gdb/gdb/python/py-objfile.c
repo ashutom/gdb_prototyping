@@ -540,7 +540,7 @@ objfpy_repr (PyObject *self_)
   if (obj == nullptr)
     return gdb_py_invalid_object_repr (self_);
 
-  return AMD_PyUnicode_FromFormat ("<gdb.Objfile filename=%s>",
+  return PyUnicode_FromFormat ("<gdb.Objfile filename=%s>",
 			       objfile_name (obj));
 }
 

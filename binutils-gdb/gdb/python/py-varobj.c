@@ -95,7 +95,7 @@ py_varobj_iter::next ()
 
 	  std::string name_str = string_printf ("<error at %d>",
 						m_next_raw_index++);
-	  item.reset (AMD_Py_BuildValue ("(ss)", name_str.c_str (),
+	  item.reset (Py_BuildValue_SizeT ("(ss)", name_str.c_str (),
 				     value_str.get ()));
 	  if (item == NULL)
 	    {
@@ -111,7 +111,7 @@ py_varobj_iter::next ()
 	}
     }
 
-  if (!AMD_PyArg_ParseTuple (item.get (), "sO", &name, &py_v))
+  if (!PyArg_ParseTuple (item.get (), "sO", &name, &py_v))
     {
       gdbpy_print_stack ();
       error (_("Invalid item from the child list"));
@@ -154,7 +154,7 @@ py_varobj_get_iterator (struct varobj *var, PyObject *printer,
   scoped_restore set_options = make_scoped_restore (&gdbpy_current_print_options,
 						    opts);
 
-  gdbpy_ref<> children (AMD_PyObject_CallMethodObjArgs (printer, gdbpy_children_cst,
+  gdbpy_ref<> children (PyObject_CallMethodObjArgs (printer, gdbpy_children_cst,
 						    NULL));
   if (children == NULL)
     {

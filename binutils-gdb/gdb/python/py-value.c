@@ -716,7 +716,7 @@ valpy_format_string (PyObject *self, PyObject *args, PyObject *kw)
       /* This matches the error message that Python 3.3 raises when
 	 passing positionals to functions expecting keyword-only
 	 arguments.  */
-      AMD_PyErr_Format ((AMD_PyExc_TypeError),
+      PyErr_Format ((AMD_PyExc_TypeError),
 		    "format_string() takes 0 positional arguments but %zu were given",
 		    positional_count);
       return NULL;
@@ -838,7 +838,7 @@ valpy_do_cast (PyObject *self, PyObject *args, enum exp_opcode op)
   PyObject *type_obj, *result = NULL;
   struct type *type;
 
-  if (! AMD_PyArg_ParseTuple (args, "O", &type_obj))
+  if (! PyArg_ParseTuple (args, "O", &type_obj))
     return NULL;
 
   type = type_object_to_type (type_obj);
@@ -935,7 +935,7 @@ valpy_assign (PyObject *self_obj, PyObject *args)
 {
   PyObject *val_obj;
 
-  if (! AMD_PyArg_ParseTuple (args, "O", &val_obj))
+  if (! PyArg_ParseTuple (args, "O", &val_obj))
     return nullptr;
 
   struct value *val = convert_value_from_python (val_obj);
@@ -1189,7 +1189,7 @@ valpy_getitem (PyObject *self, PyObject *key)
 static int
 valpy_setitem (PyObject *self, PyObject *key, PyObject *value)
 {
-  AMD_PyErr_Format ((AMD_PyExc_NotImplementedError),
+  PyErr_Format ((AMD_PyExc_NotImplementedError),
 		_("Setting of struct elements is not currently supported."));
   return -1;
 }
@@ -2047,11 +2047,11 @@ convert_value_from_python (PyObject *obj)
 	{
 	  PyObject *result;
 
-	  result = AMD_PyObject_CallMethodObjArgs (obj, gdbpy_value_cst,  NULL);
+	  result = PyObject_CallMethodObjArgs (obj, gdbpy_value_cst,  NULL);
 	  value = ((value_object *) result)->value->copy ();
 	}
       else
-	AMD_PyErr_Format ((AMD_PyExc_TypeError),
+	PyErr_Format ((AMD_PyExc_TypeError),
 		      _("Could not convert Python object: %S."), obj);
     }
   catch (const gdb_exception &except)
@@ -2068,7 +2068,7 @@ gdbpy_history (PyObject *self, PyObject *args)
 {
   int i;
 
-  if (!AMD_PyArg_ParseTuple (args, "i", &i))
+  if (!PyArg_ParseTuple (args, "i", &i))
     return NULL;
 
   PyObject *result = nullptr;
@@ -2093,7 +2093,7 @@ gdbpy_add_history (PyObject *self, PyObject *args)
 {
   PyObject *value_obj;
 
-  if (!AMD_PyArg_ParseTuple (args, "O", &value_obj))
+  if (!PyArg_ParseTuple (args, "O", &value_obj))
     return nullptr;
 
   struct value *value = convert_value_from_python (value_obj);
@@ -2128,7 +2128,7 @@ gdbpy_convenience_variable (PyObject *self, PyObject *args)
   const char *varname;
   struct value *res_val = NULL;
 
-  if (!AMD_PyArg_ParseTuple (args, "s", &varname))
+  if (!PyArg_ParseTuple (args, "s", &varname))
     return NULL;
 
   PyObject *result = nullptr;
@@ -2169,7 +2169,7 @@ gdbpy_set_convenience_variable (PyObject *self, PyObject *args)
   PyObject *value_obj;
   struct value *value = NULL;
 
-  if (!AMD_PyArg_ParseTuple (args, "sO", &varname, &value_obj))
+  if (!PyArg_ParseTuple (args, "sO", &varname, &value_obj))
     return NULL;
 
   /* None means to clear the variable.  */

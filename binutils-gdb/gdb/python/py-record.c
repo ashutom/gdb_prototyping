@@ -83,7 +83,7 @@ recpy_method (PyObject *self, void* closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_method (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of record.format.  */
@@ -99,7 +99,7 @@ recpy_format (PyObject *self, void* closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_format (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of record.goto (instruction) -> None.  */
@@ -112,7 +112,7 @@ recpy_goto (PyObject *self, PyObject *value)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_goto (self, value);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of record.clear () -> None.  */
@@ -125,7 +125,7 @@ recpy_clear (PyObject *self, PyObject *value)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_clear (self, value);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of record.replay_position [instruction]  */
@@ -138,7 +138,7 @@ recpy_replay_position (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_replay_position (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of record.instruction_history [list].  */
@@ -151,7 +151,7 @@ recpy_instruction_history (PyObject *self, void* closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_instruction_history (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of record.function_call_history [list].  */
@@ -164,7 +164,7 @@ recpy_function_call_history (PyObject *self, void* closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_function_call_history (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of record.begin [instruction].  */
@@ -177,7 +177,7 @@ recpy_begin (PyObject *self, void* closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_begin (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of record.end [instruction].  */
@@ -190,7 +190,7 @@ recpy_end (PyObject *self, void* closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_end (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Create a new gdb.RecordInstruction object.  */
@@ -221,7 +221,7 @@ recpy_insn_sal (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_insn_sal (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordInstruction.pc [int].  */
@@ -234,7 +234,7 @@ recpy_insn_pc (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_insn_pc (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordInstruction.data [buffer].  */
@@ -247,7 +247,7 @@ recpy_insn_data (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_insn_data (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordInstruction.decoded [str].  */
@@ -260,7 +260,7 @@ recpy_insn_decoded (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_insn_decoded (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordInstruction.size [int].  */
@@ -273,7 +273,7 @@ recpy_insn_size (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_insn_size (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordInstruction.is_speculative [bool].  */
@@ -286,7 +286,7 @@ recpy_insn_is_speculative (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_insn_is_speculative (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Create a new gdb.RecordFunctionSegment object.  */
@@ -317,7 +317,7 @@ recpy_func_level (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_func_level (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordFunctionSegment.symbol [gdb.Symbol].  */
@@ -330,7 +330,7 @@ recpy_func_symbol (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_func_symbol (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordFunctionSegment.instructions [list].  */
@@ -343,7 +343,7 @@ recpy_func_instructions (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_func_instructions (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordFunctionSegment.up [RecordFunctionSegment].  */
@@ -356,7 +356,7 @@ recpy_func_up (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_func_up (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordFunctionSegment.prev [RecordFunctionSegment].  */
@@ -369,7 +369,7 @@ recpy_func_prev (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_func_prev (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordFunctionSegment.next [RecordFunctionSegment].  */
@@ -382,7 +382,7 @@ recpy_func_next (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_func_next (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Implementation of RecordInstruction.number [int] and
@@ -526,7 +526,7 @@ recpy_aux_data (PyObject *self, void *closure)
   if (obj->method == RECORD_METHOD_BTRACE)
     return recpy_bt_aux_data (self, closure);
 
-  return AMD_PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
+  return PyErr_Format ((AMD_PyExc_NotImplementedError), _("Not implemented."));
 }
 
 /* Record method list.  */
@@ -671,7 +671,7 @@ gdbpy_start_recording (PyObject *self, PyObject *args)
   const char *method = NULL;
   const char *format = NULL;
 
-  if (!AMD_PyArg_ParseTuple (args, "|ss", &method, &format))
+  if (!PyArg_ParseTuple (args, "|ss", &method, &format))
     return NULL;
 
   try

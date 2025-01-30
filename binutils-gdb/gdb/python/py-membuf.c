@@ -71,7 +71,7 @@ mbpy_str (PyObject *self)
 {
   membuf_object *membuf_obj = (membuf_object *) self;
 
-  return AMD_PyUnicode_FromFormat (_("Memory buffer for address %s, \
+  return PyUnicode_FromFormat (_("Memory buffer for address %s, \
 which is %s bytes long."),
 			       paddress (gdbpy_enter::get_gdbarch (),
 					 membuf_obj->addr),

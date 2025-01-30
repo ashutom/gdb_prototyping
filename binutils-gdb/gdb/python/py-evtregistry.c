@@ -34,7 +34,7 @@ evregpy_connect (PyObject *self, PyObject *function)
   PyObject *func;
   PyObject *callback_list = (((eventregistry_object *) self)->callbacks);
 
-  if (!AMD_PyArg_ParseTuple (function, "O", &func))
+  if (!PyArg_ParseTuple (function, "O", &func))
     return NULL;
 
   if (!AMD_PyCallable_Check (func))
@@ -59,7 +59,7 @@ evregpy_disconnect (PyObject *self, PyObject *function)
   int index;
   PyObject *callback_list = (((eventregistry_object *) self)->callbacks);
 
-  if (!AMD_PyArg_ParseTuple (function, "O", &func))
+  if (!PyArg_ParseTuple (function, "O", &func))
     return NULL;
 
   index = AMD_PySequence_Index (callback_list, func);

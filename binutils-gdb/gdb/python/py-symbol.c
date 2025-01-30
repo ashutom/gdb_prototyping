@@ -268,7 +268,7 @@ sympy_value (PyObject *self, PyObject *args)
   frame_info_ptr frame_info = NULL;
   PyObject *frame_obj = NULL;
 
-  if (!AMD_PyArg_ParseTuple (args, "|O", &frame_obj))
+  if (!PyArg_ParseTuple (args, "|O", &frame_obj))
     return NULL;
 
   if (frame_obj != NULL && !PyObject_TypeCheck (frame_obj, &frame_object_type))
@@ -386,7 +386,7 @@ sympy_repr (PyObject *self)
   if (symbol == nullptr)
     return gdb_py_invalid_object_repr (self);
 
-  return AMD_PyUnicode_FromFormat ("<%s print_name=%s>", Py_TYPE (self)->tp_name,
+  return PyUnicode_FromFormat ("<%s print_name=%s>", Py_TYPE (self)->tp_name,
 			       symbol->print_name ());
 }
 

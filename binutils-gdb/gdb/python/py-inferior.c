@@ -812,7 +812,7 @@ infpy_repr (PyObject *obj)
   if (inf == nullptr)
     return gdb_py_invalid_object_repr (obj);
 
-  return AMD_PyUnicode_FromFormat ("<gdb.Inferior num=%d, pid=%d>",
+  return PyUnicode_FromFormat ("<gdb.Inferior num=%d, pid=%d>",
 			       inf->num, inf->pid);
 }
 

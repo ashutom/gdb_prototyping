@@ -159,7 +159,7 @@ ltpy_get_pcs_for_line (PyObject *self, PyObject *args)
 
   LTPY_REQUIRE_VALID (self, symtab);
 
-  if (! AMD_PyArg_ParseTuple (args, GDB_PY_LL_ARG, &py_line))
+  if (! PyArg_ParseTuple (args, GDB_PY_LL_ARG, &py_line))
     return NULL;
 
   try
@@ -187,7 +187,7 @@ ltpy_has_line (PyObject *self, PyObject *args)
 
   LTPY_REQUIRE_VALID (self, symtab);
 
-  if (! AMD_PyArg_ParseTuple (args, GDB_PY_LL_ARG, &py_line))
+  if (! PyArg_ParseTuple (args, GDB_PY_LL_ARG, &py_line))
     return NULL;
 
   if (symtab->linetable () == NULL)
