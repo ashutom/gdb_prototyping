@@ -1,0 +1,28 @@
+
+
+Build_cmd used :  ./binutils-gdb/configure --disable-binutils --disable-ld --disable-gold --disable-gas --disable-sim --disable-gprof --disable-gprofng --disable-intl --disable-doc --with-separate-debug-dir=/usr/lib/debug CXXFLAGS='-g3 -O0' CFLAGS='-g3 -O0'  
+
+
+
+
+ 673
+ 674 # Libraries and corresponding dependencies for compiling gdb.
+ 675 # XM_CLIBS, defined in *config files, have host-dependent libs.
+ 676 # LIBIBERTY appears twice on purpose.
+ 677 CLIBS = $(SIM) $(READLINE) $(OPCODES) $(LIBCTF) $(BFD) $(ZLIB) $(ZSTD_LIBS) \
+ 678         $(LIBSUPPORT) $(INTL) $(LIBIBERTY) $(LIBDECNUMBER) \
+ 679         $(XM_CLIBS) $(GDBTKLIBS)  $(LIBBACKTRACE_LIB) \
+ 680         @LIBS@ @GUILE_LIBS@ @PYTHON_LIBS@ $(AMD_DBGAPI_LIBS) \
+ 681         $(LIBEXPAT) $(LIBLZMA) $(LIBBABELTRACE) $(LIBIPT) \
+ 682         $(WIN32LIBS) $(LIBGNU) $(LIBGNU_EXTRA_LIBS) $(LIBICONV) \
+ 683         $(GMPLIBS) $(SRCHIGH_LIBS) $(LIBXXHASH) $(PTHREAD_LIBS) \
+ 684         $(DEBUGINFOD_LIBS) $(LIBBABELTRACE_LIB)
+ 685 CDEPS = $(NAT_CDEPS) $(SIM) $(BFD) $(READLINE_DEPS) $(CTF_DEPS) \
+ 686         $(OPCODES) $(INTL_DEPS) $(LIBIBERTY) $(CONFIG_DEPS) $(LIBGNU) \
+ 687         $(LIBSUPPORT)
+ 688
+
+
+
+
+
