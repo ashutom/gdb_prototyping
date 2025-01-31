@@ -37,19 +37,15 @@ extern pyarg_unpacktuple          AMD_PyArg_UnpackTuple;
 extern pyerr_format               AMD_PyErr_Format;
 extern pyarg_parsetuple           AMD_PyArg_ParseTuple;
 
-//#define AMD_PyBool_Check(x)             AMD_Py_IS_TYPE(x,&(AMD_PyBool_Type))
-//#define AMD_PySlice_Check(op)           AMD_Py_IS_TYPE(op, &(AMD_PySlice_Type))
 #define AMD_PyBool_Check(x)             Py_IS_TYPE(x,&(AMD_PyBool_Type))
 #define AMD_PySlice_Check(op)           Py_IS_TYPE(op, &(AMD_PySlice_Type))
 #define AMD_PyRun_String(str, s, g, l)  AMD_PyRun_StringFlags(str,s,g,l,NULL)
 #define AMD_PyRun_InteractiveLoop(f, p) AMD_PyRun_InteractiveLoopFlags(f, p, NULL)
-//#define AMD_Py_DECREF(ob)               _AMD_Py_DECREF((PyObject*) ob);
 #define AMD_Py_DECREF(ob)               Py_DECREF(ob);
 #define AMD_Py_RETURN_FALSE return      Py_INCREF(AMD_Py_False), AMD_Py_False
 #define AMD_Py_RETURN_TRUE return       Py_INCREF(AMD_Py_True), AMD_Py_True
 #define AMD_Py_RETURN_NONE return       Py_INCREF(AMD_Py_NotImplemented), AMD_Py_NotImplemented
 #define Py_BuildValue_SizeT               _Py_BuildValue_SizeT_
-//#define AMD_PyFloat_Check(op)           AMD_PyObject_TypeCheck(op,AMD_PyFloat_Type)
 #define AMD_PyFloat_Check(op)           PyObject_TypeCheck(op, (&(AMD_PyFloat_Type)))
 #define AMD_Py_False                    ((PyObject *)   &(*AMD_Py_FalseStructPtr))
 #define AMD_Py_True                     ((PyObject *)   &(*AMD_Py_TrueStructPtr))
@@ -88,29 +84,10 @@ extern pyarg_parsetuple           AMD_PyArg_ParseTuple;
 #define PyUnicode_FromFormat            (*AMD_PyUnicode_FromFormat)
 
 
-
-
 //From python :  extern __attribute__ ((visibility ("default"))) char* (*PyOS_ReadlineFunctionPointer)(FILE *, FILE *, const char *)
 typedef char* (*AMD_PyOS_Readlinefp) (FILE *, FILE *, const char *);
 
 void AMD_Assign_AMD_PyOS_Readlinefp(AMD_PyOS_Readlinefp FP);
-
-#if 0
-int  AMD_PyArg_VaParseTupleAndKeywords(PyObject *args, PyObject *kw, const char *format, 
-                                       char **keywords, ...);
-PyObject* PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...);
-PyObject* PyObject_CallMethodObjArgs(PyObject *obj, PyObject *name, ...);
-PyObject* PyObject_CallFunctionObjArgs(PyObject *callable,...);
-//PyObject* Py_BuildValue_SizeT(const char *, ...);
-PyObject* AMD_Py_BuildValue_SizeT(const char *, ...);
-int PyArg_ParseTuple(PyObject *, const char *, ...);
-int AMD_PyArg_UnpackTuple(PyObject *, const char *, Py_ssize_t, Py_ssize_t, ...);
-PyObject * PyErr_Format(PyObject *exception,const char *format,...);
-PyObject* PyUnicode_FromFormat(
-    const char *format,   /* ASCII-encoded string  */
-    ...
-);
-#endif
 
 PyObject* AMD_PyObject_CallObject(PyObject *callable, PyObject *args);
 PyObject* AMD_PyObject_GetAttr(PyObject * ob, PyObject * at);
@@ -254,7 +231,6 @@ int AMD_PyBuffer_FillInfo(Py_buffer *view, PyObject *o, void *buf,
                                   Py_ssize_t len, int readonly,
                                   int flags);
 
-
 long AMD_PyLong_AsLong(PyObject *ob);
 long long AMD_PyLong_AsLongLong(PyObject *ob);
 long AMD_PyLong_AsLongAndOverflow(PyObject *ob, int* nump);
@@ -264,8 +240,6 @@ PyObject* AMD_PyLong_FromUnsignedLongLong(unsigned long long);
 unsigned long long AMD_PyLong_AsUnsignedLongLong(PyObject *);
 
 void AMD_PyErr_SetNone(PyObject *);
-//int  PySlice_Unpack(PyObject *slice, Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step);
-//Py_ssize_t PySlice_AdjustIndices(Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t step);
 
 PyObject* AMD_PyNumber_Long(PyObject *o);
 
@@ -311,27 +285,5 @@ PyObject* AMD_PyObject_Type(PyObject *o);
 void amd_lib_constructor();
 //void __attribute__((constructor)) amd_lib_constructor();
 
-
-#if 0 //these APIs are not needed
-template<typename T>
-T* AMD_PyObject_New(PyTypeObject* objptr){
-   AMD_get_lib_handle();   
-   char str[]="_PyObject_New";
-   py_new_func fp =(py_new_func) AMD_check_symbol_resolution((void*) fp,str);
-   PyObject* retval = (*fp)(objptr);
-   return (T*) retval;
-}
-void AMD_Py_CompileStringExFlags(const wchar_t *);
-PyObject* AMD_Py_NewRef(PyObject* ob);
-inline PyObject* _AMD_Py_RETURN_FALSE_() {
-    return AMD_Py_NewRef(AMD_Py_False);
-}
-inline PyObject* _AMD_Py_RETURN_TRUE_(){
-    return AMD_Py_NewRef(AMD_Py_True);
-}
-inline PyObject* _AMD_Py_RETURN_NONE_(){
-    return AMD_Py_NewRef(AMD_Py_None);
-}
-#endif
 
 #endif /* __AMD_PYTHON_WRAPPER__ */

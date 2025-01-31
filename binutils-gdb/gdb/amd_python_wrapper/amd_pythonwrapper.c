@@ -7,34 +7,6 @@
 #include "amd_pythonwrapper.h"
 #include "amd_function_pointers_list.h"
 
-
-//Ashutosh
-#include <execinfo.h>
-static void ashutosh_print_backtrace(void);
-static void ashutosh_print_backtrace(void) {  
-  void *buffer[100];  
-  char **symbols;  
-  int size;  
-
-  // Capture the backtrace  
-  size = backtrace(buffer, 100);  
-  symbols = backtrace_symbols(buffer, size);  
-
-  if (symbols == NULL) {  
-      perror("backtrace_symbols");  
-      exit(EXIT_FAILURE);  
-  }  
-
-  printf("Ashutosh : Backtrace:\n");  
-  for (int i = 0; i < size; i++) {  
-      printf("%d: %s\n", i, symbols[i]);  
-  }  
-
-  printf("Ashutosh : Backtrace Ends :\n\n\n");  
-  free(symbols);  
-}  
-
-
 /*
  The init part of the code is clearly the critical section if operated in multiple threads
  Since init would start at lod time hence that would single thread and executed under the constructor API
@@ -46,7 +18,10 @@ static bool GLOBAL_INIT=false;
 static std::unordered_map<std::string,void*>* AMD_FunctionPointerTablePtr=nullptr;
 /*This shall have to be made dynamic using the configuration file later */
 //static const char* LIBRARY_WITH_PATH = "/lib/x86_64-linux-gnu/libpython3.10.so.1.0";
-static const char* LIBRARY_WITH_PATH = "/opt/ashutosh/python3.10/lib/libpython3.10.so.1.0";
+//static const char* LIBRARY_WITH_PATH = "/opt/ashutosh/python3.10/lib/libpython3.10.so.1.0";
+//BUFFER FOR LIB PATH
+const int MAX_LIB_PATH_CHARS=256;
+static char LIBRARY_WITH_PATH[MAX_LIB_PATH_CHARS]={};
 
 /* LIB handle */
 static void * PY_LIB_HANDLE=NULL;
@@ -97,22 +72,42 @@ static bool SKIP_START=false;
 static const char* DEBUG_VAR=  "AMD_GDB_DEBUG";
 static const char* SKIP_VAR=   "AMD_GDB_DEBUG_SKIP";
 static void SetEnviornment();
-static void printObjectType(PyObject* obj);
+//static void printObjectType(PyObject* obj);
+static void DiscoverPythonLib();
+static void amd_gdb_backtrace(void);
 #define check_set_and_print_debug_value(value_var_name,env_var_name,debug_value_for_setting)     do{     \
     const char* value_var_name = getenv(env_var_name);                                                   \
     if (value_var_name != NULL) {                                                                        \
-        printf("Value of %s is: %s\n", "#env_var_name", value_var_name);                                 \
+        printf("Value of %s is: %s\n", env_var_name, value_var_name);                                    \
         debug_value_for_setting=true;                                                                    \
     } else {                                                                                             \
-        printf("Environment variable %s is not set.\n", "#env_var_name");                                \
+        printf("Environment variable %s is not set.\n", env_var_name);                                   \
     }                                                                                                    \
 }while(0);                                                                                               \
 
+/*
 #define AMD_TRACE_API   do{                                                                              \
    if(DEBUG_START){                                                                                      \
       printf(" In AMD API : [%s] \n", __FUNCTION__);                                                     \
    }                                                                                                     \
 }while(0);                                                                                               \
+*/
+
+#define AMD_TRACE_API AMD_DEBUG_PRINT_ONE_VAR(" In AMD API : ",__FUNCTION__)
+
+#define AMD_DEBUG_PRINT_ONE_VAR(PRINT,VAR)   do{                                                         \
+   if(DEBUG_START){                                                                                      \
+      fprintf(stdout, "%s, %s\n", PRINT, VAR);                                                           \
+   }                                                                                                     \
+}while(0);                                                                                               \
+
+
+#define AMD_DEBUG_PRINT_NO_VAR(PRINT)   do{                                                              \
+   if(DEBUG_START){                                                                                      \
+      fprintf(stdout, "%s \n", PRINT);                                                                   \
+   }                                                                                                     \
+}while(0);                                                                                               \
+
 
 static void SetEnviornment() {
    AMD_TRACE_API
@@ -120,23 +115,6 @@ static void SetEnviornment() {
     check_set_and_print_debug_value(AMD_GDB_DEBUG_VALUE,DEBUG_VAR,DEBUG_START);
     check_set_and_print_debug_value(AMD_GDB_DEBUG_SKIP_VALUE,SKIP_VAR,SKIP_START);
 }  
-
-static void printObjectType(PyObject* obj) {
-   AMD_TRACE_API
-   if(DEBUG_START){
-      PyTypeObject* objType = (PyTypeObject*) AMD_PyObject_Type(obj);  
-      if (objType != NULL) {  
-         const char* typeName = objType->tp_name;
-         printf("Type of object: %s\n", typeName);  
-         //Py_DECREF(objType);
-      } else {  
-         printf("Failed to get object type.\n");  
-      }  
-
-   }
-}
-
-
 // Debug functions end :: TODO : move these to a seperate file
 
 
@@ -163,7 +141,7 @@ static void* AMD_get_lib_handle(){
         	//PY_LIB_HANDLE = dlopen(LIBRARY_WITH_PATH, RTLD_LAZY);
          //Switched to RTLD_NOW because we wanted to resolve all the symbols in the starting
          //when we are making funtion pointer table
-         PY_LIB_HANDLE = dlopen(LIBRARY_WITH_PATH, RTLD_NOW); 
+         PY_LIB_HANDLE = dlopen((const char*)LIBRARY_WITH_PATH, RTLD_NOW);
 		if (!PY_LIB_HANDLE) {
             AMD_lib_exception_failure_handeler();
         }
@@ -195,7 +173,8 @@ static inline void CheckNASSIGN_FP_To_Table_From_LIB_Using_Handle(void* f,const 
    if(AMD_FunctionPointerTablePtr->count(std::string(str))>0){
       fprintf(stderr, "%s, %s\n", "Alaready present in table hence overriding pointer for", str);
    }else{
-      fprintf(stdout, "%s, %s\n", "Adding function pointer for", str);
+      //fprintf(stdout, "%s, %s\n", "Adding function pointer for", str);
+      AMD_DEBUG_PRINT_ONE_VAR("Adding function pointer for",str)
    }
    (*AMD_FunctionPointerTablePtr).insert(std::make_pair(str,AMD_check_symbol_resolution(f,str)));   
 }
@@ -299,36 +278,25 @@ static void Initialize_AMD_PyAPI_DATA(){
 
 void amd_lib_constructor() {
    AMD_TRACE_API
-   ashutosh_print_backtrace();
    SetEnviornment();
-   printf("===> AMD Constructor start\n");
+   AMD_DEBUG_PRINT_NO_VAR("===> AMD Constructor start\n")
+   //Set Python Lib Path for symbols
+   DiscoverPythonLib();
+   //Open lib
    AMD_get_lib_handle();
+   //Init Data
    Initialize_AMD_PyAPI_DATA();
+   //Init Functions
    Initialize_Fun_Pointer_Table();
 
-   if(false == SKIP_START){
-      /*printObjectType(*_AMD_PyExc_RuntimeError);
-      fprintf(stdout, "%s\n", " Trying to print : *_AMD_PyExc_RuntimeError <<<<<<<<<<<<<<<<<<<<<<<<");
-      PyObject* AMD_PyExc_RuntimeError_forprinting = *_AMD_PyExc_RuntimeError;
-      PyTypeObject* type_for_printing=AMD_PyExc_RuntimeError_forprinting->ob_type;
-      printf("Trying to print : type_for_printing->tp_name  : is [ %s ] <<<<<<<<<<<<<<< \n", type_for_printing->tp_name);  */    
-   }else{
-      PyObject* var=(PyObject*)*_AMD_PyExc_RuntimeError;
-      printObjectType(var);
-      /*fprintf(stdout, "%s\n", " Trying to print : *var <<<<<<<<<<<<<<<<<<<<<<<<");
-      PyObject* AMD_PyExc_RuntimeError_forprinting = *_AMD_PyExc_RuntimeError;
-      PyTypeObject* type_for_printing=AMD_PyExc_RuntimeError_forprinting->ob_type;
-      printf("Trying to print : type_for_printing->tp_name  : is [ %s ] <<<<<<<<<<<<<<< \n", type_for_printing->tp_name);*/
-
-   }
    GLOBAL_INIT=true;
-   printf("AMD Constructor Ends <=== \n");
+   AMD_DEBUG_PRINT_NO_VAR("AMD Constructor Ends <=== \n")
 }  
 
 //SPECIAL ONE : assinging value TO Python from GDB
 void AMD_Assign_AMD_PyOS_Readlinefp(AMD_PyOS_Readlinefp FP){
    AMD_TRACE_API
-   ashutosh_print_backtrace();
+   amd_gdb_backtrace();
    char symbolname[]="PyOS_ReadlineFunctionPointer";
    AMD_get_lib_handle();
    AMD_PyOS_Readlinefp* fp=(AMD_PyOS_Readlinefp*) dlsym(PY_LIB_HANDLE, symbolname);
@@ -339,27 +307,6 @@ void AMD_Assign_AMD_PyOS_Readlinefp(AMD_PyOS_Readlinefp FP){
    }
    *fp=FP;
 }
-
-/*inline int AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type){
-   AMD_TRACE_API
-   return ob->ob_type == type;
-}
-
-int  AMD_PyObject_TypeCheck(PyObject *ob, PyTypeObject* type){
-   AMD_TRACE_API
-   //int result = AMD_Py_IS_TYPE(ob,type);
-   int result = Py_IS_TYPE(ob,type);
-   if(0 == result){
-      // Look up the symbol
-      pytypeissubtype Py_pytypeissubtype=(pytypeissubtype)get_fun_pointer_from_table("PyType_IsSubtype");
-      //Use the function  
-      result = (*Py_pytypeissubtype) (ob->ob_type,type);  
-      printf("Call status of the API :[ %s ]  is [ %d ]\n",__FUNCTION__, result);
-   }
-  
-   return result ;
-}*/
-
 
 void AMD_PyErr_SetString(PyObject *exception, const char* Errstr){
    AMD_TRACE_API
@@ -1003,3 +950,107 @@ int PyType_IsSubtype(PyTypeObject* left, PyTypeObject* right){
    pytypeissubtype fp = (pytypeissubtype) get_fun_pointer_from_table("PyType_IsSubtype");
    return (*fp) (left,right); //execute    
 }
+
+void DiscoverPythonLib()   {
+
+   const std::string py_discovery_script = "python3 -c \"import sysconfig; print(sysconfig.get_config_var('LIBDIR')); print(sysconfig.get_config_var('LDLIBRARY'));\" ";
+   const int NUMBER_OF_LINES = 3;
+   const int MAX_BUFFER_SIZE = 1024;
+   std::vector<std::string> line_commands(NUMBER_OF_LINES);
+   FILE *fp;
+   char buffer[MAX_BUFFER_SIZE];  // Buffer to store the output from the Python script
+
+   // Open the command for reading
+   fp = popen(py_discovery_script.c_str(), "r");
+   if (fp == nullptr) {
+      perror("Failed to run python commands ");
+      exit(EXIT_FAILURE);
+   }
+
+   // Read the output a line at a time
+   int counter = 0;
+   if(DEBUG_START) { fprintf(stdout, "%s\n", "Output from Python discovery script:\n"); }
+   while ((fgets(buffer, sizeof(buffer), fp) != nullptr) && counter< NUMBER_OF_LINES ) {
+      if(DEBUG_START) { fprintf(stdout, "%s\n", buffer); }
+      //remove new line char from the buffer
+      buffer[strcspn(buffer, "\n")] = 0;
+      line_commands[counter++] = buffer;
+   }
+   // Close the pipe
+   int status = pclose(fp);
+   if (status == -1) {
+      perror("Error reported by pclose()");
+   }
+
+   // Make find command
+   std::string find_command = "find " + line_commands[0] + " -name " + line_commands[1] + " | head -n 1 ";
+   if(DEBUG_START) { fprintf(stdout, "find command = [ %s ] \n", find_command.c_str()); }
+   fp = popen(find_command.c_str(), "r");
+   if (fp == nullptr) {
+      perror("Failed to run find command ");
+      exit(EXIT_FAILURE);
+   }
+
+   // Read the output a line at a time
+   if(DEBUG_START) { fprintf(stdout, "Output from find cmd: \n"); }
+   while (fgets(buffer, sizeof(buffer), fp) != nullptr) {
+      if(DEBUG_START) { fprintf(stdout, "%s\n", buffer); }
+      buffer[strcspn(buffer, "\n")] = 0;
+      line_commands[2] = buffer;
+   }
+   // Close the pipe
+   pclose(fp);
+   if(DEBUG_START){
+      fprintf(stdout, "All of the THREE cmds : \n");
+      for(int i=0;i<NUMBER_OF_LINES;i++){
+         fprintf(stdout, "[%d] ==> [%s] : \n",i+1,line_commands[i].c_str());
+      }
+   }
+
+   //finally copy to the buffer
+   strncpy(LIBRARY_WITH_PATH, line_commands[NUMBER_OF_LINES-1].c_str() ,MAX_LIB_PATH_CHARS);
+}
+
+//Debug
+#include <execinfo.h>
+static void amd_gdb_backtrace(void) {
+   if(DEBUG_START){
+      void *buffer[100];
+      char **symbols;
+      int size;
+
+      // Capture the backtrace
+      size = backtrace(buffer, 100);
+      symbols = backtrace_symbols(buffer, size);
+
+      if (symbols == NULL) {
+         perror("backtrace_symbols");
+         exit(EXIT_FAILURE);
+      }
+
+      printf("AMD : Backtrace:\n");
+      for (int i = 0; i < size; i++) {
+         printf("%d: %s\n", i, symbols[i]);
+      }
+
+      printf("Ashutosh : Backtrace Ends :\n\n\n");
+      free(symbols);
+   }
+}
+
+/*
+static void printObjectType(PyObject* obj) {
+   AMD_TRACE_API
+   if(DEBUG_START){
+      PyTypeObject* objType = (PyTypeObject*) AMD_PyObject_Type(obj);
+      if (objType != NULL) {
+         const char* typeName = objType->tp_name;
+         printf("Type of object: %s\n", typeName);
+         //Py_DECREF(objType);
+      } else {
+         printf("Failed to get object type.\n");
+      }
+
+   }
+}
+*/
