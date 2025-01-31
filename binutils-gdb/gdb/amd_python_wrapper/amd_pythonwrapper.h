@@ -3,8 +3,8 @@
 
 #include <Python.h>
 #include "amd_function_pointers_list.h"
-//#include "amd_function_pointers_list.h"
 
+//Declarations of the externs in other translation units
 extern PyTypeObject*    _AMD_PyBool_Type;
 extern PyTypeObject*    _AMD_PySlice_Type;
 extern PyTypeObject*    _AMD_PyEllipsis_Type;
@@ -37,6 +37,7 @@ extern pyarg_unpacktuple          AMD_PyArg_UnpackTuple;
 extern pyerr_format               AMD_PyErr_Format;
 extern pyarg_parsetuple           AMD_PyArg_ParseTuple;
 
+//Macros for Delinking GDB from Python
 #define AMD_PyBool_Check(x)             Py_IS_TYPE(x,&(AMD_PyBool_Type))
 #define AMD_PySlice_Check(op)           Py_IS_TYPE(op, &(AMD_PySlice_Type))
 #define AMD_PyRun_String(str, s, g, l)  AMD_PyRun_StringFlags(str,s,g,l,NULL)
@@ -100,9 +101,7 @@ PyObject* AMD_PyObject_Repr(PyObject *);
 PyObject* AMD_PyObject_Str(PyObject *);
 Py_ssize_t AMD_PyObject_Size(PyObject *o);
 int AMD_PyObject_RichCompareBool(PyObject *, PyObject *, int);
-
 PyObject* AMD_PyUnicode_AsASCIIString(PyObject *unicode);
-
 PyObject* AMD_PyUnicode_FromString(const char *ustr);
 PyObject* AMD_PyUnicode_Decode(
     const char *s,              /* encoded string */
@@ -119,8 +118,6 @@ PyObject* AMD_PyUnicode_AsEncodedString(
     const char *encoding,       /* encoding */
     const char *errors          /* error handling */
     );
-//int AMD_Py_IS_TYPE(PyObject *ob, PyTypeObject *type);
-//int AMD_PyObject_TypeCheck(PyObject *ob, PyTypeObject*);
 PyObject* AMD_PyObject_GetAttrString(PyObject *, const char *);
 int AMD_PyObject_SetAttrString(PyObject *, const char *, PyObject *);
 int AMD_PyObject_HasAttrString(PyObject *, const char *);
@@ -240,7 +237,6 @@ PyObject* AMD_PyLong_FromUnsignedLongLong(unsigned long long);
 unsigned long long AMD_PyLong_AsUnsignedLongLong(PyObject *);
 
 void AMD_PyErr_SetNone(PyObject *);
-
 PyObject* AMD_PyNumber_Long(PyObject *o);
 
 /* Return Python float from C double. */

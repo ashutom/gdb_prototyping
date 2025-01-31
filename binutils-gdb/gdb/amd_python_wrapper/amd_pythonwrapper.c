@@ -9,7 +9,7 @@
 
 /*
  The init part of the code is clearly the critical section if operated in multiple threads
- Since init would start at lod time hence that would single thread and executed under the constructor API
+ Since init would start at load time hence that would single thread and executed under the constructor API
  Hence not using pthread_mutex anywhere 
 */
 
@@ -17,8 +17,6 @@ static const int AMD_APIVER = 1013;
 static bool GLOBAL_INIT=false;
 static std::unordered_map<std::string,void*>* AMD_FunctionPointerTablePtr=nullptr;
 /*This shall have to be made dynamic using the configuration file later */
-//static const char* LIBRARY_WITH_PATH = "/lib/x86_64-linux-gnu/libpython3.10.so.1.0";
-//static const char* LIBRARY_WITH_PATH = "/opt/ashutosh/python3.10/lib/libpython3.10.so.1.0";
 //BUFFER FOR LIB PATH
 const int MAX_LIB_PATH_CHARS=256;
 static char LIBRARY_WITH_PATH[MAX_LIB_PATH_CHARS]={};
@@ -85,14 +83,6 @@ static void amd_gdb_backtrace(void);
     }                                                                                                    \
 }while(0);                                                                                               \
 
-/*
-#define AMD_TRACE_API   do{                                                                              \
-   if(DEBUG_START){                                                                                      \
-      printf(" In AMD API : [%s] \n", __FUNCTION__);                                                     \
-   }                                                                                                     \
-}while(0);                                                                                               \
-*/
-
 #define AMD_TRACE_API AMD_DEBUG_PRINT_ONE_VAR(" In AMD API : ",__FUNCTION__)
 
 #define AMD_DEBUG_PRINT_ONE_VAR(PRINT,VAR)   do{                                                         \
@@ -137,7 +127,8 @@ static void AMD_lib_exception_failure_handeler(){
 static void* AMD_get_lib_handle(){
    AMD_TRACE_API
 	if(!PY_LIB_HANDLE){
-                fprintf(stdout, "%s\n", "Ashutosh 's Implementation of Python API <<<<<<<<<<<<<<<<<<<<<<<<");  
+         fprintf(stdout, "%s\n", "AMD's Implementation of Python API <<<<<<<<<<<<<<<<<<<<<<<<");
+         fprintf(stdout, "%s %s %s \n", "Using PythonLib [", LIBRARY_WITH_PATH, "] ");
         	//PY_LIB_HANDLE = dlopen(LIBRARY_WITH_PATH, RTLD_LAZY);
          //Switched to RTLD_NOW because we wanted to resolve all the symbols in the starting
          //when we are making funtion pointer table
@@ -232,7 +223,6 @@ static void Initialize_Fun_Pointer_Table(){
       CheckNASSIGN_FP_To_Table_From_LIB_Using_Handle(placeholder,functionnames[i].c_str());
    }   
 }
-
 
 static void Initialize_AMD_PyAPI_DATA(){
    AMD_TRACE_API
@@ -953,12 +943,12 @@ int PyType_IsSubtype(PyTypeObject* left, PyTypeObject* right){
 
 void DiscoverPythonLib()   {
 
-   const std::string py_discovery_script = "python3 -c \"import sysconfig; print(sysconfig.get_config_var('LIBDIR')); print(sysconfig.get_config_var('LDLIBRARY'));\" ";
    const int NUMBER_OF_LINES = 3;
    const int MAX_BUFFER_SIZE = 1024;
    std::vector<std::string> line_commands(NUMBER_OF_LINES);
    FILE *fp;
    char buffer[MAX_BUFFER_SIZE];  // Buffer to store the output from the Python script
+   const std::string py_discovery_script = "python3 -c \"import sysconfig; print(sysconfig.get_config_var('LIBDIR')); print(sysconfig.get_config_var('LDLIBRARY'));\" ";
 
    // Open the command for reading
    fp = popen(py_discovery_script.c_str(), "r");
@@ -982,7 +972,9 @@ void DiscoverPythonLib()   {
       perror("Error reported by pclose()");
    }
 
-   // Make find command
+   //Usally this is enough as the lib can be found in LIBDIR/LDLIBRARY but
+   //second level confirmation is done using the find as it gives proper path
+   //Make find command
    std::string find_command = "find " + line_commands[0] + " -name " + line_commands[1] + " | head -n 1 ";
    if(DEBUG_START) { fprintf(stdout, "find command = [ %s ] \n", find_command.c_str()); }
    fp = popen(find_command.c_str(), "r");
@@ -1015,25 +1007,20 @@ void DiscoverPythonLib()   {
 #include <execinfo.h>
 static void amd_gdb_backtrace(void) {
    if(DEBUG_START){
-      void *buffer[100];
-      char **symbols;
-      int size;
+      void *buffer[100];  char **symbols;  int size;
 
       // Capture the backtrace
       size = backtrace(buffer, 100);
       symbols = backtrace_symbols(buffer, size);
-
       if (symbols == NULL) {
          perror("backtrace_symbols");
          exit(EXIT_FAILURE);
       }
-
       printf("AMD : Backtrace:\n");
       for (int i = 0; i < size; i++) {
          printf("%d: %s\n", i, symbols[i]);
       }
-
-      printf("Ashutosh : Backtrace Ends :\n\n\n");
+      printf("AMD : Backtrace Ends :\n\n\n");
       free(symbols);
    }
 }

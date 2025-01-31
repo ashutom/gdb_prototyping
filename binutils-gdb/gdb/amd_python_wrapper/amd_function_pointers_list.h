@@ -2,8 +2,7 @@
 #define _AMD_FUNCTION_POINTER_LIST_H_
 
 
-
-/*List of function poitners which needs to be looked from the library*/
+/*type of functions which needs to be looked from the library*/
 typedef int  (*va_arg_pyfunc) (PyObject *args, PyObject *kw, const char *format, char **keywords, ...);
 typedef PyObject* (*pyobj_callmethod) (PyObject *obj, const char *name, const char *format, ...);
 typedef PyObject* (*pyobj_callmethodobjargs) (PyObject *obj, PyObject *name, ...);
