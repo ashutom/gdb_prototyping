@@ -212,18 +212,16 @@ static void Initialize_Fun_Pointer_Table(){
       "PyUnicode_AsEncodedString",  "PyBytes_FromString",  "PyBytes_AsString",  "PyErr_SetNone",  "PyNumber_Long",
       "PyModule_AddObject",  "PyModule_AddStringConstant",  "PyModule_GetDict",  "PyErr_GivenExceptionMatches",
       "PyErr_NewException",  "PyErr_SetInterrupt",  "PyErr_Print",  "PyFloat_FromDouble",  "PyFloat_AsDouble",
-      "PySequence_Concat",  "PySys_GetObject",  "PySys_SetPath",  "PyOS_InterruptOccurred",  "PyImport_AddModule",
-      "PyImport_ExtendInittab",  "PyEval_EvalCode",  "PyEval_SaveThread",  "PyEval_RestoreThread",
-      "PyRun_InteractiveLoopFlags",  "PyRun_StringFlags", "Py_CompileStringExFlags",
-      "PyErr_Occurred",  "PyErr_SetObject",  "PyObject_Call", "PySlice_GetIndicesEx",
-      "Py_DecRef",  "PyIter_Check",  "_Py_Dealloc", "_PyObject_New", "PyObject_Type", "PyConfig_InitPythonConfig",
-      "PyConfig_SetString", "PyStatus_Exception", "PyConfig_Read", "Py_InitializeFromConfig", "PyConfig_Clear",
+      "PySequence_Concat",  "PySys_GetObject",  "PyOS_InterruptOccurred",  "PyImport_AddModule", "PyImport_ExtendInittab",
+      "PyEval_EvalCode",  "PyEval_SaveThread",  "PyEval_RestoreThread", "PyRun_InteractiveLoopFlags",  "PyRun_StringFlags",
+      "Py_CompileStringExFlags", "PyErr_Occurred",  "PyErr_SetObject",  "PyObject_Call", "PySlice_GetIndicesEx", "Py_DecRef",
+      "PyIter_Check",  "_Py_Dealloc", "_PyObject_New", "PyObject_Type",  "Py_Finalize",
 
 #if PY_VERSION_HEX < 0x030c0000
       "PyErr_Fetch",
 #endif
 #if PY_VERSION_HEX < 0x030a0000
-      "Py_SetProgramName", "Py_Initialize", "Py_Finalize",
+      "Py_SetProgramName", "Py_Initialize",
 #else
       "PySys_SetPath", "PyStatus_Exception", "PyConfig_InitPythonConfig", "PyConfig_SetString", "PyConfig_Read",
       "Py_InitializeFromConfig", "PyConfig_Clear",
@@ -898,6 +896,12 @@ int PyType_IsSubtype(PyTypeObject* left, PyTypeObject* right){
    return (*fp) (left,right); //execute
 }
 
+void AMD_Py_Finalize(void){
+   AMD_TRACE_API
+   pyerr_clear fp =(pyerr_clear) get_fun_pointer_from_table("Py_Finalize");
+   return (*fp) (); //execute
+}
+
 #if PY_VERSION_HEX < 0x030c0000
 void AMD_PyErr_Fetch(PyObject ** a, PyObject ** b, PyObject ** c){
    AMD_TRACE_API
@@ -920,18 +924,14 @@ void AMD_Py_Initialize(void){
    pyerr_clear fp =(pyerr_clear) get_fun_pointer_from_table("Py_Initialize");
    return (*fp) (); //execute
 }
-void AMD_Py_Finalize(void){
-   AMD_TRACE_API
-   pyerr_clear fp =(pyerr_clear) get_fun_pointer_from_table("Py_Finalize");
-   return (*fp) (); //execute
-}
 
-#else
 void AMD_PySys_SetPath(const wchar_t * str){
    AMD_TRACE_API
    pysys_setpath fp =(pysys_setpath) get_fun_pointer_from_table("PySys_SetPath");
    return (*fp) (str); //execute
 }
+
+#else
 
 int  AMD_PyStatus_Exception(PyStatus err){
    AMD_TRACE_API

@@ -79,8 +79,9 @@ typedef void (*pyerr_setobject) (PyObject* ob1, PyObject* ob2);
 typedef int (*pyslice_getindicesex) (PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
                                      Py_ssize_t *step, Py_ssize_t *slicelength);
 typedef void  (*pysys_setpath) (const wchar_t *);
-#if PY_VERSION_HEX < 0x030a0000
 typedef void (*pyerr_clear) (void);
+#if PY_VERSION_HEX < 0x030a0000
+//typedef void (*pyerr_clear) (void);
 #else
 typedef void (*pyconfig_initpythonconfig) (PyConfig *config);
 typedef PyStatus (*pyconfig_setstring) (PyConfig *config, wchar_t **config_str, const wchar_t *str);

@@ -254,6 +254,8 @@ PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int
 int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
                                      Py_ssize_t *step, Py_ssize_t *slicelength);
 
+void AMD_Py_Finalize(void);//Only Initialization is versioned
+
 #if PY_VERSION_HEX < 0x030c0000
 void AMD_PyErr_Fetch(PyObject **, PyObject **, PyObject **);
 void AMD_PyErr_Restore(PyObject *, PyObject *, PyObject *);
@@ -271,9 +273,8 @@ extern int*             _AMD_Py_IgnoreEnvironmentFlag;
 
 void AMD_Py_SetProgramName(const wchar_t *);
 void AMD_Py_Initialize(void);
-void AMD_Py_Finalize(void);
-#else
 void AMD_PySys_SetPath(const wchar_t *);
+#else
 int  AMD_PyStatus_Exception(PyStatus err);
 void AMD_PyConfig_InitPythonConfig(PyConfig *config);
 PyStatus AMD_PyConfig_SetString(PyConfig *config, wchar_t **config_str, const wchar_t *str);
