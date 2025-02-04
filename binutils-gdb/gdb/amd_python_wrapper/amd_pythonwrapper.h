@@ -5,7 +5,6 @@
 #include "amd_function_pointers_list.h"
 
 //Declarations of the externs in other translation units
-extern PyTypeObject*    _AMD_PyBool_Type;
 extern PyTypeObject*    _AMD_PySlice_Type;
 extern PyTypeObject*    _AMD_PyEllipsis_Type;
 extern PyTypeObject*    _AMD_PyFloat_Type;
@@ -38,6 +37,11 @@ extern pyarg_parsetuple           AMD_PyArg_ParseTuple;
 #if PY_VERSION_HEX >= 0x030c0000
 extern pydict_new                 AMD_PyErr_GetRaisedException;
 extern pyerr_setnone              AMD_PyErr_SetRaisedException;
+extern PyTypeObject               PyBool_Type;
+extern PyTypeObject               PyLong_Type;
+#else
+#define PyBool_Type                     (*_AMD_PyBool_Type)
+extern  PyTypeObject*                    _AMD_PyBool_Type;
 #endif
 
 //Macros for Delinking GDB from Python
@@ -68,11 +72,9 @@ extern pyerr_setnone              AMD_PyErr_SetRaisedException;
 #define AMD_PyExc_NameError             (*_AMD_PyExc_NameError)
 #define AMD_PyExc_KeyboardInterrupt     (*_AMD_PyExc_KeyboardInterrupt)
 #define AMD_PyExc_OverflowError         (*_AMD_PyExc_OverflowError)
-#define PyBool_Type                     (*_AMD_PyBool_Type)
 #define AMD_PySlice_Type                (*_AMD_PySlice_Type)
 #define AMD_PyEllipsis_Type             (*_AMD_PyEllipsis_Type)
 #define AMD_PyFloat_Type                (*_AMD_PyFloat_Type)
-
 
 #define AMD_Py_None                     (&(*_AMD_Py_None))
 
@@ -268,8 +270,6 @@ void AMD_PyErr_NormalizeException(PyObject**, PyObject**, PyObject**);
 #else
 #define PyErr_GetRaisedException        (*AMD_PyErr_GetRaisedException)
 #define PyErr_SetRaisedException        (*AMD_PyErr_SetRaisedException)
-//PyObject* PyErr_GetRaisedException(void);
-//void PyErr_SetRaisedException(PyObject *);
 #endif
 
 #if PY_VERSION_HEX < 0x030a0000

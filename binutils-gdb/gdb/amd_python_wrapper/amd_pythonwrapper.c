@@ -41,6 +41,13 @@ PyTypeObject* _AMD_PyBool_Type=nullptr;
 PyTypeObject* _AMD_PySlice_Type=nullptr;
 PyTypeObject* _AMD_PyEllipsis_Type=nullptr;
 PyTypeObject* _AMD_PyFloat_Type=nullptr;
+
+#if PY_VERSION_HEX >= 0x030c0000
+PyTypeObject* _AMD_PyLong_Type=nullptr;
+PyTypeObject  PyBool_Type;
+PyTypeObject  PyLong_Type;
+#endif
+
 #if PY_VERSION_HEX < 0x030a0000
 int* _AMD_Py_DontWriteBytecodeFlag=nullptr;
 int* _AMD_Py_IgnoreEnvironmentFlag=nullptr;
@@ -263,6 +270,11 @@ static void Initialize_AMD_PyAPI_DATA(){
    _AMD_PyEllipsis_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyEllipsis_Type");
    _AMD_PyFloat_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyFloat_Type");
 
+#if PY_VERSION_HEX >= 0x030c0000
+   PyBool_Type=(*_AMD_PyBool_Type);
+   _AMD_PyLong_Type=(PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyLong_Type");
+   PyLong_Type=(*_AMD_PyLong_Type);
+#endif
 
 #if PY_VERSION_HEX < 0x030a0000
    _AMD_Py_DontWriteBytecodeFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_DontWriteBytecodeFlag");
