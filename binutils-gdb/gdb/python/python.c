@@ -653,8 +653,8 @@ execute_gdb_command (PyObject *self, PyObject *args, PyObject *kw)
 				    nullptr };
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!O!", keywords, &arg,
-					&(AMD_PyBool_Type), &from_tty_obj,
-					&(AMD_PyBool_Type), &to_string_obj))
+					&(PyBool_Type), &from_tty_obj,
+					&(PyBool_Type), &to_string_obj))
     return nullptr;
 
   bool from_tty = false;
@@ -792,7 +792,7 @@ gdbpy_rbreak (PyObject *self, PyObject *args, PyObject *kw)
 				   "symtabs", NULL};
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!IO", keywords,
-					&regex, &(AMD_PyBool_Type),
+					&regex, &(PyBool_Type),
 					&minsyms_p_obj, &throttle,
 					&symtab_list))
     return NULL;
@@ -1023,7 +1023,7 @@ gdbpy_parse_and_eval (PyObject *self, PyObject *args, PyObject *kw)
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!", keywords,
 					&expr_str,
-					&(AMD_PyBool_Type), &global_context_obj))
+					&(PyBool_Type), &global_context_obj))
     return nullptr;
 
   parser_flags flags = 0;
@@ -2541,6 +2541,7 @@ which don't seem to make sense, indicate that it's on/enabled."),
 static bool
 do_initialize (const struct extension_language_defn *extlang)
 {
+  //amd_lib_constructor(); //Call constructor first
   PyObject *m;
   PyObject *sys_path;
 

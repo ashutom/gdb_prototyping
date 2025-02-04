@@ -598,7 +598,7 @@ gdbpy_lookup_objfile (PyObject *self, PyObject *args, PyObject *kw)
   int by_build_id;
 
   if (!gdb_PyArg_ParseTupleAndKeywords (args, kw, "s|O!", keywords,
-					&name, &(AMD_PyBool_Type), &by_build_id_obj))
+					&name, &(PyBool_Type), &by_build_id_obj))
     return NULL;
 
   by_build_id = 0;

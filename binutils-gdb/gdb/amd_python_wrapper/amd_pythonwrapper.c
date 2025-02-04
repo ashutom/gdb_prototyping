@@ -62,9 +62,10 @@ pyarg_unpacktuple          AMD_PyArg_UnpackTuple=nullptr;
 pyerr_format               AMD_PyErr_Format=nullptr;
 pyarg_parsetuple           AMD_PyArg_ParseTuple=nullptr;
 
-
-//Special Data 
-//char* (*PyOS_ReadlineFunctionPointer)(FILE *, FILE *, const char *)
+#if PY_VERSION_HEX >= 0x030c0000
+pydict_new                 AMD_PyErr_GetRaisedException=nullptr;
+pyerr_setnone              AMD_PyErr_SetRaisedException=nullptr;
+#endif
 
 // Debug functions begin :: TODO : move these to a seperate file
 static bool DEBUG_START=false;
@@ -277,6 +278,12 @@ static void Initialize_AMD_PyAPI_DATA(){
    AMD_PyErr_Format= (pyerr_format)AMD_check_symbol_resolution(placeholder,"PyErr_Format");
    AMD_PyArg_ParseTuple= (pyarg_parsetuple)AMD_check_symbol_resolution(placeholder,"PyArg_ParseTuple");
    AMD_PyObject_CallFunctionObjArgs= (pyobj_callfunctionobjargs)AMD_check_symbol_resolution(placeholder,"PyObject_CallFunctionObjArgs");
+
+#if PY_VERSION_HEX >= 0x030c0000
+   AMD_PyErr_GetRaisedException=(pydict_new) AMD_check_symbol_resolution(placeholder,"PyErr_GetRaisedException");
+   AMD_PyErr_SetRaisedException=(pyerr_setnone) AMD_check_symbol_resolution(placeholder,"PyErr_SetRaisedException");
+#endif
+
 }
 
 void amd_lib_constructor() {
@@ -561,16 +568,6 @@ PyObject * AMD_PyImport_GetModuleDict(void){
    return (*fp) (); //execute   
 }
 
-void AMD_PyErr_NormalizeException(PyObject ** a, PyObject ** b, PyObject ** c){
-   AMD_TRACE_API
-   pyerr_fetch fp =(pyerr_fetch) get_fun_pointer_from_table("PyErr_NormalizeException");
-   return (*fp) (a,b,c); //execute
-}
-void AMD_PyErr_Restore(PyObject * a, PyObject * b, PyObject * c){
-   AMD_TRACE_API
-   pyerr_restore fp =(pyerr_restore) get_fun_pointer_from_table("PyErr_Restore");
-   return (*fp) (a,b,c); //execute
-}
 void AMD_PyBuffer_Release(Py_buffer *view){
    AMD_TRACE_API
    pybuffer_release fp =(pybuffer_release) get_fun_pointer_from_table("PyBuffer_Release");
@@ -903,11 +900,23 @@ void AMD_Py_Finalize(void){
 }
 
 #if PY_VERSION_HEX < 0x030c0000
+
 void AMD_PyErr_Fetch(PyObject ** a, PyObject ** b, PyObject ** c){
    AMD_TRACE_API
    pyerr_fetch fp =(pyerr_fetch) get_fun_pointer_from_table("PyErr_Fetch");
    return (*fp) (a,b,c); //execute
 }
+void AMD_PyErr_NormalizeException(PyObject ** a, PyObject ** b, PyObject ** c){
+   AMD_TRACE_API
+   pyerr_fetch fp =(pyerr_fetch) get_fun_pointer_from_table("PyErr_NormalizeException");
+   return (*fp) (a,b,c); //execute
+}
+void AMD_PyErr_Restore(PyObject * a, PyObject * b, PyObject * c){
+   AMD_TRACE_API
+   pyerr_restore fp =(pyerr_restore) get_fun_pointer_from_table("PyErr_Restore");
+   return (*fp) (a,b,c); //execute
+}
+
 #else
 //PyErr_GetRaisedException
 #endif

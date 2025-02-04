@@ -46,8 +46,6 @@ typedef PyObject* (*pybytes_fromstringandsize) (const char *s, Py_ssize_t len);
 typedef int  (*pyobj_getbuffer) (PyObject *obj, Py_buffer *view,int flags);
 typedef Py_ssize_t (*pylist_size) (PyObject *);
 typedef PyObject* (*pymodue_create2) (struct PyModuleDef*,int apiver);
-typedef void (*pyerr_fetch) (PyObject **, PyObject **, PyObject **);
-typedef void (*pyerr_restore) (PyObject *, PyObject *, PyObject *);
 typedef void (*pybuffer_release) (Py_buffer *view);
 typedef Py_ssize_t (*pysequence_index) (PyObject *o, PyObject *value);
 typedef void* (*pymem_rawmalloc) (size_t size);
@@ -80,6 +78,12 @@ typedef int (*pyslice_getindicesex) (PyObject *r, Py_ssize_t length, Py_ssize_t 
                                      Py_ssize_t *step, Py_ssize_t *slicelength);
 typedef void  (*pysys_setpath) (const wchar_t *);
 typedef void (*pyerr_clear) (void);
+
+#if PY_VERSION_HEX < 0x030c0000
+typedef void (*pyerr_fetch) (PyObject **, PyObject **, PyObject **);
+typedef void (*pyerr_restore) (PyObject *, PyObject *, PyObject *);
+#endif
+
 #if PY_VERSION_HEX < 0x030a0000
 //typedef void (*pyerr_clear) (void);
 #else

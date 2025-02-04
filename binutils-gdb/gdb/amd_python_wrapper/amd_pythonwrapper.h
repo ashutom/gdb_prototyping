@@ -35,8 +35,13 @@ extern pyarg_unpacktuple          AMD_PyArg_UnpackTuple;
 extern pyerr_format               AMD_PyErr_Format;
 extern pyarg_parsetuple           AMD_PyArg_ParseTuple;
 
+#if PY_VERSION_HEX >= 0x030c0000
+extern pydict_new                 AMD_PyErr_GetRaisedException;
+extern pyerr_setnone              AMD_PyErr_SetRaisedException;
+#endif
+
 //Macros for Delinking GDB from Python
-#define AMD_PyBool_Check(x)             Py_IS_TYPE(x,&(AMD_PyBool_Type))
+#define AMD_PyBool_Check(x)             Py_IS_TYPE(x,&(PyBool_Type))
 #define AMD_PySlice_Check(op)           Py_IS_TYPE(op, &(AMD_PySlice_Type))
 #define AMD_PyRun_String(str, s, g, l)  AMD_PyRun_StringFlags(str,s,g,l,NULL)
 #define AMD_PyRun_InteractiveLoop(f, p) AMD_PyRun_InteractiveLoopFlags(f, p, NULL)
@@ -63,7 +68,7 @@ extern pyarg_parsetuple           AMD_PyArg_ParseTuple;
 #define AMD_PyExc_NameError             (*_AMD_PyExc_NameError)
 #define AMD_PyExc_KeyboardInterrupt     (*_AMD_PyExc_KeyboardInterrupt)
 #define AMD_PyExc_OverflowError         (*_AMD_PyExc_OverflowError)
-#define AMD_PyBool_Type                 (*_AMD_PyBool_Type)
+#define PyBool_Type                     (*_AMD_PyBool_Type)
 #define AMD_PySlice_Type                (*_AMD_PySlice_Type)
 #define AMD_PyEllipsis_Type             (*_AMD_PyEllipsis_Type)
 #define AMD_PyFloat_Type                (*_AMD_PyFloat_Type)
@@ -261,8 +266,10 @@ void AMD_PyErr_Fetch(PyObject **, PyObject **, PyObject **);
 void AMD_PyErr_Restore(PyObject *, PyObject *, PyObject *);
 void AMD_PyErr_NormalizeException(PyObject**, PyObject**, PyObject**);
 #else
-//PyErr_GetRaisedException
-//PyErr_SetRaisedException
+#define PyErr_GetRaisedException        (*AMD_PyErr_GetRaisedException)
+#define PyErr_SetRaisedException        (*AMD_PyErr_SetRaisedException)
+//PyObject* PyErr_GetRaisedException(void);
+//void PyErr_SetRaisedException(PyObject *);
 #endif
 
 #if PY_VERSION_HEX < 0x030a0000
