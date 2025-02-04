@@ -34,7 +34,6 @@ typedef int  (*pyobj_setattr) (PyObject *, PyObject *, PyObject *);
 typedef int  (*pyobj_istrue) (PyObject* a);
 typedef int  (*pytype_ready) (PyTypeObject* objtype);
 typedef int  (*pytmodule_addintconstant) (PyObject *, const char *, long);
-typedef void (*pyerr_clear) (void);
 typedef Py_ssize_t (*pysequence_size) (PyObject *ob);
 typedef PyObject * (*pysequence_getitem) (PyObject *o, Py_ssize_t i);
 typedef int  (*pysequence_delitem) (PyObject *o, Py_ssize_t i);
@@ -68,7 +67,6 @@ typedef int  (*pymodule_addstringconstant) (PyObject* ob, const char *str , cons
 typedef PyObject* (*pyerr_newexception) (const char *name, PyObject *base, PyObject *dict);
 typedef PyObject* (*pyfloat_fromdouble) (double);
 typedef double (*pyfloat_asdouble) (PyObject *);
-typedef void  (*pysys_setpath) (const wchar_t *);
 typedef int  (*pyos_interruptoccurred) (void);
 typedef int  (*pyimport_extendinitab) (struct _inittab *newtab);
 typedef PyObject* (*pyeval_evalcode) (PyObject *, PyObject *, PyObject *);
@@ -80,10 +78,15 @@ typedef PyObject* (*py_compilestringexflags) (const char *str, const char *filen
 typedef void (*pyerr_setobject) (PyObject* ob1, PyObject* ob2);
 typedef int (*pyslice_getindicesex) (PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
                                      Py_ssize_t *step, Py_ssize_t *slicelength);
+typedef void  (*pysys_setpath) (const wchar_t *);
+#if PY_VERSION_HEX < 0x030a0000
+typedef void (*pyerr_clear) (void);
+#else
 typedef void (*pyconfig_initpythonconfig) (PyConfig *config);
 typedef PyStatus (*pyconfig_setstring) (PyConfig *config, wchar_t **config_str, const wchar_t *str);
-typedef int  (*pystatus_exception) (PyStatus err);
 typedef PyStatus (*pyconfig_read) (PyConfig *config);
 typedef PyStatus (*py_initializefromconfig) (const PyConfig *config);
+typedef int  (*pystatus_exception) (PyStatus err);
+#endif
 
 #endif //_AMD_FUNCTION_POINTER_LIST_H_

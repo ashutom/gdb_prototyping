@@ -23,8 +23,6 @@ extern PyObject**       _AMD_PyExc_KeyboardInterrupt;
 extern PyObject**       _AMD_PyExc_OverflowError;
 extern PyObject*        _AMD_Py_None;
 extern PyObject*        AMD_Py_NotImplementedStructPtr;
-extern int*             _AMD_Py_DontWriteBytecodeFlag;
-extern int*             _AMD_Py_IgnoreEnvironmentFlag;
 extern _longobject*     AMD_Py_FalseStructPtr;
 extern _longobject*     AMD_Py_TrueStructPtr;
 extern va_arg_pyfunc 			  AMD_PyArg_VaParseTupleAndKeywords;
@@ -69,8 +67,8 @@ extern pyarg_parsetuple           AMD_PyArg_ParseTuple;
 #define AMD_PySlice_Type                (*_AMD_PySlice_Type)
 #define AMD_PyEllipsis_Type             (*_AMD_PyEllipsis_Type)
 #define AMD_PyFloat_Type                (*_AMD_PyFloat_Type)
-#define AMD_Py_DontWriteBytecodeFlag    (*_AMD_Py_DontWriteBytecodeFlag)
-#define AMD_Py_IgnoreEnvironmentFlag    (*_AMD_Py_IgnoreEnvironmentFlag)
+
+
 #define AMD_Py_None                     (&(*_AMD_Py_None))
 
 //va functions
@@ -181,16 +179,12 @@ int AMD_PyModule_AddStringConstant(PyObject *, const char *, const char *);
 PyObject* AMD_PyModule_GetDict(PyObject *);
 int AMD_PyModule_AddIntConstant(PyObject *, const char *, long);
 
-
-void AMD_PyErr_Fetch(PyObject **, PyObject **, PyObject **);
-void AMD_PyErr_NormalizeException(PyObject**, PyObject**, PyObject**);
-void AMD_PyErr_Restore(PyObject *, PyObject *, PyObject *);
 int AMD_PyErr_GivenExceptionMatches(PyObject *, PyObject *);
 PyObject* AMD_PyErr_NewException(const char *name, PyObject *base, PyObject *dict);
 void AMD_PyErr_SetInterrupt(void);
 void AMD_PyErr_Print(void);
 
-void AMD_Py_SetProgramName(const wchar_t *);
+
 PyObject* AMD_PyErr_Occurred(void);
 void AMD_PyErr_SetObject(PyObject* ob1, PyObject* ob2);
 PyObject* AMD_PyObject_Call(PyObject *callable, PyObject *args, PyObject *kwargs);
@@ -244,7 +238,7 @@ PyObject* AMD_PyFloat_FromDouble(double);
 double AMD_PyFloat_AsDouble(PyObject *);
 
 PyObject * AMD_PySys_GetObject(const char *);
-void AMD_PySys_SetPath(const wchar_t *);
+
 
 int AMD_PyOS_InterruptOccurred(void);
 PyObject* AMD_PyImport_AddModule(const char *name );
@@ -260,21 +254,48 @@ PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int
 int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
                                      Py_ssize_t *step, Py_ssize_t *slicelength);
 
+#if PY_VERSION_HEX < 0x030c0000
+void AMD_PyErr_Fetch(PyObject **, PyObject **, PyObject **);
+void AMD_PyErr_Restore(PyObject *, PyObject *, PyObject *);
+void AMD_PyErr_NormalizeException(PyObject**, PyObject**, PyObject**);
+#else
+//PyErr_GetRaisedException
+//PyErr_SetRaisedException
+#endif
+
+#if PY_VERSION_HEX < 0x030a0000
+extern int*             _AMD_Py_DontWriteBytecodeFlag;
+extern int*             _AMD_Py_IgnoreEnvironmentFlag;
+#define AMD_Py_IgnoreEnvironmentFlag    (*_AMD_Py_IgnoreEnvironmentFlag)
+#define AMD_Py_DontWriteBytecodeFlag    (*_AMD_Py_DontWriteBytecodeFlag)
+
+void AMD_Py_SetProgramName(const wchar_t *);
 void AMD_Py_Initialize(void);
 void AMD_Py_Finalize(void);
+#else
+void AMD_PySys_SetPath(const wchar_t *);
+int  AMD_PyStatus_Exception(PyStatus err);
 void AMD_PyConfig_InitPythonConfig(PyConfig *config);
 PyStatus AMD_PyConfig_SetString(PyConfig *config, wchar_t **config_str, const wchar_t *str);
-int  AMD_PyStatus_Exception(PyStatus err);
 PyStatus AMD_PyConfig_Read(PyConfig *config);
 PyStatus AMD_Py_InitializeFromConfig(const PyConfig *config);
 void AMD_PyConfig_Clear(PyConfig *);
+#endif
+
+#if PY_VERSION_HEX < 0x03090000
+  /* PyEval_InitThreads became deprecated in Python 3.9 and will
+     be removed in Python 3.11.  Prior to Python 3.7, this call was
+     required to initialize the GIL.  */
+  PyEval_InitThreads ();
+#endif
+
 
 //void _AMD_Py_DECREF(PyObject* ob);
 int  AMD_PyIter_Check(PyObject *);
 Py_ssize_t AMD_PyLong_AsSsize_t(PyObject *);
 Py_ssize_t AMD_PyObject_Length(PyObject *o);
 
-PyObject * _AMD_PyObject_New_(PyTypeObject *);
+PyObject* _AMD_PyObject_New_(PyTypeObject *);
 PyObject* AMD_PyObject_Type(PyObject *o);
 
 /*Internal functions */

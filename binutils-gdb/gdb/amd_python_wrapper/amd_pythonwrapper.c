@@ -41,8 +41,10 @@ PyTypeObject* _AMD_PyBool_Type=nullptr;
 PyTypeObject* _AMD_PySlice_Type=nullptr;
 PyTypeObject* _AMD_PyEllipsis_Type=nullptr;
 PyTypeObject* _AMD_PyFloat_Type=nullptr;
+#if PY_VERSION_HEX < 0x030a0000
 int* _AMD_Py_DontWriteBytecodeFlag=nullptr;
 int* _AMD_Py_IgnoreEnvironmentFlag=nullptr;
+#endif
 PyObject*  _AMD_Py_None=nullptr;
 
 _longobject*  AMD_Py_FalseStructPtr=nullptr;
@@ -200,7 +202,7 @@ static void Initialize_Fun_Pointer_Table(){
       "PySequence_DelItem",  "PyBool_FromLong",  "PyTuple_New",  "PyList_AsTuple",  "PyTuple_SetItem",  "PyObject_GetIter",
       "PyIter_Next",  "PyUnicode_AsASCIIString",  "PyBytes_AsStringAndSize",  "PyBytes_FromStringAndSize",
       "PyImport_ImportModule",  "PyObject_CheckBuffer",  "PyObject_GetBuffer",  "PyList_Size",  "PyObject_IsInstance",
-      "PyModule_Create2",  "PyImport_GetModuleDict",  "PyErr_Fetch",  "PyErr_NormalizeException",  "PyErr_Restore",
+      "PyModule_Create2",  "PyImport_GetModuleDict",  "PyErr_NormalizeException",  "PyErr_Restore",
       "PyBuffer_Release",  "PySequence_List",  "PyList_GetItem",  "PySequence_Index",  "PyMem_RawMalloc",
       "PyErr_NoMemory",  "PyRun_SimpleStringFlags",  "PyGILState_Ensure",  "PyGILState_Release",  "PyDict_SetItem",
       "PyDict_Keys",  "PyDict_Next",  "PyDict_DelItemString",  "PyDict_GetItemWithError",  "PyMemoryView_FromObject",
@@ -212,10 +214,20 @@ static void Initialize_Fun_Pointer_Table(){
       "PyErr_NewException",  "PyErr_SetInterrupt",  "PyErr_Print",  "PyFloat_FromDouble",  "PyFloat_AsDouble",
       "PySequence_Concat",  "PySys_GetObject",  "PySys_SetPath",  "PyOS_InterruptOccurred",  "PyImport_AddModule",
       "PyImport_ExtendInittab",  "PyEval_EvalCode",  "PyEval_SaveThread",  "PyEval_RestoreThread",
-      "PyRun_InteractiveLoopFlags",  "PyRun_StringFlags", "Py_CompileStringExFlags", "Py_Initialize",  "Py_Finalize",
-      "PyErr_Occurred",  "PyErr_SetObject",  "PyObject_Call",  "Py_SetProgramName", "PySlice_GetIndicesEx",
+      "PyRun_InteractiveLoopFlags",  "PyRun_StringFlags", "Py_CompileStringExFlags",
+      "PyErr_Occurred",  "PyErr_SetObject",  "PyObject_Call", "PySlice_GetIndicesEx",
       "Py_DecRef",  "PyIter_Check",  "_Py_Dealloc", "_PyObject_New", "PyObject_Type", "PyConfig_InitPythonConfig",
       "PyConfig_SetString", "PyStatus_Exception", "PyConfig_Read", "Py_InitializeFromConfig", "PyConfig_Clear",
+
+#if PY_VERSION_HEX < 0x030c0000
+      "PyErr_Fetch",
+#endif
+#if PY_VERSION_HEX < 0x030a0000
+      "Py_SetProgramName", "Py_Initialize", "Py_Finalize",
+#else
+      "PySys_SetPath", "PyStatus_Exception", "PyConfig_InitPythonConfig", "PyConfig_SetString", "PyConfig_Read",
+      "Py_InitializeFromConfig", "PyConfig_Clear",
+#endif
       "PyObject_CallMethod"
    };
    //lets assing
@@ -252,8 +264,11 @@ static void Initialize_AMD_PyAPI_DATA(){
    _AMD_PyEllipsis_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyEllipsis_Type");
    _AMD_PyFloat_Type = (PyTypeObject*)AMD_check_symbol_resolution(placeholder,"PyFloat_Type");
 
+
+#if PY_VERSION_HEX < 0x030a0000
    _AMD_Py_DontWriteBytecodeFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_DontWriteBytecodeFlag");
    _AMD_Py_IgnoreEnvironmentFlag = (int*)AMD_check_symbol_resolution(placeholder,"Py_IgnoreEnvironmentFlag");
+#endif
 
    AMD_PyArg_VaParseTupleAndKeywords= (va_arg_pyfunc)AMD_check_symbol_resolution(placeholder,"PyArg_VaParseTupleAndKeywords");
    AMD_PyUnicode_FromFormat= (pyunicode_fromformat)AMD_check_symbol_resolution(placeholder,"PyUnicode_FromFormat");
@@ -547,11 +562,7 @@ PyObject * AMD_PyImport_GetModuleDict(void){
    pydict_new fp =(pydict_new) get_fun_pointer_from_table("PyImport_GetModuleDict");
    return (*fp) (); //execute   
 }
-void AMD_PyErr_Fetch(PyObject ** a, PyObject ** b, PyObject ** c){
-   AMD_TRACE_API
-   pyerr_fetch fp =(pyerr_fetch) get_fun_pointer_from_table("PyErr_Fetch");
-   return (*fp) (a,b,c); //execute
-}
+
 void AMD_PyErr_NormalizeException(PyObject ** a, PyObject ** b, PyObject ** c){
    AMD_TRACE_API
    pyerr_fetch fp =(pyerr_fetch) get_fun_pointer_from_table("PyErr_NormalizeException");
@@ -787,11 +798,7 @@ PyObject * AMD_PySys_GetObject(const char * str){
    py_convert_str_to_pyobj fp =(py_convert_str_to_pyobj) get_fun_pointer_from_table("PySys_GetObject");
    return (*fp) (str); //execute   
 }
-void AMD_PySys_SetPath(const wchar_t * str){
-   AMD_TRACE_API
-   pysys_setpath fp =(pysys_setpath) get_fun_pointer_from_table("PySys_SetPath");
-   return (*fp) (str); //execute   
-}
+
 int AMD_PyOS_InterruptOccurred(void){
    AMD_TRACE_API
    pyos_interruptoccurred fp =(pyos_interruptoccurred) get_fun_pointer_from_table("PyOS_InterruptOccurred");
@@ -837,16 +844,7 @@ PyObject* AMD_Py_CompileStringExFlags(const char *str, const char *filename, int
    py_compilestringexflags fp =(py_compilestringexflags) get_fun_pointer_from_table("Py_CompileStringExFlags");
    return (*fp) (str,filename,start,flags,optimize); //execute
 }
-void AMD_Py_Initialize(void){
-   AMD_TRACE_API
-   pyerr_clear fp =(pyerr_clear) get_fun_pointer_from_table("Py_Initialize");
-   return (*fp) (); //execute
-}
-void AMD_Py_Finalize(void){
-   AMD_TRACE_API
-   pyerr_clear fp =(pyerr_clear) get_fun_pointer_from_table("Py_Finalize");
-   return (*fp) (); //execute
-}
+
 PyObject * AMD_PyErr_Occurred(void){
    AMD_TRACE_API
    pydict_new fp =(pydict_new) get_fun_pointer_from_table("PyErr_Occurred");
@@ -861,11 +859,6 @@ PyObject* AMD_PyObject_Call(PyObject *callable, PyObject *args, PyObject *kwargs
    AMD_TRACE_API
    pyeval_evalcode fp =(pyeval_evalcode) get_fun_pointer_from_table("PyObject_Call");
    return (*fp) (callable,args,kwargs); //execute
-}
-void AMD_Py_SetProgramName(const wchar_t * name){
-   AMD_TRACE_API
-   pysys_setpath fp =(pysys_setpath) get_fun_pointer_from_table("Py_SetProgramName");
-   return (*fp) (name); //execute
 }
 
 int AMD_PySlice_GetIndicesEx(PyObject *r, Py_ssize_t length, Py_ssize_t *start, Py_ssize_t *stop,
@@ -893,6 +886,59 @@ PyObject* AMD_PyObject_Type(PyObject *ob){
    return (*fp)(ob);
 }
 
+void  _Py_Dealloc(PyObject* ob){
+   AMD_TRACE_API
+   pyerr_setnone fp = (pyerr_setnone) get_fun_pointer_from_table("_Py_Dealloc");
+   return (*fp) (ob); //execute
+}
+
+int PyType_IsSubtype(PyTypeObject* left, PyTypeObject* right){
+   AMD_TRACE_API
+   pytypeissubtype fp = (pytypeissubtype) get_fun_pointer_from_table("PyType_IsSubtype");
+   return (*fp) (left,right); //execute
+}
+
+#if PY_VERSION_HEX < 0x030c0000
+void AMD_PyErr_Fetch(PyObject ** a, PyObject ** b, PyObject ** c){
+   AMD_TRACE_API
+   pyerr_fetch fp =(pyerr_fetch) get_fun_pointer_from_table("PyErr_Fetch");
+   return (*fp) (a,b,c); //execute
+}
+#else
+//PyErr_GetRaisedException
+#endif
+
+#if PY_VERSION_HEX < 0x030a0000
+void AMD_Py_SetProgramName(const wchar_t * name){
+   AMD_TRACE_API
+   pysys_setpath fp =(pysys_setpath) get_fun_pointer_from_table("Py_SetProgramName");
+   return (*fp) (name); //execute
+}
+
+void AMD_Py_Initialize(void){
+   AMD_TRACE_API
+   pyerr_clear fp =(pyerr_clear) get_fun_pointer_from_table("Py_Initialize");
+   return (*fp) (); //execute
+}
+void AMD_Py_Finalize(void){
+   AMD_TRACE_API
+   pyerr_clear fp =(pyerr_clear) get_fun_pointer_from_table("Py_Finalize");
+   return (*fp) (); //execute
+}
+
+#else
+void AMD_PySys_SetPath(const wchar_t * str){
+   AMD_TRACE_API
+   pysys_setpath fp =(pysys_setpath) get_fun_pointer_from_table("PySys_SetPath");
+   return (*fp) (str); //execute
+}
+
+int  AMD_PyStatus_Exception(PyStatus err){
+   AMD_TRACE_API
+   pystatus_exception fp = (pystatus_exception) get_fun_pointer_from_table("PyStatus_Exception");
+   return (*fp)(err);
+}
+
 void AMD_PyConfig_InitPythonConfig(PyConfig *config){
    AMD_TRACE_API
    pyconfig_initpythonconfig fp = (pyconfig_initpythonconfig) get_fun_pointer_from_table("PyConfig_InitPythonConfig");
@@ -903,12 +949,6 @@ PyStatus AMD_PyConfig_SetString(PyConfig *config, wchar_t **config_str, const wc
    AMD_TRACE_API
    pyconfig_setstring fp = (pyconfig_setstring) get_fun_pointer_from_table("PyConfig_SetString");
    return (*fp)(config,config_str,str);
-}
-
-int  AMD_PyStatus_Exception(PyStatus err){
-   AMD_TRACE_API
-   pystatus_exception fp = (pystatus_exception) get_fun_pointer_from_table("PyStatus_Exception");
-   return (*fp)(err);
 }
 
 PyStatus AMD_PyConfig_Read(PyConfig *config){
@@ -928,18 +968,7 @@ void AMD_PyConfig_Clear(PyConfig * config){
    pyconfig_initpythonconfig fp = (pyconfig_initpythonconfig) get_fun_pointer_from_table("PyConfig_Clear");
    return (*fp)(config);   
 }
-
-void  _Py_Dealloc(PyObject* ob){
-   AMD_TRACE_API
-   pyerr_setnone fp = (pyerr_setnone) get_fun_pointer_from_table("_Py_Dealloc");
-   return (*fp) (ob); //execute    
-}
-
-int PyType_IsSubtype(PyTypeObject* left, PyTypeObject* right){
-   AMD_TRACE_API
-   pytypeissubtype fp = (pytypeissubtype) get_fun_pointer_from_table("PyType_IsSubtype");
-   return (*fp) (left,right); //execute    
-}
+#endif
 
 void DiscoverPythonLib()   {
 
